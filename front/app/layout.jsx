@@ -1,8 +1,8 @@
 import '@styles/globals.css'
 
 export const metadata = {
-    title: "Fitness Tracker",
-    description: "Enhance Your Workout"
+    title: "Company Management",
+    description: "Dashboard For Company"
 }
 
 const RootLayout = ({children}) => {
