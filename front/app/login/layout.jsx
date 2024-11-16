@@ -1,8 +1,8 @@
 import '@styles/globals.css'
 
 export const metadata = {
-    title: "Gym Hub",
-    description: "Landpage of Gym Hub"
+    title: "Login",
+    description: "Login For Gym Hub"
 }
 
 const RootLayout = ({children}) => {
