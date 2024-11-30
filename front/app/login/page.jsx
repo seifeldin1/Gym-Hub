@@ -54,20 +54,20 @@ const LoginPage= ()=>{
 
     return(
         /*main page */
-        <div className={`min-h-screen flex justify-start p-8 items-center bg-cover ${style.background}`} >
+        <div className={`min-h-screen flex justify-start p-8 items-center bg-cover ${style.background} `} >
             {/*form of login*/}
            
-            <div className={`relative bg-white p-8 rounded-lg shadow-lg w-full max-w-lg ${darkMode?`bg-slate-700 text-black`: `bg-white text-black` }`}>
+            <div className={`relative bg-white p-8 rounded-lg shadow-lg w-full max-w-lg ${darkMode? 'bg-gray-800 text-white': 'bg-slate-700 text-black' }`}>
                 <IconButton
                  onClick ={ChangeDarkMode}
                  color="inherit"
-                 className={`absolute top-4 right-4 ${darkMode? `bg-slate-300`:`bg-white`}`}
+                 className={`absolute top-4 right-4 ${darkMode? `bg-gray-800`:`bg-white`}`}
                  >
-                    {darkMode? <DarkModeIcon/> : <LightModeIcon/>}
+                    {darkMode? <LightModeIcon/> : <DarkModeIcon/>}
                  </IconButton>
-                 <div className= "flex justify-between items-center mb-10 " >
+                 <div className= {`flex justify-between items-center mb-10 ${darkMode? `bg-gray-800 text-white`:`text-black`} `} >
                     <div className="flex1">
-                        <h2 className={`text-xl sm:text-2xl font-bold mb-5 text-center ${darkMode? `text-white`:`text-black`}`}>
+                        <h2 className={`text-xl sm:text-2xl font-bold mb-5 text-center ${darkMode? `bg-gray-800 text-white`:`text-black`}`}>
                             Log in 
                         </h2>
                         <form onSubmit={LoginHandler}>
@@ -78,7 +78,13 @@ const LoginPage= ()=>{
                                 value={username}
                                 fullWidth
                                 onChange={(e) => setUsername(e.target.value)}
-                                className={`${darkMode? `text-white`:`text-black`}`}>
+                                InputLabelProps={{
+                                    style: { color: darkMode ? 'white' : 'black' },
+                                }}
+                                InputProps={{
+                                    style: { color: darkMode ? 'white' : 'black', backgroundColor: darkMode ? '#374151' : '#ffffff' },
+                                }}
+                                className="rounded">
                                 </TextField>
                                 {UsernameError && !username && <p className="text-red-700">{UsernameError}</p>}
                             </div>
@@ -90,7 +96,13 @@ const LoginPage= ()=>{
                                 value={password}
                                 fullWidth
                                 onChange={(e) => setPassword(e.target.value)}
-                                className={`${darkMode? `text-white`:`text-black`}`}>
+                                InputLabelProps={{
+                                    style: { color: darkMode ? 'white' : 'black' },
+                                }}
+                                InputProps={{
+                                    style: { color: darkMode ? 'white' : 'black', backgroundColor: darkMode ? '#374151' : '#ffffff' },
+                                }}
+                                className="rounded">
 
                                 </TextField>
                                 <div>
