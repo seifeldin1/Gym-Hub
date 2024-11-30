@@ -54,23 +54,23 @@ const LoginPage= ()=>{
 
     return(
         /*main page */
-        <div className={`min-h-screen flex justify-start p-8 items-center bg-cover ${style.background} `} >
+        <div className={`min-h-screen flex justify-center  p-8 items-center bg-cover ${style.background} `} >
             {/*form of login*/}
            
-            <div className={`relative bg-white p-8 rounded-lg shadow-lg w-full max-w-lg ${darkMode? 'bg-gray-800 text-white': 'bg-slate-700 text-black' }`}>
+            <div className={`relative bg-white p-4 items-center rounded-lg shadow-lg w-80 max-w-lg ${darkMode? 'bg-slate-800 text-white': 'bg-slate-700 text-black' }`}>
                 <IconButton
                  onClick ={ChangeDarkMode}
                  color="inherit"
-                 className={`absolute top-4 right-4 ${darkMode? `bg-gray-800`:`bg-white`}`}
+                 className={`absolute top-8 right-1 ${darkMode? `bg-gray-800`:`bg-white`}`}
                  >
                     {darkMode? <LightModeIcon/> : <DarkModeIcon/>}
                  </IconButton>
-                 <div className= {`flex justify-between items-center mb-10 ${darkMode? `bg-gray-800 text-white`:`text-black`} `} >
+                 <div className= {`flex justify-between w-64 items-center mb-10 ${darkMode? `bg-gray-800 text-white`:`text-black`} `} >
                     <div className="flex1">
                         <h2 className={`text-xl sm:text-2xl font-bold mb-5 text-center ${darkMode? `bg-gray-800 text-white`:`text-black`}`}>
                             Log in 
                         </h2>
-                        <form onSubmit={LoginHandler}>
+                        <form onSubmit={LoginHandler} className="m-4 mb-8">
                             <div className="mb-4">
                                 <TextField
                                 label="Username"
@@ -79,16 +79,16 @@ const LoginPage= ()=>{
                                 fullWidth
                                 onChange={(e) => setUsername(e.target.value)}
                                 InputLabelProps={{
-                                    style: { color: darkMode ? 'white' : 'black' },
+                                    style: { color: darkMode ? 'grey' : 'black' },
                                 }}
                                 InputProps={{
-                                    style: { color: darkMode ? 'white' : 'black', backgroundColor: darkMode ? '#374151' : '#ffffff' },
+                                    style: { color: darkMode ? 'white' : 'black', backgroundColor: darkMode ? '#374151' : '#ffffff' , height:'50px'},
                                 }}
                                 className="rounded">
                                 </TextField>
                                 {UsernameError && !username && <p className="text-red-700">{UsernameError}</p>}
                             </div>
-                            <div className="mb-4">
+                            <div className={`flex ${darkMode? `text-white`:`text-black`}`}>
                                 <TextField
                                 label="Password"
                                 variant="outlined"
@@ -97,39 +97,56 @@ const LoginPage= ()=>{
                                 fullWidth
                                 onChange={(e) => setPassword(e.target.value)}
                                 InputLabelProps={{
-                                    style: { color: darkMode ? 'white' : 'black' },
+                                    style: { color: darkMode ? 'grey' : 'black' },
                                 }}
                                 InputProps={{
-                                    style: { color: darkMode ? 'white' : 'black', backgroundColor: darkMode ? '#374151' : '#ffffff' },
+                                    style: { color: darkMode ? 'white' : 'black', backgroundColor: darkMode ? '#374151' : '#ffffff' , height:'50px' },
+                                    endAdornment: (
+                                        <IconButton
+                                            onClick={ChangePasswordVisibility}
+                                            edge="end"
+                                            style={{ color: darkMode ? 'white' : 'black' }}
+                                        >
+                                            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                        </IconButton>
+                                    ),
                                 }}
                                 className="rounded">
-
+                    
                                 </TextField>
-                                <div>
-                                {PasswordError && !password && <p className="text-red-700">{PasswordError}</p>}
-
-                                <IconButton
-                                onClick={ChangePasswordVisibility}
-                                className="absolute left-1/2 transform translate-x-1/2 mt-2">
-                                {showPassword? <VisibilityIcon/> : <VisibilityOffIcon/>}
-                                </IconButton>
-                                </div>
+                                
+                               
+                               
+                                
+                                
                             </div>
                             <div>
-                            <Button
-                            variant="outlined"
-                            type="submit"
-                            color="primary"
-                            disabled={loading}
-                            onClick={LoginHandler}
-                            fullwidth>
-                                {loading ? "Logging in..." : "Log in"}
-                            </Button>
+                                {PasswordError && !password && <p className="text-red-700">{PasswordError}</p>}
+
+                                </div>
+                               
+                            
+                            
+                            
                            
 
 
-                        </div>
+                        
                         </form>
+                        <div className="ml-5">
+                        <Button
+                            variant="contained"
+                            type="submit"
+                            color="105269"
+                            disabled={loading}
+                            onClick={LoginHandler}
+                            fullwidth
+                            className="w-60">
+                            
+                                {loading ? "Logging in..." : "Login"}
+                            </Button>
+                        </div>
+                       
                         {success && <p className="text-green-500 mt-2">{success}</p>}
 
                         
