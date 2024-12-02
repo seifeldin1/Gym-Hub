@@ -1,4 +1,6 @@
 import NavBar from "@components/NavBar";
+import Header from "@app/new";
+
 const HannahA7a = () => {
     return (
         <>
@@ -9,14 +11,8 @@ const HannahA7a = () => {
 }
 
 
-const Header=()=>{
-    return(
-        <div>
 
-        </div>
-    );
 
-};
 const Home = () => {
     return (
          <div>
