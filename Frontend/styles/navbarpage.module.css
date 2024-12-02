@@ -1,0 +1,8 @@
+.NavButtons {
+    @apply w-24 h-10 rounded-full duration-200 border-2 border-slate-700/0 text-white;
+    @apply hover:bg-transparent hover:text-yellow-400 hover:duration-200 hover:border-2 hover:border-yellow-400;
+}
+.NavButtonsSelected{
+    @apply w-24 h-10 rounded-full duration-200 border-2 border-yellow-400 bg-yellow-400 text-white;
+    @apply hover:bg-transparent hover:text-yellow-400 hover:duration-200;
+}
