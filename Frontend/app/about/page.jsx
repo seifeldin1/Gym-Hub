@@ -8,11 +8,12 @@ const Header=()=>{
         </>
     );
 
+};
 const Home = () => {
     return (
         <>
         
-        <div className="h-screen pt-6 bg-black">
+        <div className="h-screen pt-6">
             <NavBarPage/>
         </div>
          
