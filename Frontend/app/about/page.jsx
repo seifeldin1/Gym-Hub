@@ -123,8 +123,6 @@ const Home = () => {
             <NewsSletter/>
 
         </div>
-         
-            
         </>
     );
 };
