@@ -1,0 +1,16 @@
+@layer HomeLeft {
+    .HomeImg {
+        background-image: url('/assets/images/Dashboard/GymH.jpg');
+        @apply w-[97%] mx-auto bg-cover bg-center h-[50%] rounded-lg mt-3 flex items-end;
+    }
+    .MeetingDiv {
+        @apply bg-white w-60 h-40 ml-3 mb-3 rounded-2xl overflow-hidden;
+    }
+
+    .MeetingIMG {
+        background-image: url('/assets/images/Dashboard/meeting.jpg');
+        @apply w-full bg-cover bg-top h-32 mb-4;
+    }
+}
+
+

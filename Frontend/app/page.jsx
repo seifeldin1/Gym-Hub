@@ -4,7 +4,7 @@ import NavBarPage from "@components/NavBarPage";
 const Header = () => {
     return (
         <>
-
+            
         </>
     );
 }
