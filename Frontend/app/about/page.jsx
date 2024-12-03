@@ -13,8 +13,8 @@ const Home = () => {
     return (
         <>
         
-        <div className="h-screen pt-6">
-            <NavBarPage/>
+        <div className="h-screen pt-6 bg-black">
+            <NavBarPage page_name="about"/>
         </div>
          
          
