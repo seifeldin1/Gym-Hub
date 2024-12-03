@@ -6,7 +6,7 @@ const Header=()=>{
         <>
 
         </>
-    );
+    );}
 
 const Home = () => {
     return (
