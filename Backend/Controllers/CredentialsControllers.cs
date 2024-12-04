@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/Credentials")]
     public class CredentialController : ControllerBase
     {
         private readonly CredentialServices credentialServices;

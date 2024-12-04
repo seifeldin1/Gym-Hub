@@ -21,7 +21,7 @@ namespace Backend.Services
             {
                 connection.Open();
 
-                string query = "SELECT * FROM LoginCredentials WHERE Username = @username;";
+                string query = "SELECT Username , PasswordHashed , Type FROM User WHERE Username = @username;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@username", entry.Username);
@@ -31,7 +31,7 @@ namespace Backend.Services
                         if (reader.Read()) // If username found in database
                         {
                             string hashedPassword = reader["PasswordHashed"].ToString();
-                            string userType = reader["Type"].ToString();
+                            string roleType = reader["Type"].ToString();
                           
 
                             if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
@@ -41,7 +41,7 @@ namespace Backend.Services
                                 {
                                     success = true,
                                     message = "Login successful",
-                                    userType = userType
+                                    userType = roleType
                                 };
                                 return JsonConvert.SerializeObject(response); // JSON response for success
                             }
