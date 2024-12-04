@@ -10,6 +10,8 @@ import gall7 from '@public/images/gallery-7.jpg';
 import gall8 from '@public/images/gallery-8.jpg';
 import NavBar from "@components/NavBar";
 import NavBarPage from "@components/NavBarPage";
+import WHY from "@components/WHY";
+import Newsletter from "@components/Newsletter";
 
 const About = () => {
   return (
@@ -43,18 +45,8 @@ const About = () => {
         </>
     );
 };
-const NewsSletter = () => {
-  return (
-    <>
-<div className="relative text-center h-80  py-3 bg-black ease-in duration-300 hover:scale-110">
-  
-  <h1 className="absolute inset-0 text-5xl font-serif  font-bold text-yellow-300 opacity-30 z-0">FITNESS </h1>
-  <h1 className="relative text-4xl font-bold text-white z-10"> WHY CHOOSE US</h1>
-    </div>
-    
-    </>
-  );
-};
+
+
 const Gallery = () => {
   return (
     <>
@@ -90,9 +82,10 @@ const Home = () => {
       <div className="h-screen pt-6 bg-black ">
         <NavBarPage page_name="about" />
         <About />
-        <WHY />
+        <WHY/>
         <Gallery />
-        <NewsSletter />
+        <Newsletter/>
+        
 
       </div>
     </>
