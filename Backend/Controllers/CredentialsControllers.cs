@@ -19,10 +19,21 @@ namespace Backend.Controllers
         public IActionResult Login([FromBody] Credentials entry)
         {
             // Call the service method
-            string result = credentialServices.Login(entry);
-
-            // Return the JSON result
-            return Content(result, "application/json");
+            var result = credentialServices.Login(entry);
+            
+            if (result.success){
+                return Ok(new{
+                    success = true,
+                    message = result.message,
+                    token = result.token,
+                    userType = result.userType
+                });
+            }
+            
+            return Unauthorized(new{
+                success = false,
+                message = result.message
+            });
         }
     }
 }
