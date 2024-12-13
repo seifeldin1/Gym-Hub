@@ -53,6 +53,10 @@
               "target": "Package",
               "version": "[9.0.0, )"
             },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.3.0, )"
+            },
             "MySql.Data": {
               "target": "Package",
               "version": "[9.1.0, )"

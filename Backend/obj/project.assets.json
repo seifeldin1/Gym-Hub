@@ -1987,6 +1987,7 @@
     "net8.0": [
       "BCrypt.Net-Next >= 4.0.3",
       "Microsoft.Extensions.DependencyInjection >= 9.0.0",
+      "Microsoft.IdentityModel.Tokens >= 8.3.0",
       "MySql.Data >= 9.1.0",
       "Newtonsoft.Json >= 13.0.3",
       "System.IdentityModel.Tokens.Jwt >= 8.3.0"
@@ -2043,6 +2044,10 @@
           "Microsoft.Extensions.DependencyInjection": {
             "target": "Package",
             "version": "[9.0.0, )"
+          },
+          "Microsoft.IdentityModel.Tokens": {
+            "target": "Package",
+            "version": "[8.3.0, )"
           },
           "MySql.Data": {
             "target": "Package",

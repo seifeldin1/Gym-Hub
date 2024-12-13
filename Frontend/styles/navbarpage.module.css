@@ -1,8 +1,28 @@
 .NavButtons {
-    @apply w-24 h-10 rounded-full duration-200 border-2 border-slate-700/0 text-white;
+    @apply w-24 h-10 rounded-full border-2 border-slate-700/0 text-white duration-200;
     @apply hover:bg-transparent hover:text-yellow-400 hover:duration-200 hover:border-2 hover:border-yellow-400;
 }
 .NavButtonsSelected{
-    @apply w-24 h-10 rounded-full duration-200 border-2 border-yellow-400 bg-yellow-400 text-white;
+    @apply w-24 h-10 rounded-full border-2 border-yellow-400 bg-yellow-400 text-white duration-200;
     @apply hover:bg-transparent hover:text-yellow-400 hover:duration-200;
+}
+.AnimBackground{
+    @apply h-auto pt-1;
+    background: linear-gradient(-45deg, #000000, #002637,#000000);
+    animation: gradient 15s ease infinite;
+    background-size: 400% 400%;
+}
+.DivOFbuttons {
+    @apply flex w-2/3 py-2 mx-auto items-center mt-6 mb-14 rounded-full;    
+}
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
