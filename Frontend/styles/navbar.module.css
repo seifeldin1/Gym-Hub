@@ -1,8 +1,8 @@
 @layer NavbarItems {
     .container {
-        @apply bg-[#FFFFFF] rounded-full flex text-xs px-4 py-2 items-center;
+        @apply flex flex-col w-[80%] text-xs py-2;
     }
     .icon {
-        @apply flex items-center gap-2 hover:text-[#F6643C] duration-75 cursor-pointer;
+        @apply flex text-[#7B817E] px-[22%] py-2 rounded-xl items-center gap-2 hover:text-black hover:bg-[#FEED02] duration-75 cursor-pointer text-left;
     }
 }

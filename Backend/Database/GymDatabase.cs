@@ -33,7 +33,7 @@ namespace Backend.Database{
                         Phone_Number VARCHAR(100) NOT NULL UNIQUE,
                         Gender VARCHAR(20), 
                         Age INT, 
-                        National_Number INT NOT NULL UNIQUE
+                        National_Number BIGINT NOT NULL UNIQUE
                     );
                 " , connection);
                 createUserTableCommand.ExecuteNonQuery();
@@ -43,7 +43,7 @@ namespace Backend.Database{
                         Owner_ID INT NOT NULL PRIMARY KEY,
                         Share_Percentage INT NOT NULL, 
                         Established_branches INT NOT NULL,
-                        FOREIGN KEY(Owner_ID) REFERENCES User(User_ID)
+                        FOREIGN KEY(Owner_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 " , connection);
                 createOwnerTableCommand.ExecuteNonQuery();
@@ -69,8 +69,8 @@ namespace Backend.Database{
                         Employee_Under_Supervision INT NOT NULL DEFAULT 0,
                         Fire_Date DATE,
                         Manages_Branch_ID INT,
-                        FOREIGN KEY (Manages_Branch_ID) REFERENCES Branch(Branch_ID),
-                        FOREIGN KEY(Branch_Manager_ID) REFERENCES User(User_ID)
+                        FOREIGN KEY (Manages_Branch_ID) REFERENCES Branch(Branch_ID) ON DELETE SET NULL ON UPDATE CASCADE,
+                        FOREIGN KEY(Branch_Manager_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
                 createBranchManagerTableCommand.ExecuteNonQuery();
@@ -89,7 +89,7 @@ namespace Backend.Database{
                         Shift_Start TIME,
                         Shift_Ends TIME, 
                         Speciality VARCHAR(50) NOT NULL,
-                        FOREIGN KEY(Coach_ID) REFERENCES User(User_ID)
+                        FOREIGN KEY(Coach_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
                 createCoachTableCommand.ExecuteNonQuery();
@@ -98,7 +98,7 @@ namespace Backend.Database{
                     CREATE TABLE IF NOT EXISTS Skills(
                         Skill_Name VARCHAR(50) NOT NULL, 
                         Coach_Skilled_ID INT NOT NULL,
-                        FOREIGN KEY(Coach_Skilled_ID) REFERENCES Coach(Coach_ID)
+                        FOREIGN KEY(Coach_Skilled_ID) REFERENCES Coach(Coach_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
                 createSkillsTableCommand.ExecuteNonQuery();
@@ -116,8 +116,8 @@ namespace Backend.Database{
                         Membership_Type VARCHAR(255) NOT NULL DEFAULT 'Silver',
                         Fees_Of_Membership INT NOT NULL, 
                         Membership_Period_Months INT NOT NULL,
-                        FOREIGN KEY(Belong_To_Coach_ID) REFERENCES Coach(Coach_ID),
-                        FOREIGN KEY(Client_ID) REFERENCES User(User_ID)
+                        FOREIGN KEY(Belong_To_Coach_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE,
+                        FOREIGN KEY(Client_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
                 createClientTableCommand.ExecuteNonQuery();
@@ -125,13 +125,13 @@ namespace Backend.Database{
                 var createReportTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Reports(
                         Report_ID INT AUTO_INCREMENT PRIMARY KEY, 
-                        Manager_Reported_ID INT NOT NULL,
+                        Manager_Reported_ID INT ,
                         Title VARCHAR(50) NOT NULL, 
                         Generated_Date DATE NOT NULL, 
                         Type VARCHAR(50) NOT NULL DEFAULT 'Montly Report',
                         Status VARCHAR(50) NOT NULL DEFAULT 'To be sent',
                         Content VARCHAR(500) NOT NULL ,
-                        FOREIGN KEY(Manager_Reported_ID) REFERENCES Branch_Manager(Branch_Manager_ID)
+                        FOREIGN KEY(Manager_Reported_ID) REFERENCES Branch_Manager(Branch_Manager_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
                 ", connection);
                 createReportTableCommand.ExecuteNonQuery();
@@ -139,10 +139,10 @@ namespace Backend.Database{
                 var createFreeInterviewTimesCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Interview_Times(
                         Interview_ID INT AUTO_INCREMENT PRIMARY KEY,
-                        Manager_ID INT NOT NULL, 
+                        Manager_ID INT, 
                         Free_Interview_Date DATETIME NOT NULL,
                         Taken BOOLEAN,
-                        FOREIGN KEY(Manager_ID) REFERENCES Branch_Manager(Branch_Manager_ID)
+                        FOREIGN KEY(Manager_ID) REFERENCES Branch_Manager(Branch_Manager_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
                 
                 ", connection);
@@ -154,14 +154,12 @@ namespace Backend.Database{
                         First_Name VARCHAR(255) NOT NULL,
                         Last_Name VARCHAR(255) NOT NULL,
                         Age INT NOT NULL,
-                        National_Number INT NOT NULL ,
-                        Years_Of_Experience INT NOT NULL,
-                        Date_Applied DATE NOT NULL, 
-                        Phone_Number VARCHAR(100) NOT NULL,
-                        Email VARCHAR(255) NOT NULL,
+                        National_Number BIGINT NOT NULL UNIQUE ,
+                        Phone_Number VARCHAR(100) NOT NULL UNIQUE ,
+                        Email VARCHAR(255) NOT NULL UNIQUE,
                         Status VARCHAR(50), 
-                        Resume_Link VARCHAR(500) NOT NULL,
-                        Linkedin_Account_Link VARCHAR(500)
+                        Resume_Link VARCHAR(1000) NOT NULL,
+                        Linkedin_Account_Link VARCHAR(1000)
                     );
                 ", connection);
                 createCandidateTableCommand.ExecuteNonQuery();
@@ -190,19 +188,20 @@ namespace Backend.Database{
                         Experience_Years_Required INT NOT NULL, 
                         Deadline DATETIME NOT NULL, 
                         Location VARCHAR(255) NOT NULL,
-                        FOREIGN KEY(Branch_Posted_ID) REFERENCES Branch(Branch_ID)
+                        FOREIGN KEY(Branch_Posted_ID) REFERENCES Branch(Branch_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
                 ", connection);
                 createJobPostingsTableCommand.ExecuteNonQuery();
 
                 var createApplicationsTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Applications(
-                        Applicant_ID INT NOT NULL , 
+                        Applicant_ID INT NOT NULL, 
                         Post_ID INT NOT NULL, 
                         Applied_Date DATETIME NOT NULL,
+                        Years_Of_Experience NOT NULL,
                         PRIMARY KEY(Applicant_ID , Post_ID),
-                        FOREIGN KEY(Applicant_ID) REFERENCES Candidate(Candidate_ID), 
-                        FOREIGN KEY(Post_ID) REFERENCES Job_Posting(Post_ID)
+                        FOREIGN KEY(Applicant_ID) REFERENCES Candidate(Candidate_ID) ON DELETE CASCADE ON UPDATE CASCADE, 
+                        FOREIGN KEY(Post_ID) REFERENCES Job_Posting(Post_ID) ON DELETE CASCADE ON UPDATE CASCADE
 
                     );
                 ", connection);
@@ -219,7 +218,7 @@ namespace Backend.Database{
                         Name VARCHAR(100) NOT NULL, 
                         Serial_Number VARCHAR(255) NOT NULL UNIQUE, 
                         Belong_To_Branch_ID INT, 
-                        FOREIGN KEY(Belong_To_Branch_ID) REFERENCES Branch(Branch_ID)
+                        FOREIGN KEY(Belong_To_Branch_ID) REFERENCES Branch(Branch_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
                 ", connection);
                 createEquipmentsTableCommand.ExecuteNonQuery();
@@ -230,8 +229,8 @@ namespace Backend.Database{
                         Client_ID INT NOT NULL, 
                         Rate INT NOT NULL,
                         PRIMARY KEY(Coach_ID , Client_ID), 
-                        FOREIGN KEY(Coach_ID) REFERENCES Coach(Coach_ID), 
-                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID)
+                        FOREIGN KEY(Coach_ID) REFERENCES Coach(Coach_ID) ON DELETE CASCADE ON UPDATE CASCADE, 
+                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
                 ", connection);
                 createRatingTableCommand.ExecuteNonQuery();
@@ -246,7 +245,7 @@ namespace Backend.Database{
                         Reps_Per_Set INT,
                         Sets INT, 
                         Duration_min INT,
-                        FOREIGN KEY(Created_By_Coach_ID) REFERENCES Coach(Coach_ID)
+                        FOREIGN KEY(Created_By_Coach_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
                 " , connection);
                 createWorkoutTableCommand.ExecuteNonQuery();
@@ -258,8 +257,8 @@ namespace Backend.Database{
                         Order_Of_Workout INT NOT NULL, 
                         Type VARCHAR(50) NOT NULL, 
                         Day_Number INT NOT NULL,
-                        FOREIGN KEY(Workout_ID) REFERENCES Workout(Workout_ID),
-                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID)
+                        FOREIGN KEY(Workout_ID) REFERENCES Workout(Workout_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 " , connection);
                 createPerformWorkoutTableCommad.ExecuteNonQuery();
@@ -312,8 +311,8 @@ namespace Backend.Database{
                         End_Date DATE NOT NULL,
                         Mandatory BOOLEAN NOT NULL, 
                         Scoops_Per_Day_Of_Usage INT NOT NULL,
-                        FOREIGN KEY(Supplement_ID) REFERENCES Supplements(Supplement_ID),
-                        FOREIGN KEY(Nutrition_Plan_ID) REFERENCES Nutrition(Nutrition_ID)
+                        FOREIGN KEY(Supplement_ID) REFERENCES Supplements(Supplement_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY(Nutrition_Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 " , connection);
                 createSupplementsNeededTableCommand.ExecuteNonQuery();
@@ -327,9 +326,9 @@ namespace Backend.Database{
                         Status VARCHAR(255) NOT NULL DEFAULT 'Not choosed', 
                         Start_Date DATE NOT NULL,
                         End_Date DATE NOT NULL,
-                        FOREIGN KEY(Nutrition_Plan_ID) REFERENCES Nutrition(Nutrition_ID),
-                        FOREIGN KEY(Coach_Created_ID) REFERENCES Coach(Coach_ID),
-                        FOREIGN KEY(Client_Assigned_TO_ID) REFERENCES Client(Client_ID),
+                        FOREIGN KEY(Nutrition_Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY(Coach_Created_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE,
+                        FOREIGN KEY(Client_Assigned_TO_ID) REFERENCES Client(Client_ID) ON DELETE SET NULL ON UPDATE CASCADE ,
                         PRIMARY KEY(Nutrition_Plan_ID, Coach_Created_ID, Client_Assigned_TO_ID)
                     );
                 " , connection);
@@ -344,7 +343,7 @@ namespace Backend.Database{
                         Content VARCHAR(500) NOT NULL,
                         Date_Posted DATETIME NOT NULL,
                         Type VARCHAR(50) NOT NULL,
-                        FOREIGN KEY(Author_ID) REFERENCES User(User_ID)
+                        FOREIGN KEY(Author_ID) REFERENCES User(User_ID)ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
                 createAnnouncmentTableCommand.ExecuteNonQuery();

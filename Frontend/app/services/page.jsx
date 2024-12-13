@@ -2,7 +2,7 @@ import Image from 'next/image';
 import NavBar from "@components/NavBar";
 import services1 from '@public/images/fitness.png';
 import NavBarPage from "@components/NavBarPage";
-import  Schedule  from "@components/Schedule";
+import Schedule from "@components/Schedule";
 import Newwsletter from "@components/Newsletter";
 import Newsletter from '@components/Newsletter';
 import styles from "@styles/navbarpage.module.css" //it has style for animation of background
@@ -19,8 +19,8 @@ return(
     </>
 );
 };
-const OpenClass= () =>{
-    return(
+const OpenClass = () => {
+    return (
         <>
         <div className="relative flex flex-col text-center">
             <span className="absolute inset-0 text-[8rem] lg:text-[5rem] font-bold uppercase text-yellow-300 opacity-10 z-0">BODY BUILDING</span>

@@ -1,10 +1,10 @@
 .NavButtons {
-    @apply w-24 h-10 rounded-full border-2 border-slate-700/0 text-white duration-200;
-    @apply hover:bg-transparent hover:text-yellow-400 hover:duration-200 hover:border-2 hover:border-yellow-400;
+    @apply w-24 h-10 rounded-full border-2 border-slate-700/0 text-gray-100 duration-200;
+    @apply hover:bg-transparent hover:text-orange-400 hover:duration-200 hover:border-2 hover:border-orange-400;
 }
 .NavButtonsSelected{
-    @apply w-24 h-10 rounded-full border-2 border-yellow-400 bg-yellow-400 text-white duration-200;
-    @apply hover:bg-transparent hover:text-yellow-400 hover:duration-200;
+    @apply w-24 h-10 rounded-full border-2 border-orange-400 bg-orange-400 text-gray-100 duration-200;
+    @apply hover:bg-transparent hover:text-orange-400 hover:duration-200;
 }
 .AnimBackground{
     @apply h-auto pt-1;
