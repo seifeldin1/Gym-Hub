@@ -16,7 +16,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult AddWorkout([FromBody] SupplementsModel entry)
+        public IActionResult AddSupplement([FromBody] SupplementsModel entry)
         {
             // Call the service method to add the workout
             var result =supplementsService.AddSupplements(entry);
@@ -33,6 +33,12 @@ namespace Backend.Controllers
                 message = result.message
             });
             // Return the JSON result
+        }
+        [HttpGet]
+        public IActionResult GetSupplements()
+        {
+            var supplementList =supplementsService.GetSupplements();
+            return Ok(supplementList);
         }
         
     }

@@ -30,7 +30,7 @@ namespace Backend.Services
                     command.Parameters.AddWithValue("@Serial_Number", entry.Serial_Number);
                     command.Parameters.AddWithValue("@Belong_To_Branch_ID", entry.Belong_To_Branch_ID);
 
-                     int rowsAffected = command.ExecuteNonQuery();
+                    int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
 
@@ -45,8 +45,9 @@ namespace Backend.Services
             }
 
         }
-        public string GetEquipments()
+        public List<EquipmentsModel> GetEquipments()
         {
+            var equipmentList = new List<EquipmentsModel>();
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
@@ -56,28 +57,22 @@ namespace Backend.Services
                 {
                     using (var reader = command.ExecuteReader())
                     {
-                        var equipmentList = new List<object>();
                         while (reader.Read())
                         {
-                            equipmentList.Add(new
+                            equipmentList.Add(new EquipmentsModel
                             {
-                                Equipment_ID = reader["Equipment_ID"],
-                                Status = reader["Status"],
-                                Purchase_Price = reader["Purchase_Price"],
-                                Category = reader["Category "],
-                                Purchase_Date = reader["Purchase_Date"],
-                                Name = reader["Name"],
-                                Serial_Number = reader["Serial_Number"],
-                                Belong_To_Branch_ID = reader["Belong_To_Branch_ID"]
+                                Equipment_ID = reader.GetInt16("Equipment_ID"),
+                                Status = reader.GetString("Status"),
+                                Purchase_Price = reader.GetInt16("Purchase_Price"),
+                                Category = reader.GetString("Category "),
+                                Purchase_Date = DateOnly.FromDateTime(reader.GetDateTime("Purchase_Date")),
+                                Name = reader.GetString("Name"),
+                                Serial_Number = reader.GetString("Serial_Number"),
+                                Belong_To_Branch_ID = reader.GetInt16("Belong_To_Branch_ID")
                             });
                         }
 
-                        var response = new
-                        {
-                            success = true,
-                            data = equipmentList
-                        };
-                        return JsonConvert.SerializeObject(response);
+                        return equipmentList;
                     }
 
                 }

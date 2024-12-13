@@ -16,9 +16,9 @@ namespace Backend.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult AddClients([FromBody] ClientsModel entry)
+        public IActionResult AddClient([FromBody] ClientsModel entry)
         {
-            // Call the service method to add the workout
+            // Call the service method to add the client
             var result = ClientsService.AddClients(entry);
             if (result.success)
             {
