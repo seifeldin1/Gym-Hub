@@ -18,8 +18,8 @@ namespace Backend.Controllers
         [HttpPost("add")]
         public IActionResult AddNutritionPlan([FromBody] NutritionPlanModel entry)
         {
-            // Call the service method to add the workout
-            var result =NutritionPlanService.AddNutritionPlan(entry);
+            // Call the service method to add the NutritionPlan
+            var result =NutritionPlanService.AddNutritionPlan(entry);   
              if (result.success){
                 return Ok(new{
                     success = true,

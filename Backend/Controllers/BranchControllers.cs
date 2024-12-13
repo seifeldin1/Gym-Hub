@@ -49,7 +49,7 @@ namespace Backend.Controllers
             // Return success response after deletion
             return Ok(new { message = "Branch deleted successfully" });
         }
-        
+
         [HttpPut]
         public IActionResult UpdateBranch([FromBody] BranchModel UpdatedBranch)
         {
@@ -57,6 +57,13 @@ namespace Backend.Controllers
             branchService.UpdateBranch(UpdatedBranch);
             // Return success response after update
             return Ok(new { message = "Branch updated successfully" });
+        }
+         [HttpPut]
+        public IActionResult SetWorkingHours([FromBody] BranchModel UpdatedBranch)
+        {
+            // Call the service to set new working Hours
+            branchService.SetWorkingHours(UpdatedBranch);            // Return success response after update
+            return Ok(new { message = "Set Working Hours successfully" });
         }
         
     }

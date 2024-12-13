@@ -95,6 +95,32 @@ namespace Backend.Services
                 }
             }
         }
+        public (bool success, string message) SetWorkingHours(BranchModel entry)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Branch SET Opening_Time = @Opening_Time , Closing_Time = @Closing_Time  WHERE  Branch_ID =@Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Opening_Time", entry.Opening_Time);
+                    command.Parameters.AddWithValue("@Closing_Time", entry.Closing_Time);
+                    command.Parameters.AddWithValue("@Id", entry.Branch_ID);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Set New Working Hours  successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Set New Working Hours");
+                    }
+                }
+            }
+
+        }
         public (bool success, string message) UpdateBranch(BranchModel entry)
         {
             //? Check if An Entry is Given
