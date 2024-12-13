@@ -2,7 +2,7 @@ using MySql.Data.MySqlClient;
 
 namespace Backend.Database{
     public class GymDatabase{
-        private const string connectionString = "Server=127.0.0.1;User=root;Password=$$eif@eldin_1020;";
+        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=AmrAshraf@0135789@;";
 
         //Create connection 
         public MySqlConnection ConnectToDatabase(){
