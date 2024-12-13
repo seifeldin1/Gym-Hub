@@ -2,7 +2,7 @@ import Image from 'next/image';
 import NavBar from "@components/NavBar";
 import services1 from '@public/images/fitness.png';
 import NavBarPage from "@components/NavBarPage";
-import  Schedule  from "@components/Schedule";
+import Schedule from "@components/Schedule";
 import Newwsletter from "@components/Newsletter";
 import Newsletter from '@components/Newsletter';
 import styles from "@styles/navbarpage.module.css" //it has style for animation of background
@@ -18,8 +18,8 @@ return(
     </>
 );
 };
-const OpenClass= () =>{
-    return(
+const OpenClass = () => {
+    return (
         <>
         <div className="my-10 pb-8 h-full bg-transparent">
             <div className="relative text-center h-80  pt-3 bg-transparent ease-in duration-300 ">

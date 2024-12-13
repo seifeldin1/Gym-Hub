@@ -1987,25 +1987,26 @@
     "net8.0": [
       "BCrypt.Net-Next >= 4.0.3",
       "Microsoft.Extensions.DependencyInjection >= 9.0.0",
+      "Microsoft.IdentityModel.Tokens >= 8.3.0",
       "MySql.Data >= 9.1.0",
       "Newtonsoft.Json >= 13.0.3",
       "System.IdentityModel.Tokens.Jwt >= 8.3.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\amras\\.nuget\\packages\\": {}
+    "C:\\Users\\Seifeldin Sameh\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
+      "projectUniqueName": "D:\\Database_Project\\Gym-Hub\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
-      "packagesPath": "C:\\Users\\amras\\.nuget\\packages\\",
-      "outputPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\obj\\",
+      "projectPath": "D:\\Database_Project\\Gym-Hub\\Backend\\Backend.csproj",
+      "packagesPath": "C:\\Users\\Seifeldin Sameh\\.nuget\\packages\\",
+      "outputPath": "D:\\Database_Project\\Gym-Hub\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\amras\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Seifeldin Sameh\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -2044,6 +2045,10 @@
             "target": "Package",
             "version": "[9.0.0, )"
           },
+          "Microsoft.IdentityModel.Tokens": {
+            "target": "Package",
+            "version": "[8.3.0, )"
+          },
           "MySql.Data": {
             "target": "Package",
             "version": "[9.1.0, )"
@@ -2076,7 +2081,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

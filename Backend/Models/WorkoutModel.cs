@@ -1,7 +1,3 @@
-
-
-
-
 namespace Backend.Models
 {
     public class WorkoutModel
