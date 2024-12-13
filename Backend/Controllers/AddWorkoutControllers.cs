@@ -5,24 +5,38 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
      [ApiController]
-    [Route("api/Workout")]
+    [Route("api/WorkoutModel")]
     public class WorkoutController : ControllerBase
     {
-        private readonly AddWorkoutService addWorkoutService;
+        private readonly Workout WorkoutService;
 
-        public WorkoutController(AddWorkoutService addWorkoutService)
+        public WorkoutController(Workout WorkoutService)
         {
-            this.addWorkoutService = addWorkoutService;
+            this.WorkoutService = WorkoutService;
         }
 
         [HttpPost("add")]
-        public IActionResult AddWorkout([FromBody] Workout workout)
+        public IActionResult AddWorkout([FromBody] WorkoutModel entry)
         {
             // Call the service method to add the workout
-            string result = addWorkoutService.AddWorkout(workout);
+            var result =WorkoutService.AddWorkout(entry);
+             if (result.success){
+                return Ok(new{
+                    success = true,
+                    message = result.message
+            
+                });
+            }
+            
+            return Unauthorized(new{
+                success = false,
+                message = result.message
+            });
+            
 
             // Return the JSON result
-            return Content(result, "application/json");
+           
         }
+        
     }
 }

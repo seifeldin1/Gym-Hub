@@ -3,6 +3,12 @@ using Backend.Models;
 using BCrypt.Net;
 using Newtonsoft.Json;
 using MySql.Data.MySqlClient;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.IdentityModel;
+using System.Security.Claims;
+
 
 namespace Backend.Services
 {
@@ -15,7 +21,33 @@ namespace Backend.Services
             this.database = gymDatabase;
         }
 
-        public string Login(Credentials entry)
+        private string GenerateJwtToken(string username , string role){
+            var key = Encoding.UTF8.GetBytes("9c1b3f43-df57-4a9a-88d3-b6e9e58c6f2e"); //Convert the secret key into a byte array for cryptographic signing.
+            var Claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, username), // Subject claim (username)
+                new Claim("role", role), // Custom claim for the user's role
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Unique identifier for the token to prevent reuse
+            };
+
+            //Token descriptor to specify the token's properties
+            var tokenDescriptor = new SecurityTokenDescriptor{
+                Subject = new ClaimsIdentity(Claims), //assign claims to token 
+                Expires = DateTime.UtcNow.AddHours(24), //expires in 24 hours 
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key), // Use the secret key for logging in
+                     SecurityAlgorithms.HmacSha256Signature // Use HMAC-SHA256 for logging in (algorithm)
+                )
+            };
+            
+            var tokenHandler = new JwtSecurityTokenHandler(); //token handler that will generate the token 
+            var token = tokenHandler.CreateToken(tokenDescriptor); //token creation 
+            return tokenHandler.WriteToken(token); //convert token to string and return it 
+        }
+
+       
+
+        public (bool success, string message, string token, string userType) Login(Credentials entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -36,35 +68,21 @@ namespace Backend.Services
 
                             if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
                             {
+
+                                string token = GenerateJwtToken(entry.Username, roleType);
                                 // Password is correct
-                                var response = new
-                                {
-                                    success = true,
-                                    message = "Login successful",
-                                    userType = roleType
-                                };
-                                return JsonConvert.SerializeObject(response); // JSON response for success
+                                return(true , "Login Successful" , token , roleType);
                             }
                             else
                             {
                                 // Password is incorrect
-                                var response = new
-                                {
-                                    success = false,
-                                    message = "Invalid password"
-                                };
-                                return JsonConvert.SerializeObject(response); // JSON response for error
+                                return (false, "Invalid password", null, null);
                             }
                         }
                         else
                         {
                             // Username not found
-                            var response = new
-                            {
-                                success = false,
-                                message = "Username does not exist"
-                            };
-                            return JsonConvert.SerializeObject(response); // JSON response for error
+                            return (false, "Username does not exist", null, null);
                         }
                     }
                 }
