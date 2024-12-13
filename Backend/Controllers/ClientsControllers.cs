@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-     [ApiController]
+    [ApiController]
     [Route("api/ClientsModel")]
     public class ClientsController : ControllerBase
     {
@@ -19,24 +19,27 @@ namespace Backend.Controllers
         public IActionResult AddClients([FromBody] ClientsModel entry)
         {
             // Call the service method to add the workout
-            var result =ClientsService.AddClients(entry);
-             if (result.success){
-                return Ok(new{
+            var result = ClientsService.AddClients(entry);
+            if (result.success)
+            {
+                return Ok(new
+                {
                     success = true,
                     message = result.message
-            
+
                 });
             }
-            
-            return Unauthorized(new{
+
+            return Unauthorized(new
+            {
                 success = false,
                 message = result.message
             });
-            
+
 
             // Return the JSON result
-           
+
         }
-        
+
     }
 }
