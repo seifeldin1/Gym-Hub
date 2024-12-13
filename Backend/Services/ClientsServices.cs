@@ -46,6 +46,30 @@ namespace Backend.Services
             }
 
         }
+        public (bool success, string message) AssignClientToCoach(ClientsModel entry)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Client SET Belong_To_Coach_ID = @Belong_To_Coach_ID WHERE  Client_ID=@Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Belong_To_Coach_ID", entry.Belong_To_Coach_ID);
+                    command.Parameters.AddWithValue("@Id", entry.Client_ID);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Assign Client To Coach successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Assign Client To Coach");
+                    }
+                }
+            }
+        }
 
         //* UpdateClientData : Update Data in client DataTable
         public (bool success, string message) UpdateClientData(ClientsModel entry)

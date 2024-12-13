@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-     [ApiController]
+    [ApiController]
     [Route("api/NutritionPlanModel")]
     public class NutritionPlanController : ControllerBase
     {
@@ -19,24 +19,27 @@ namespace Backend.Controllers
         public IActionResult AddNutritionPlan([FromBody] NutritionPlanModel entry)
         {
             // Call the service method to add the NutritionPlan
-            var result =NutritionPlanService.AddNutritionPlan(entry);   
-             if (result.success){
-                return Ok(new{
+            var result = NutritionPlanService.AddNutritionPlan(entry);
+            if (result.success)
+            {
+                return Ok(new
+                {
                     success = true,
                     message = result.message
-            
+
                 });
             }
-            
-            return Unauthorized(new{
+
+            return Unauthorized(new
+            {
                 success = false,
                 message = result.message
             });
-            
+
 
             // Return the JSON result
-           
+
         }
-        
+
     }
 }

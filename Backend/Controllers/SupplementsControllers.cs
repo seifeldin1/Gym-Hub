@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-     [ApiController]
+    [ApiController]
     [Route("api/SupplementsModel")]
     public class SupplementsController : ControllerBase
     {
@@ -19,16 +19,19 @@ namespace Backend.Controllers
         public IActionResult AddSupplement([FromBody] SupplementsModel entry)
         {
             // Call the service method to add the workout
-            var result =supplementsService.AddSupplements(entry);
-             if (result.success){
-                return Ok(new{
+            var result = supplementsService.AddSupplements(entry);
+            if (result.success)
+            {
+                return Ok(new
+                {
                     success = true,
                     message = result.message
-            
+
                 });
             }
-            
-            return Unauthorized(new{
+
+            return Unauthorized(new
+            {
                 success = false,
                 message = result.message
             });
@@ -37,9 +40,9 @@ namespace Backend.Controllers
         [HttpGet]
         public IActionResult GetSupplements()
         {
-            var supplementList =supplementsService.GetSupplements();
+            var supplementList = supplementsService.GetSupplements();
             return Ok(supplementList);
         }
-        
+
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-     [ApiController]
+    [ApiController]
     [Route("api/BranchModel")]
     public class BranchController : ControllerBase
     {
@@ -19,16 +19,19 @@ namespace Backend.Controllers
         public IActionResult AddBranch([FromBody] BranchModel entry)
         {
             // Call the service method to add the Branch
-            var result =branchService.AddBranch(entry);
-             if (result.success){
-                return Ok(new{
+            var result = branchService.AddBranch(entry);
+            if (result.success)
+            {
+                return Ok(new
+                {
                     success = true,
                     message = result.message
-            
+
                 });
             }
-            
-            return Unauthorized(new{
+
+            return Unauthorized(new
+            {
                 success = false,
                 message = result.message
             });
@@ -37,34 +40,76 @@ namespace Backend.Controllers
         [HttpGet]
         public IActionResult GetBranches()
         {
-            var branchList=branchService.GetBranches();
+            var branchList = branchService.GetBranches();
             return Ok(branchList);
         }
 
-         [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteBranch(int id)
         {
-            
-            branchService.DeleteBranch(id);
+
+            var result = branchService.DeleteBranch(id);
             // Return success response after deletion
-            return Ok(new { message = "Branch deleted successfully" });
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
         }
 
         [HttpPut]
         public IActionResult UpdateBranch([FromBody] BranchModel UpdatedBranch)
         {
             // Call the service to update the Branch
-            branchService.UpdateBranch(UpdatedBranch);
+            var result = branchService.UpdateBranch(UpdatedBranch);
             // Return success response after update
-            return Ok(new { message = "Branch updated successfully" });
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
         }
-         [HttpPut]
+        [HttpPut]
         public IActionResult SetWorkingHours([FromBody] BranchModel UpdatedBranch)
         {
             // Call the service to set new working Hours
-            branchService.SetWorkingHours(UpdatedBranch);            // Return success response after update
-            return Ok(new { message = "Set Working Hours successfully" });
+            var result = branchService.SetWorkingHours(UpdatedBranch);            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
         }
-        
+
     }
 }

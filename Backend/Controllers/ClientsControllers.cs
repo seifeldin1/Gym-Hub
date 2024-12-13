@@ -40,6 +40,27 @@ namespace Backend.Controllers
             // Return the JSON result
 
         }
+        [HttpPut]
+        public IActionResult AssignClientToCoach([FromBody] ClientsModel entry)
+        {
+            // Call the service to Assign client To coach
+            var result = ClientsService.AssignClientToCoach(entry);            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
 
     }
 }
