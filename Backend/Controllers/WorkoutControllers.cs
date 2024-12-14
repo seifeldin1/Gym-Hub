@@ -40,6 +40,12 @@ namespace Backend.Controllers
             // Return the JSON result
 
         }
+        [HttpGet]
+        public IActionResult GetWorkouts()
+        {
+            var workoutList = WorkoutService.GetWorkouts();
+            return Ok(workoutList);
+        }
 
     }
 }

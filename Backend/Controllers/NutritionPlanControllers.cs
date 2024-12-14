@@ -40,6 +40,12 @@ namespace Backend.Controllers
             // Return the JSON result
 
         }
+        [HttpGet]
+        public IActionResult GetNutritionPlans()
+        {
+            var nutritionplanList = NutritionPlanService.GetNutritionPlans();
+            return Ok(nutritionplanList);
+        }
 
     }
 }

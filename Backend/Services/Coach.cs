@@ -87,7 +87,7 @@ namespace Backend.Services
                 //? Join Query
                 updateQuery += string.Join(", ", setClauses) + " WHERE User_ID = @User_ID";
 
-                parameters.Add(new MySqlParameter("@User_ID", entry.Client_ID));
+                parameters.Add(new MySqlParameter("@User_ID", entry.Coach_ID));
 
                 using (var connection = database.ConnectToDatabase())
                 {
