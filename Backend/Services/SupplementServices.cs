@@ -74,9 +74,9 @@ namespace Backend.Services
                                 Purchased_Price = reader.GetFloat("Purchased_Price"),
                                 Type = reader.GetString("Type"),
                                 Flavor = reader.GetString("Flavor"),
-                                 Manufactured_Date =DateOnly.FromDateTime( reader.GetDateTime("Manufactured_Date")),
+                                Manufactured_Date = DateOnly.FromDateTime(reader.GetDateTime("Manufactured_Date")),
                                 Expiration_Date = DateOnly.FromDateTime(reader.GetDateTime("Expiration_Date")),
-                                Purchase_Date =DateOnly.FromDateTime(reader.GetDateTime("Purchase_Date")),
+                                Purchase_Date = DateOnly.FromDateTime(reader.GetDateTime("Purchase_Date")),
                                 Scoop_Size_grams = reader.GetInt32("Scoop_Size_grams"),
                                 Scoop_Number_package = reader.GetInt32("Scoop_Number_package"),
                                 Scoop_Detail = reader.GetString("Scoop_Detail")
