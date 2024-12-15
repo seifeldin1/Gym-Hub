@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Services;
 using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
-namespace{
+namespace Backend.Controllers {
     [ApiController]
     [Route("api/Applications")]
     public class ApplicationsController : ControllerBase{
