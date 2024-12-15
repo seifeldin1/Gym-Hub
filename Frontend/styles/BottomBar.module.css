@@ -1,0 +1,11 @@
+.NavButtons {
+    @apply w-24 h-10 border-b-2 border-transparent text-gray-400 duration-200;
+    @apply hover:bg-transparent hover:text-orange-400 hover:duration-200;
+}
+.NavButtonsSelected{
+    @apply w-24 h-10 border-none border-transparent text-orange-400 duration-200;
+    @apply hover:bg-transparent hover:text-orange-400 hover:duration-200;
+}
+.DivOFbuttons {
+    @apply flex w-1/4 mx-auto items-center rounded-full text-sm ;    
+}

@@ -1,11 +1,14 @@
-import styles from "@styles/navbarpage.module.css"
+import styles from "@styles/BottomBar.module.css"
 import GYMlogo from '@public/assets/images/GYM-Logo.png';
-const NavBarPage = ({page_name}) => {
+const BottomBar = ({page_name}) => {
     return (
         <>
+        <div className="bg-gray-600/40">
+
+        </div>
         <div className={`${styles.DivOFbuttons}`}>
-            <img className="ease-in h-8 duration-300 hover:scale-110 ml-1 mr-96" src={GYMlogo.src} alt="Description of the image"/>
-            <div className="w-full h-10 flex items-center justify-between rounded-full text-lg font-semibold">
+            <img className="h-4 mr-6" src={GYMlogo.src} alt="Description of the image"/>
+            <div className="w-[100%] flex items-center gap-4 text-base font-semibold ">
                 <button className={`${page_name === "home" ? styles.NavButtonsSelected : styles.NavButtons}`}>Home</button>
                 <button className={`${page_name === "about" ? styles.NavButtonsSelected : styles.NavButtons}`}>About</button>
                 <button className={`${page_name === "services" ? styles.NavButtonsSelected : styles.NavButtons}`}>Services</button>
@@ -13,7 +16,10 @@ const NavBarPage = ({page_name}) => {
                 <button className={`${page_name === "contact" ? styles.NavButtonsSelected : styles.NavButtons}`}>Contact</button>
             </div>
         </div>
+        <div className="bg-transparent text-center mt-5">
+            <p className="text-gray-400 font-extrabold">©2025 PulseFit. All rights reserved</p>
+        </div>
         </>
     )
 }
-export default NavBarPage
+export default BottomBar

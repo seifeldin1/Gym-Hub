@@ -2,7 +2,7 @@ using MySql.Data.MySqlClient;
 
 namespace Backend.Database{
     public class GymDatabase{
-        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=$$eif@eldin_1020;";
+        private const string connectionString = "Server=127.0.0.1;User=root;Password=AmrAshraf@0135789@;";
 
         //Create connection 
         public MySqlConnection ConnectToDatabase(){
@@ -111,6 +111,7 @@ namespace Backend.Database{
                         Weight_kg INT, 
                         Height_cm INT, 
                         Belong_To_Coach_ID INT , 
+                        AcountActivated BOOLEAN DEFAULT false,
                         Start_Date_Membership DATE NOT NULL, 
                         End_Date_Membership DATE NOT NULL, 
                         Membership_Type VARCHAR(255) NOT NULL DEFAULT 'Silver',
@@ -180,7 +181,7 @@ namespace Backend.Database{
                 var createJobPostingsTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Job_Posting(
                         Post_ID INT AUTO_INCREMENT PRIMARY KEY, 
-                        Branch_Posted_ID INT NOT NULL, 
+                        Branch_Posted_ID INT, 
                         Description VARCHAR(255) NOT NULL, 
                         Title VARCHAR(50) NOT NULL, 
                         Date_Posted DATETIME NOT NULL, 
@@ -188,17 +189,17 @@ namespace Backend.Database{
                         Experience_Years_Required INT NOT NULL, 
                         Deadline DATETIME NOT NULL, 
                         Location VARCHAR(255) NOT NULL,
-                        FOREIGN KEY(Branch_Posted_ID) REFERENCES Branch(Branch_ID) ON DELETE SET NULL ON UPDATE CASCADE
+                        FOREIGN KEY(Branch_Posted_ID) REFERENCES Branch(Branch_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
                 createJobPostingsTableCommand.ExecuteNonQuery();
 
                 var createApplicationsTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Applications(
-                        Applicant_ID INT NOT NULL, 
-                        Post_ID INT NOT NULL, 
+                        Applicant_ID INT , 
+                        Post_ID INT , 
                         Applied_Date DATETIME NOT NULL,
-                        Years_Of_Experience NOT NULL,
+                        Years_Of_Experience INT NOT NULL,
                         PRIMARY KEY(Applicant_ID , Post_ID),
                         FOREIGN KEY(Applicant_ID) REFERENCES Candidate(Candidate_ID) ON DELETE CASCADE ON UPDATE CASCADE, 
                         FOREIGN KEY(Post_ID) REFERENCES Job_Posting(Post_ID) ON DELETE CASCADE ON UPDATE CASCADE
@@ -225,10 +226,11 @@ namespace Backend.Database{
 
                 var createRatingTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Ratings(
-                        Coach_ID INT NOT NULL, 
-                        Client_ID INT NOT NULL, 
+                        Coach_ID INT NOT NULL,
+                        Rating_ID INT AUTO_INCREMENT,
+                        Client_ID INT , 
                         Rate INT NOT NULL,
-                        PRIMARY KEY(Coach_ID , Client_ID), 
+                        PRIMARY KEY(Rating_ID), 
                         FOREIGN KEY(Coach_ID) REFERENCES Coach(Coach_ID) ON DELETE CASCADE ON UPDATE CASCADE, 
                         FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
@@ -240,7 +242,7 @@ namespace Backend.Database{
                         Workout_ID INT AUTO_INCREMENT PRIMARY KEY, 
                         Muscle_Targeted VARCHAR(50) NOT NULL, 
                         Goal VARCHAR(50) NOT NULL, 
-                        Created_By_Coach_ID INT NOT NULL, 
+                        Created_By_Coach_ID INT , 
                         Calories_Burnt INT NOT NULL, 
                         Reps_Per_Set INT,
                         Sets INT, 
@@ -257,6 +259,7 @@ namespace Backend.Database{
                         Order_Of_Workout INT NOT NULL, 
                         Type VARCHAR(50) NOT NULL, 
                         Day_Number INT NOT NULL,
+                        Performed BOOLEAN DEFAULT false,
                         FOREIGN KEY(Workout_ID) REFERENCES Workout(Workout_ID) ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
@@ -321,15 +324,15 @@ namespace Backend.Database{
                 var createDietTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Diet(
                         Nutrition_Plan_ID INT NOT NULL,
-                        Coach_Created_ID INT NOT NULL, 
+                        Coach_Created_ID INT , 
                         Client_Assigned_TO_ID INT NOT NULL,
                         Status VARCHAR(255) NOT NULL DEFAULT 'Not choosed', 
                         Start_Date DATE NOT NULL,
                         End_Date DATE NOT NULL,
                         FOREIGN KEY(Nutrition_Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY(Coach_Created_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE,
-                        FOREIGN KEY(Client_Assigned_TO_ID) REFERENCES Client(Client_ID) ON DELETE SET NULL ON UPDATE CASCADE ,
-                        PRIMARY KEY(Nutrition_Plan_ID, Coach_Created_ID, Client_Assigned_TO_ID)
+                        FOREIGN KEY(Client_Assigned_TO_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE ,
+                        PRIMARY KEY(Nutrition_Plan_ID, Client_Assigned_TO_ID)
                     );
                 " , connection);
                 createDietTableCommand.ExecuteNonQuery();
