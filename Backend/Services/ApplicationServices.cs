@@ -129,7 +129,7 @@ namespace Backend.Services{
                 
         }
                 
-    }
+    
 
         public List<Application> GetAllApplicationsForPost(JobPost job){
             var applications = new List<Application>();
