@@ -111,3 +111,10 @@ D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\scopedcss\projectbu
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\Backend.csproj.Up2Date
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\Backend.genruntimeconfig.cache
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\ref\Backend.dll
+D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\DotNetEnv.dll
+D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Sprache.dll
+D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll

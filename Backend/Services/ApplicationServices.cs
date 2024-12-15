@@ -10,60 +10,126 @@ namespace Backend.Services{
         }
 
         public (bool success , string message) ApplyForJob(Candidate candidate , JobPost job){
-                if(DateTime.Now > job.Deadline){
-                    return (false , "Application deadline has passed");
-                }
+            if (candidate == null || job == null)
+                return (false, "Invalid candidate or job post.");
+            if(DateTime.Now > job.Deadline)
+                return (false , "Application deadline has passed");
+            using(var connection = database.ConnectToDatabase()){
+                connection.Open();
+                using(var transaction = connection.BeginTransaction()){
+
+                    try{
+                        
+                        string query = "SELECT COUNT(*) FROM Candidate Where National_Number = @National_Number ";
+
+                        using(var checkCommand = new MySqlCommand(query , connection , transaction)){
+                    
+                            var command = new MySqlCommand(query, connection);
+                            checkCommand.Parameters.AddWithValue("@National_Number", candidate.NationalNumber);
+
+                            string message="";
+                            int result = (int)checkCommand.ExecuteScalar();
+                            if(result == 0){
+                                query = "INSERT INTO Candidate VALUES(@ID , @FirstName , @LastName , @Age , @NationalNumber  , @PhoneNumber , @Email , @Status , @ResumeLink , @LinkedinLink)";
+                                using(command = new MySqlCommand(query, connection)){
+                                    command.Parameters.AddWithValue("@ID" , candidate.Id);
+                                    command.Parameters.AddWithValue("@FirstName" , candidate.FirstName);
+                                    command.Parameters.AddWithValue("@LastName" , candidate.LastName);
+                                    command.Parameters.AddWithValue("@Age" , candidate.Age);
+                                    command.Parameters.AddWithValue("@NationalNumber" , candidate.NationalNumber);
+                                    command.Parameters.AddWithValue("@PhoneNumber" , candidate.PhoneNumber);
+                                    command.Parameters.AddWithValue("@Email" , candidate.Email);
+                                    if(candidate.Status) command.Parameters.AddWithValue("@Status" , candidate.Status);
+                                    command.Parameters.AddWithValue("@ResumeLink" , candidate.ResumeLink);
+                                    if(candidate.LinkedinAccountLink)command.Parameters.AddWithValue("@LinkedInLink" , candidate.LinkedinAccountLink);
+                                }
+                                message+="Candidate added successfully";
+                            }
+                            else{
+                                string updateQuery = "UPDATE Candidate SET ";
+                                List<string> setClauses = new List<string>();
+                                List<MySqlParameter> parameters = new List<MySqlParameter>();
+                                if(!string.IsNullOrEmpty(candidate.First_Name)){
+                                    setClauses.Add("First_Name = @First_Name");
+                                    parameters.Add(new MySqlParameter("@First_Name" , candidate.First_Name));
+                                }
+                                if(!string.IsNullOrEmpty(candidate.Last_Name)){
+                                    setClauses.Add("Last_Name = @Last_Name");
+                                    parameters.Add(new MySqlParameter("@Last_Name" , candidate.Last_Name));
+                                }
+                                if(candidate.Age>0){
+                                    setClauses.Add("Age = @Age");
+                                    parameters.Add(new MySqlParameter("@Age" , candidate.Age));
+                                }
+                        
+                        
+                                if(!string.IsNullOrEmpty(candidate.PhoneNumber)){
+                                    setClauses.Add("Phone_Number = @PhoneNumber");
+                                    parameters.Add(new MySqlParameter("@PhoneNumber" , candidate.PhoneNumber));
+                                }
+                                if(!string.IsNullOrEmpty(candidate.Email)){
+                                    setClauses.Add("Email = @Email");
+                                    parameters.Add(new MySqlParameter("@Email" , candidate.Email));
+                                }
+                                if(!string.IsNullOrEmpty(candidate.Status)){
+                                    setClauses.Add("Status = @Status");
+                                    parameters.Add(new MySqlParameter("@Status" , candidate.Status));
+                                }
+                                if(!string.IsNullOrEmpty(candidate.ResumeLink)){
+                                    setClauses.Add("ResumeLink = @ResumeLink");
+                                    parameters.Add(new MySqlParameter("@ResumeLink" , candidate.ResumeLink));
+                                }
+                                if(!string.IsNullOrEmpty(candidate.LinkedinAccountLink)){
+                                    setClauses.Add("Linkedin_Account_Link = @LinkedAccount");
+                                    parameters.Add(new MySqlParameter("@LinkedAccount" , candidate.LinkedinAccountLink));
+                                }
+                                if (setClauses.Count == 0)
+                                    return (false, "No fields to update.");
+
+                                updateQuery += string.Join(", ", setClauses) + " WHERE National_Number= @National_Number";
+                                parameters.Add(new MySqlParameter("@National_Number" , candidate.NationalNumber));
+
+
+                  
+                                using (var command = new MySqlCommand(updateQuery, connection)){
+                                    //! Add parameters to the command (Replace @variable with acutal value)
+                                    foreach (var parameter in parameters)
+                                        command.Parameters.Add(parameter);
+
+                                    int rowsAffected1 = command.ExecuteNonQuery();
+
+                                    if (rowsAffected1 == 0)
+                                        return (false, "No Candidate data was updated.");
+                                }
+
+                                return (true, "Candidate Data Was updated");
+                            }
                 
-                using(var connection = database.ConnectToDatabase()){
-                    connection.Open();
-                    string query = "SELECT National_Number FROM Candidate Where National_Number = @National_Number ";
-                    var command = new MySqlCommand(query, connection);
-                    command.Parameters.AddWithValue("@National_Number", candidate.NationalNumber);
-                    int result = (int)command.ExecuteScalar();
-                    if(result <= 0){
-                        query = "INSERT INTO Candidate VALUES(@ID , @FirstName , @LastName , @Age , @NationalNumber , @YearsOfExperience , @PhoneNumber , @Email , @Status , @ResumeLink , @LinkedinLink)";
-                        using(command = new MySqlCommand(query, connection)){
-                            command.Parameters.AddWithValue("@ID" , candidate.Id);
-                            command.Parameters.AddWithValue("@FirstName" , candidate.FirstName);
-                            command.Parameters.AddWithValue("@LastName" , candidate.LastName);
-                            command.Parameters.AddWithValue("@Age" , candidate.Age);
-                            command.Parameters.AddWithValue("@NationalNumber" , candidate.NationalNumber);
-                            command.Parameters.AddWithValue("@YearsOfExperience" , candidate.ExperienceYears);
-                            command.Parameters.AddWithValue("@PhoneNumber" , candidate.PhoneNumber);
-                            command.Parameters.AddWithValue("@Email" , candidate.Email);
-                            command.Parameters.AddWithValue("@Status" , candidate.Status);
-                            command.Parameters.AddWithValue("@ResumeLink" , candidate.ResumeLink);
-                            command.Parameters.AddWithValue("@LinkedInLink" , candidate.LinkedinAccountLink);
                         }
-                    }
-                    else{
-                        query = "UPDATE Candidate SET Phone_Number = @PhoneNumber, Status = @Status , Resume_Link = @ResumeLink , Linkedin_Account_Link = @LinkedInLink , Age = @Age , Last_Name = @LastName , Email = @Email ";
+
+                        query = "INSERT INTO Applications VALUES(@ApplicantId,@PostId , @Applied_Date , @Years_Of_Experience)";
                         using(command = new MySqlCommand(query, connection)){
-                            command.Parameters.AddWithValue("@Status" , candidate.Status);
-                            command.Parameters.AddWithValue("@ResumeLink" , candidate.ResumeLink);
-                            command.Parameters.AddWithValue("@LinkedInLink" , candidate.LinkedinAccountLink);
-                            command.Parameters.AddWithValue("@PhoneNumber" , candidate.PhoneNumber);
-                            command.Parameters.AddWithValue("@Email" , candidate.Email);
-                            command.Parameters.AddWithValue("@Age" , candidate.Age);
-                            command.Parameters.AddWithValue("@LastName" , candidate.LastName);
+                            command.Parameters.AddWithValue("@ApplicantId" , candidate.Id);
+                            command.Parameters.AddWithValue("@PostId" , job.JobPostID);
+                            command.Parameters.AddWithValue("@Applied_Date" , DateTime.Now);
+                            command.Parameters.AddWithValue("@Years_Of_Experience" , candidate.ExperienceYears);
                         }
-                    }
 
-                    query = "INSERT INTO Applications VALUES(@ApplicantId,@PostId , @Applied_Date , @Years_Of_Experience)";
-                    using(command = new MySqlCommand(query, connection)){
-                        command.Parameters.AddWithValue("@ApplicantId" , candidate.Id);
-                        command.Parameters.AddWithValue("@PostId" , job.JobPostID);
-                        command.Parameters.AddWithValue("@Applied_Date" , DateTime.Now);
-                        command.Parameters.AddWithValue("@Years_Of_Experience" , candidate.ExperienceYears);
+                        transaction.Commit();
+                        return(true , "Application is submitted successfully");
                     }
-
-                    return(true , "Application is submitted successfully");
+                    catch(Exception ex){
+                        transaction.Rollback();
+                        return(false , $"An error occurred while submitting application: {ex.Message}");
+                    }
                 }
             
+            }
                 
-            return(false , "An error occurred while submitting the application");
                 
         }
+                
+    }
 
         public List<Application> GetAllApplicationsForPost(JobPost job){
             var applications = new List<Application>();
@@ -88,12 +154,12 @@ namespace Backend.Services{
             return applications;
         }
 
-        public Candidate GetApplicantForPost(Candidate candidate){
+        public Candidate GetApplicantForPost(int candidateID){
             using(var connection = database.ConnectToDatabase()){
                 connection.Open();
                 string query = "SELECT * FROM Candidates WHERE Candidate_ID = @ID";
                 using(var command = new MySqlCommand(query, connection)){
-                    command.Parameters.AddWithValue("@ID" , candidate.Id );
+                    command.Parameters.AddWithValue("@ID" , candidateID );
                     using(var reader = command.ExecuteReader()){
                         while(reader.Read()){
                             return new Candidate{

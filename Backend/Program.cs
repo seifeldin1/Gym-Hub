@@ -4,6 +4,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using MySql.Data.MySqlClient;
+using Backend.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +19,9 @@ builder.Services.AddScoped<MySqlConnection>(provider =>
     return new MySqlConnection(connectionString);  // Return a new MySqlConnection using the connection string
 });
 
-// Register ProductServices as Scoped, to be injected into controllers
+// Register Services as Scoped, to be injected into controllers
 builder.Services.AddScoped<CredentialServices>();
+builder.Services.AddScoped<ApplicationServices>();
 
 
 
@@ -54,6 +56,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.UseAuthorization();
 

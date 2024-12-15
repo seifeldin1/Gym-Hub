@@ -1,9 +1,31 @@
 using MySql.Data.MySqlClient;
+using DotNetEnv;
 
 namespace Backend.Database{
     public class GymDatabase{
-        private const string connectionString = "Server=127.0.0.1;User=root;Password=AmrAshraf@0135789@;";
+        /*private static readonly string connectionStringTemplate = "Server=127.0.0.1;User=root;Password={0};";
+        static GymDatabase(){
+            // Load environment variables from .env file (optional, for development convenience)
+            Env.Load();
+        }
 
+        public string GetConnectionString(){
+            string password = Environment.GetEnvironmentVariable("MYSQL_PASSWORD");
+            if (string.IsNullOrEmpty(password)){
+                // Handle missing password gracefully (e.g., throw an exception)
+                throw new ArgumentException("MYSQL_PASSWORD environment variable not found");
+            }
+
+            return string.Format(connectionStringTemplate, password);
+        }
+        //Create connection 
+        public MySqlConnection ConnectToDatabase(){
+            string connectionString = GetConnectionString();
+            return new MySqlConnection(connectionString);
+        }*/
+
+       
+        private const string connectionString = "Server=127.0.0.1;User=root;Password=$$eif@eldin_1020;";
         //Create connection 
         public MySqlConnection ConnectToDatabase(){
             return new MySqlConnection(connectionString);

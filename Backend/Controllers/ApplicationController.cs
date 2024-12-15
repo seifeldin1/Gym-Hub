@@ -1,0 +1,53 @@
+using Microsoft.AspNetCore.Mvc;
+using Backend.Models;
+using Backend.Services;
+using Backend.Attributes;
+
+namespace{
+    [ApiController]
+    [Route("api/Applications")]
+    public class ApplicationsController : ControllerBase{
+        private readonly ApplicationServices services;
+
+        public ApplicationsController(ApplicationServices appService){
+            services = appService;
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult ApplyForJob([FromBody] JobApplicationRequest request){// ApplyForJob should have a single parameter object (wrap Candidate and JobPost)
+            var result = services.ApplyForJob(request.candidate , request.job);
+            if(result.success){
+                return Ok(new{
+                    success = true,
+                    message = result.message
+                });
+            }
+            return BadRequest(new{
+                success = false,
+                message = result.message
+            });
+        }
+
+        [Authorize(Roles="Branch Manager")]
+        [HttpGet]
+        public IActionResult GetAllApplications(JobPost post){
+            var result = services.GetAllApplicationsForPost(post);
+            return Ok(result);
+        }
+
+        [Authorize(Roles="Branch Manager")]
+        [HttpGet("{candidateID}")]
+        public IActionResult GetApplicantByID(int candidateID){
+            var result = services.GetApplicantForPost(candidateID);
+            return Ok(result);
+        }
+
+    }
+    // DTO to handle the body of ApplyForJob
+    public class JobApplicationRequest
+    {
+        public Candidate candidate { get; set; }
+        public JobPost job { get; set; }
+    }
+}
