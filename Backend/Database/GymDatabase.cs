@@ -111,6 +111,7 @@ namespace Backend.Database{
                         Shift_Start TIME,
                         Shift_Ends TIME, 
                         Speciality VARCHAR(50) NOT NULL,
+                        FOREIGN KEY(Works_For_Branch) REFERENCES Branch(Branch_ID) ON DELETE SET NULL ON UPDATE CASCADE,
                         FOREIGN KEY(Coach_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);

@@ -112,6 +112,42 @@ namespace Backend.Services
                 return (false, $"Error: {ex.Message}");
             }
         }
+        public (bool success, string message) MoveCoach(CoachModel entry)
+        {
+            if (entry == null)
+            {
+                return (false, "Coach data is null.");
+            }
+            try
+            {
+                using (var connection = database.ConnectToDatabase())
+                {
+                    connection.Open();
+                    string query = "UPDATE Coach SET Works_For_Branch=@newbranchID WHERE Coach_ID=@Coach_ID";
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@newbranchID", entry.Works_For_Branch);
+                        command.Parameters.AddWithValue("@Coach_ID", entry.Coach_ID);
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+
+                            return (true, "Coach Moved  successfully");
+                        }
+                        else        
+                        {
+
+                            return (false, "Failed to Move Coach");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
+        }
+
 
         public (bool success, string message) UpdateBranchManagerData(BranchManagerModel entry)
         {

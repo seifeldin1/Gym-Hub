@@ -170,6 +170,39 @@ namespace Backend.Services
                 return (false, $"Error: {ex.Message}");
             }
         }
+        public (bool success,string message) ChangeManager(BranchManagerModel entry)
+        {
+            if(entry==null){
+                 return (false, "Branch Manager data is null.");
+            }
+            try{
+                  using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                    string query="UPDATE Branch_Manager SET Manages_Branch_ID=@Manages_Branch_ID WHERE Branch_Manager_ID=@ID;"; 
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Manages_Branch_ID", entry.Manages_Branch_ID);
+                        command.Parameters.AddWithValue("@ID", entry.Branch_Manager_ID);
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
+
+                        return (true, "Branch Manager Changed  successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Change Branch Manager ");
+                    }
+                }
+            }     
+            }
+              catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
+        }
 
     }
 }
