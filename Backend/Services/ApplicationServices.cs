@@ -39,9 +39,9 @@ namespace Backend.Services{
                                     command.Parameters.AddWithValue("@NationalNumber" , candidate.NationalNumber);
                                     command.Parameters.AddWithValue("@PhoneNumber" , candidate.PhoneNumber);
                                     command.Parameters.AddWithValue("@Email" , candidate.Email);
-                                    if(candidate.Status) command.Parameters.AddWithValue("@Status" , candidate.Status);
+                                    if(candidate.Status!=null) command.Parameters.AddWithValue("@Status" , candidate.Status);
                                     command.Parameters.AddWithValue("@ResumeLink" , candidate.ResumeLink);
-                                    if(candidate.LinkedinAccountLink)command.Parameters.AddWithValue("@LinkedInLink" , candidate.LinkedinAccountLink);
+                                    if(candidate.LinkedinAccountLink!=null)command.Parameters.AddWithValue("@LinkedInLink" , candidate.LinkedinAccountLink);
                                 }
                                 message+="Candidate added successfully";
                             }
@@ -49,13 +49,13 @@ namespace Backend.Services{
                                 string updateQuery = "UPDATE Candidate SET ";
                                 List<string> setClauses = new List<string>();
                                 List<MySqlParameter> parameters = new List<MySqlParameter>();
-                                if(!string.IsNullOrEmpty(candidate.First_Name)){
+                                if(!string.IsNullOrEmpty(candidate.FirstName)){
                                     setClauses.Add("First_Name = @First_Name");
-                                    parameters.Add(new MySqlParameter("@First_Name" , candidate.First_Name));
+                                    parameters.Add(new MySqlParameter("@First_Name" , candidate.FirstName));
                                 }
-                                if(!string.IsNullOrEmpty(candidate.Last_Name)){
+                                if(!string.IsNullOrEmpty(candidate.LastName)){
                                     setClauses.Add("Last_Name = @Last_Name");
-                                    parameters.Add(new MySqlParameter("@Last_Name" , candidate.Last_Name));
+                                    parameters.Add(new MySqlParameter("@Last_Name" , candidate.LastName));
                                 }
                                 if(candidate.Age>0){
                                     setClauses.Add("Age = @Age");
@@ -91,12 +91,12 @@ namespace Backend.Services{
 
 
                   
-                                using (var command = new MySqlCommand(updateQuery, connection)){
+                                using (var queryCommand = new MySqlCommand(updateQuery, connection)){
                                     //! Add parameters to the command (Replace @variable with acutal value)
                                     foreach (var parameter in parameters)
-                                        command.Parameters.Add(parameter);
+                                        queryCommand.Parameters.Add(parameter);
 
-                                    int rowsAffected1 = command.ExecuteNonQuery();
+                                    int rowsAffected1 = queryCommand.ExecuteNonQuery();
 
                                     if (rowsAffected1 == 0)
                                         return (false, "No Candidate data was updated.");
@@ -108,7 +108,7 @@ namespace Backend.Services{
                         }
 
                         query = "INSERT INTO Applications VALUES(@ApplicantId,@PostId , @Applied_Date , @Years_Of_Experience)";
-                        using(command = new MySqlCommand(query, connection)){
+                        using(var command = new MySqlCommand(query, connection)){
                             command.Parameters.AddWithValue("@ApplicantId" , candidate.Id);
                             command.Parameters.AddWithValue("@PostId" , job.JobPostID);
                             command.Parameters.AddWithValue("@Applied_Date" , DateTime.Now);

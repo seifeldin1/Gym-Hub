@@ -16,7 +16,7 @@ namespace Backend.Attributes{
             var userRole = context.HttpContext.Items["Type"]?.ToString();
 
             // If the user's role doesn't match the required role, deny access
-            if (userRole != _role){
+            if (userRole != role){
                 context.Result = new UnauthorizedResult(); // Return 401 Unauthorized
             }
         }
