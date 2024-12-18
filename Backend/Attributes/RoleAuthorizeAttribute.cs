@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 // Custom attribute to authorize based on role
 namespace Backend.Attributes{
-    public class RoleAuthorizeAttribute : Attribute, IAuthorizationFilter{
+    public class RoleAuthorize : Attribute, IAuthorizationFilter{
         private readonly string role;
 
-        public RoleAuthorizeAttribute(string incomingRole){
+        public RoleAuthorize(string incomingRole){
             this.role = incomingRole;
         }
 

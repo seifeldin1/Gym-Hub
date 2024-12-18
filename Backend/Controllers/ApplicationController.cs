@@ -30,7 +30,7 @@ namespace Backend.Controllers {
             });
         }
 
-        [Authorize(Roles="Branch Manager")]
+        [RoleAuthorize("Branch Manager")]
         [HttpGet]
         public IActionResult GetAllApplications(JobPost post){
             var result = services.GetAllApplicationsForPost(post);
