@@ -29,7 +29,7 @@ namespace Backend.Services
                     command.Parameters.AddWithValue("@Reps_Per_Set", entry.RepsPerSet);
                     command.Parameters.AddWithValue("@Sets", entry.Sets);
                     command.Parameters.AddWithValue("@Duration_min", entry.DurationMin);
-                    int rowsAffected = (int)command.ExecuteScalar();
+                    int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
 
@@ -61,14 +61,14 @@ namespace Backend.Services
                         {
                             workoutList.Add(new WorkoutModel
                             {
-                                ID = reader.GetInt32("ID"),
-                                MuscleTargeted = reader.GetString(" MuscleTargeted"),
+                               // Workout_ID = reader.GetInt32("Workout_ID"),
+                                MuscleTargeted = reader.GetString("Muscle_Targeted"),
                                 Goal = reader.GetString("Goal"),
-                                CreatedByCoachId = reader.GetInt32("CreatedByCoachId"),
-                                CaloriesBurnt = reader.GetInt32("CaloriesBurnt "),
-                                RepsPerSet = reader.GetInt32("RepsPerSet"),
+                                CreatedByCoachId = reader.GetInt32("Created_By_Coach_ID"),
+                                CaloriesBurnt = reader.GetInt32("Calories_Burnt"),
+                                RepsPerSet = reader.GetInt32("Reps_Per_Set"),
                                 Sets = reader.GetInt32("Sets"),
-                                DurationMin = reader.GetInt32("DurationMin "),
+                                DurationMin = reader.GetInt32("Duration_min"),
                             });
                         }
 

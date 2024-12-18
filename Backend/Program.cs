@@ -22,6 +22,7 @@ builder.Services.AddScoped<MySqlConnection>(provider =>
 // Register Services as Scoped, to be injected into controllers
 builder.Services.AddScoped<CredentialServices>();
 builder.Services.AddScoped<ApplicationServices>();
+builder.Services.AddScoped<Workout>();
 
 
 
@@ -56,7 +57,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseMiddleware<AuthorizationMiddleware>();
 
 app.UseAuthorization();

@@ -2,7 +2,7 @@ namespace Backend.Models
 {
     public class WorkoutModel
     {
-        public int ? ID {get; set;}
+        public int ? Workout_ID {get; set;}
         public  string MuscleTargeted { get; set; }
         public  string Goal { get; set; }
         public int CreatedByCoachId { get; set; }

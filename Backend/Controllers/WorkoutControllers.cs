@@ -1,6 +1,7 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -14,7 +15,7 @@ namespace Backend.Controllers
         {
             this.WorkoutService = WorkoutService;
         }
-
+        [Authorize(Roles="sss")]
         [HttpPost("add")]
         public IActionResult AddWorkout([FromBody] WorkoutModel entry)
         {
