@@ -16,6 +16,16 @@ namespace Backend.Middleware
 
         //the core of the middleware where logic is implemented , it is called in every middleware request
         public async Task Invoke(HttpContext incomingContext){
+
+             var path = incomingContext.Request.Path.Value;
+
+             if (path.Equals("/api/Credentials/login", StringComparison.OrdinalIgnoreCase))
+            {
+                // Skip token validation for login endpoint
+                 await nextPipline(incomingContext);
+                return;
+            }
+
             var extractedToken = incomingContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last(); //extracting the token
             
             if (extractedToken == null){
