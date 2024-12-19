@@ -390,12 +390,36 @@ namespace Backend.Database{
                     CREATE TABLE IF NOT EXISTS Recommandation(
                         Recommendation_ID INT PRIMARY KEY AUTO_INCREMENT,
                         Client_ID INT NOT NULL,
-                        Plan_ID,
-                        Supplement_ID,
-                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                        Plan_ID INT,
+                        Supplement_ID INT,
+                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY(Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE SET NULL ON UPDATE CASCADE ,
+                        FOREIGN KEY(Supplement_ID) REFERENCES Supplement(Supplement_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
                 ", connection);
-                createProgressTableCommand.ExecuteNonQuery();
+                createRecommendationTableCommand.ExecuteNonQuery();
+
+                var createSessionTableCommand = new MySqlCommand(@"
+                    CREATE TABLE IF NOT EXISTS Session(
+                        Session_ID INT PRIMARY KEY AUTO_INCREMENT,
+                        Category VARCHAR(50) NOT NULL,
+                        Title VARCHAR(50) NOT NULL,
+                        Date_Time DATETIME NOT NULL,
+                        Location VARCHAR(70)
+                    );
+                ", connection);
+                createSessionTableCommand.ExecuteNonQuery();
+
+                var createInterestedTableCommand = new MySqlCommand(@"
+                    CREATE TABLE IF NOT EXISTS Interested(
+                        Interest_ID INT PRIMARY KEY AUTO_INCREMENT,
+                        Client_ID INT NOT NULL,
+                        Session_ID INT NOT NULL,
+                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY(Session_ID) REFERENCES Session(Session_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                    );
+                ", connection);
+                createInterestedTableCommand.ExecuteNonQuery();
 
             }
         }
