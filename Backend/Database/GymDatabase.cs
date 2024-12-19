@@ -126,6 +126,7 @@ namespace Backend.Database{
                 ", connection);
                 createSkillsTableCommand.ExecuteNonQuery();
 
+                //i want to change weight , height to double 
                 var createClientTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Client(
                         Client_ID INT NOT NULL PRIMARY KEY,
@@ -373,6 +374,18 @@ namespace Backend.Database{
                     );
                 ", connection);
                 createAnnouncmentTableCommand.ExecuteNonQuery();
+
+                var createProgressTableCommand = new MySqlCommand(@"
+                    CREATE TABLE IF NOT EXISTS Progress(
+                        Progress_ID INT PRIMARY KEY AUTO_INCREMENT,
+                        Client_ID INT NOT NULL,
+                        Weight_kg DOUBLE NOT NULL,
+                        DateInserted DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                    );
+                ", connection);
+                createProgressTableCommand.ExecuteNonQuery();
+
             }
         }
 

@@ -24,12 +24,11 @@ namespace Backend.Services
 
                 // Query to get coaches and their skills
                 string coachQuery = @"
-                    SELECT c.Coach_ID AS ID, CONCAT(u.First_Name, ' ', u.Last_Name) AS Name, u.Email, GROUP_CONCAT(s.Skill_Name) AS Skills, 
-                    c.Experience_Years AS Experience  
+                    SELECT CONCAT(u.First_Name, ' ', u.Last_Name) AS Name, GROUP_CONCAT(s.Skill_Name) AS Skills,   
                     FROM Coach c
                     INNER JOIN User u ON c.Coach_ID = u.User_ID
                     LEFT JOIN Skills s ON c.Coach_ID = s.Coach_Skilled_ID
-                    GROUP BY c.Coach_ID, u.First_Name, u.Last_Name, u.Email, c.Experience_Years";
+                    GROUP BY u.First_Name, u.Last_Name";
 
                 
                 using (var coachCommand = new MySqlCommand(coachQuery, connection))
@@ -39,11 +38,8 @@ namespace Backend.Services
                     {
                         talentPoolList.Add(new TalentPool
                         {
-                            ID = reader.GetInt32("ID"),
                             Name = reader.GetString("Name"),
-                            Email = reader.GetString("Email"),
                             Skills = reader.IsDBNull(reader.GetOrdinal("Skills")) ? "None" : reader.GetString("Skills"),
-                            Experience = reader.GetInt32("Experience")
                         });
                     }
                 }
