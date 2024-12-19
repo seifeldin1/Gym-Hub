@@ -48,10 +48,10 @@ namespace Backend.Controllers
             return Ok(workoutList);
         }
         [HttpPut("updateWorkout")]
-        public IActionResult UpdateWorkout([FromBody] WorkoutModel UpdatedWorkout)
+        public IActionResult UpdateWorkout([FromBody] WorkoutModel entry)
         {
             // Call the service to update the Branch
-            var result = WorkoutService.UpdateWorkout(UpdatedWorkout);
+            var result = WorkoutService.UpdateWorkout(entry);
             // Return success response after update
             if (result.success)
             {

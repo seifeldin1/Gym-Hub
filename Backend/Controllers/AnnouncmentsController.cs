@@ -42,7 +42,7 @@ namespace Backend.Controllers
         [HttpGet]
         public IActionResult GetAnnouncments()
         {
-            var announcmentsList = AnnouncmentsServices.GetAnnouncments();
+            var announcmentsList = ann_Service.GetAnnouncments();
             return Ok(announcmentsList);
         }
 
