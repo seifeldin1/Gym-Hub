@@ -22,13 +22,13 @@ namespace Backend.Services
                 string query = "INSERT INTO Workout(Muscle_Targeted,Goal ,Created_By_Coach_ID,Calories_Burnt,Reps_Per_Set,Sets,Duration_min) VALUES (@Muscle_Targeted,@Goal,@Created_By_Coach_ID,@Calories_Burnt,@Reps_Per_Set,@Sets,@Duration_min);";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Muscle_Targeted", entry.MuscleTargeted);
+                    command.Parameters.AddWithValue("@Muscle_Targeted", entry.Muscle_Targeted);
                     command.Parameters.AddWithValue("@Goal", entry.Goal);
-                    command.Parameters.AddWithValue("@Created_By_Coach_ID", entry.CreatedByCoachId);
-                    command.Parameters.AddWithValue("@Calories_Burnt", entry.CaloriesBurnt);
-                    command.Parameters.AddWithValue("@Reps_Per_Set", entry.RepsPerSet);
+                    command.Parameters.AddWithValue("@Created_By_Coach_ID", entry.Created_By_Coach_ID);
+                    command.Parameters.AddWithValue("@Calories_Burnt", entry.Calories_Burnt);
+                    command.Parameters.AddWithValue("@Reps_Per_Set", entry.Reps_Per_Set);
                     command.Parameters.AddWithValue("@Sets", entry.Sets);
-                    command.Parameters.AddWithValue("@Duration_min", entry.DurationMin);
+                    command.Parameters.AddWithValue("@Duration_min", entry.Duration_min);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -85,14 +85,14 @@ namespace Backend.Services
                         {
                             workoutList.Add(new WorkoutModel
                             {
-                               // Workout_ID = reader.GetInt32("Workout_ID"),
-                                MuscleTargeted = reader.GetString("Muscle_Targeted"),
+                                // Workout_ID = reader.GetInt32("Workout_ID"),
+                                Muscle_Targeted = reader.GetString("Muscle_Targeted"),
                                 Goal = reader.GetString("Goal"),
-                                CreatedByCoachId = reader.GetInt32("Created_By_Coach_ID"),
-                                CaloriesBurnt = reader.GetInt32("Calories_Burnt"),
-                                RepsPerSet = reader.GetInt32("Reps_Per_Set"),
+                                Created_By_Coach_ID = reader.GetInt32("Created_By_Coach_ID"),
+                                Calories_Burnt = reader.GetInt32("Calories_Burnt"),
+                                Reps_Per_Set = reader.GetInt32("Reps_Per_Set"),
                                 Sets = reader.GetInt32("Sets"),
-                                DurationMin = reader.GetInt32("Duration_min"),
+                                Duration_min = reader.GetInt32("Duration_min"),
                             });
                         }
 
@@ -102,5 +102,85 @@ namespace Backend.Services
                 }
             }
         }
+
+        public (bool success, string message) UpdateWorkout(WorkoutModel entry)
+        {
+            //? Check if An Entry is Given
+            if (entry == null)
+                return (false, "Workout data is null.");
+
+            try
+            {
+                string updateQuery = "UPDATE Workout SET ";                        //! Query String
+                List<string> setClauses = new List<string>();                   //! List of clauses added to query 
+                List<MySqlParameter> parameters = new List<MySqlParameter>();   //! Query params
+
+                //! Check In Entry for Params To Be edited By query
+                if (entry.Muscle_Targeted != null)
+                {
+                    setClauses.Add("Muscle_Targeted = @Muscle_Targeted ");
+                    parameters.Add(new MySqlParameter("@Muscle_Targeted ", entry.Muscle_Targeted));
+                }
+                if (entry.Goal != null)
+                {
+                    setClauses.Add("Goal = @Goal");
+                    parameters.Add(new MySqlParameter("@Goal", entry.Goal));
+                }
+
+                setClauses.Add("Created_By_Coach_ID = @Created_By_Coach_ID ");
+                parameters.Add(new MySqlParameter("@Created_By_Coach_ID", entry.Created_By_Coach_ID));
+
+
+                setClauses.Add("Calories_Burnt = @Calories_Burnt ");
+                parameters.Add(new MySqlParameter("@Calories_Burnt ", entry.Calories_Burnt));
+
+
+
+                setClauses.Add("Reps_Per_Set = @Reps_Per_Set");
+                parameters.Add(new MySqlParameter("@Reps_Per_Set", entry.Reps_Per_Set));
+
+
+
+                setClauses.Add("Sets = @Sets");
+                parameters.Add(new MySqlParameter("@Sets", entry.Sets));
+
+
+
+                setClauses.Add("Duration_min = @Duration_min");
+                parameters.Add(new MySqlParameter("@Duration_min", entry.Duration_min));
+
+                if (setClauses.Count == 0)
+                    return (false, "No fields to update.");
+
+                //? Join Query
+                updateQuery += string.Join(", ", setClauses) + " WHERE Workout_ID = @Workout_ID";
+
+                parameters.Add(new MySqlParameter("@Workout_ID", entry.Workout_ID));
+
+                using (var connection = database.ConnectToDatabase())
+                {
+                    connection.Open();
+                    using (var command = new MySqlCommand(updateQuery, connection))
+                    {
+                        //! Add parameters to the command (Replace @variable with acutal value)
+                        foreach (var parameter in parameters)
+                            command.Parameters.Add(parameter);
+
+                        int rowsAffected1 = command.ExecuteNonQuery();
+
+                        if (rowsAffected1 == 0)
+                            return (false, "No Workout data was updated.");
+
+                        return (true, "Workout Data Was updated");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
+        }
+
+
     }
 }

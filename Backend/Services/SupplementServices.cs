@@ -56,6 +56,122 @@ namespace Backend.Services
                 return (false, $"An unexpected error occurred: {ex.Message}");
             }
         }
+            public (bool success, string message) DeleteSupplement(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "DELETE FROM Supplements WHERE Supplement_ID=@Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Supplement Deleted successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Delete Supplement");
+                    }
+                }
+
+            }
+        }
+                public (bool success, string message) UpdateSupplement(SupplementsModel entry)
+        {
+            //? Check if An Entry is Given
+            if (entry == null)
+                return (false, "Supplemeny data is null.");
+
+            try
+            {
+                string updateQuery = "UPDATE Supplements SET ";                        //! Query String
+                List<string> setClauses = new List<string>();                   //! List of clauses added to query 
+                List<MySqlParameter> parameters = new List<MySqlParameter>();   //! Query params
+
+                //! Check In Entry for Params To Be edited By query
+                if (entry.Name  != null)
+                {
+                    setClauses.Add("Name = @Name");
+                    parameters.Add(new MySqlParameter("@Name", entry.Name ));
+                }
+                if (entry.Brand != null)
+                {
+                    setClauses.Add("Brand= @Brand");
+                    parameters.Add(new MySqlParameter("@Brand", entry.Brand));
+                }
+                    setClauses.Add("Selling_Price= @Selling_Price");
+                    parameters.Add(new MySqlParameter("@Selling_Price", entry.Selling_Price));
+                
+                
+                    setClauses.Add("Purchased_Price= @Purchased_Price");
+                    parameters.Add(new MySqlParameter("@Purchased_Price", entry.Purchased_Price));
+                
+                  if (entry.Type != null)
+                {
+                    setClauses.Add("Type= @Type");
+                    parameters.Add(new MySqlParameter("@Type", entry.Type));
+                }
+                  if (entry.Flavor != null)
+                {
+                    setClauses.Add("Flavor= @Flavor");
+                    parameters.Add(new MySqlParameter("@Flavor", entry.Flavor));
+                }
+                    setClauses.Add("Manufactured_Date= @Manufactured_Date");
+                    parameters.Add(new MySqlParameter("@Manufactured_Date", entry.Manufactured_Date));
+
+                     setClauses.Add("Expiration_Date= @Expiration_Date");
+                    parameters.Add(new MySqlParameter("@Expiration_Date", entry.Expiration_Date));
+
+                     setClauses.Add("Purchase_Date= @Purchase_Date");
+                    parameters.Add(new MySqlParameter("@Purchase_Date", entry.Purchase_Date));
+
+                     setClauses.Add("Scoop_Size_grams= @Scoop_Size_grams");
+                    parameters.Add(new MySqlParameter("@Scoop_Size_grams", entry.Scoop_Size_grams));
+
+                    setClauses.Add("Scoop_Number_package= @Scoop_Number_package");
+                    parameters.Add(new MySqlParameter("@Scoop_Number_package", entry.Scoop_Number_package));
+
+                    setClauses.Add("Scoop_Detail= @Scoop_Detail");
+                    parameters.Add(new MySqlParameter("@Scoop_Detail", entry.Scoop_Detail));
+                
+
+                
+
+                if (setClauses.Count == 0)
+                    return (false, "No fields to update.");
+
+                //? Join Query
+                updateQuery += string.Join(", ", setClauses) + " WHERE Supplement_ID = @Supplement_ID";
+
+                parameters.Add(new MySqlParameter("@Supplement_ID", entry.Supplement_ID));
+
+                using (var connection = database.ConnectToDatabase())
+                {
+                    connection.Open();
+                    using (var command = new MySqlCommand(updateQuery, connection))
+                    {
+                        //! Add parameters to the command (Replace @variable with acutal value)
+                        foreach (var parameter in parameters)
+                            command.Parameters.Add(parameter);
+
+                        int rowsAffected1 = command.ExecuteNonQuery();
+
+                        if (rowsAffected1 == 0)
+                            return (false, "No Supplement data was updated.");
+
+                        return (true, "Supplement Data Was updated");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
+        }
 
         //Get Function
         public List<SupplementsModel> GetSupplements()

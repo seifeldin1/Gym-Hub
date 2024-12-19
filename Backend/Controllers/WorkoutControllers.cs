@@ -15,7 +15,7 @@ namespace Backend.Controllers
         {
             this.WorkoutService = WorkoutService;
         }
-        [Authorize(Roles="sss")]
+
         [HttpPost("add")]
         public IActionResult AddWorkout([FromBody] WorkoutModel entry)
         {
@@ -39,16 +39,39 @@ namespace Backend.Controllers
 
 
             // Return the JSON result
-
         }
+        
         [HttpGet]
         public IActionResult GetWorkouts()
         {
             var workoutList = WorkoutService.GetWorkouts();
             return Ok(workoutList);
         }
-         [HttpDelete("{id}")]
-        public IActionResult DeleteBranch(int id)
+        [HttpPut("updateWorkout")]
+        public IActionResult UpdateWorkout([FromBody] WorkoutModel UpdatedWorkout)
+        {
+            // Call the service to update the Branch
+            var result = WorkoutService.UpdateWorkout(UpdatedWorkout);
+            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteWorkout(int id)
         {
 
             var result = WorkoutService.DeleteWorkout(id);
@@ -69,7 +92,5 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-
-
     }
 }
