@@ -386,6 +386,17 @@ namespace Backend.Database{
                 ", connection);
                 createProgressTableCommand.ExecuteNonQuery();
 
+                var createRecommendationTableCommand = new MySqlCommand(@"
+                    CREATE TABLE IF NOT EXISTS Recommandation(
+                        Recommendation_ID INT PRIMARY KEY AUTO_INCREMENT,
+                        Client_ID INT NOT NULL,
+                        Plan_ID,
+                        Supplement_ID,
+                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                    );
+                ", connection);
+                createProgressTableCommand.ExecuteNonQuery();
+
             }
         }
 
