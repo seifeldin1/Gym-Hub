@@ -22,13 +22,13 @@ namespace Backend.Services
                 string query = "INSERT INTO Workout(Muscle_Targeted,Goal ,Created_By_Coach_ID,Calories_Burnt,Reps_Per_Set,Sets,Duration_min) VALUES (@Muscle_Targeted,@Goal,@Created_By_Coach_ID,@Calories_Burnt,@Reps_Per_Set,@Sets,@Duration_min);";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Muscle_Targeted", entry.MuscleTargeted);
+                    command.Parameters.AddWithValue("@Muscle_Targeted", entry.Muscle_Targeted);
                     command.Parameters.AddWithValue("@Goal", entry.Goal);
-                    command.Parameters.AddWithValue("@Created_By_Coach_ID", entry.CreatedByCoachId);
-                    command.Parameters.AddWithValue("@Calories_Burnt", entry.CaloriesBurnt);
-                    command.Parameters.AddWithValue("@Reps_Per_Set", entry.RepsPerSet);
+                    command.Parameters.AddWithValue("@Created_By_Coach_ID", entry.Created_By_Coach_ID);
+                    command.Parameters.AddWithValue("@Calories_Burnt", entry.Calories_Burnt);
+                    command.Parameters.AddWithValue("@Reps_Per_Set", entry.Reps_Per_Set);
                     command.Parameters.AddWithValue("@Sets", entry.Sets);
-                    command.Parameters.AddWithValue("@Duration_min", entry.DurationMin);
+                    command.Parameters.AddWithValue("@Duration_min", entry.Duration_min);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -43,6 +43,30 @@ namespace Backend.Services
                 }
             }
 
+        }
+        public (bool success, string message) DeleteWorkout(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "DELETE FROM Workout WHERE Workout_ID=@Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Workout Deleted successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Delete Workout");
+                    }
+                }
+
+            }
         }
         public List<WorkoutModel> GetWorkouts()
         {
@@ -61,14 +85,14 @@ namespace Backend.Services
                         {
                             workoutList.Add(new WorkoutModel
                             {
-                               // Workout_ID = reader.GetInt32("Workout_ID"),
-                                MuscleTargeted = reader.GetString("Muscle_Targeted"),
+                                Workout_ID = reader.GetInt32("Workout_ID"),
+                                Muscle_Targeted = reader.GetString("Muscle_Targeted"),
                                 Goal = reader.GetString("Goal"),
-                                CreatedByCoachId = reader.GetInt32("Created_By_Coach_ID"),
-                                CaloriesBurnt = reader.GetInt32("Calories_Burnt"),
-                                RepsPerSet = reader.GetInt32("Reps_Per_Set"),
+                                Created_By_Coach_ID = reader.GetInt32("Created_By_Coach_ID"),
+                                Calories_Burnt = reader.GetInt32("Calories_Burnt"),
+                                Reps_Per_Set = reader.GetInt32("Reps_Per_Set"),
                                 Sets = reader.GetInt32("Sets"),
-                                DurationMin = reader.GetInt32("Duration_min"),
+                                Duration_min = reader.GetInt32("Duration_min"),
                             });
                         }
 
@@ -77,6 +101,38 @@ namespace Backend.Services
                     }
                 }
             }
+        }
+
+        public (bool success, string message) UpdateWorkout(WorkoutModel entry)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Workout SET Muscle_Targeted=@Muscle_Targeted,Goal=@Goal,Created_By_Coach_ID=@Created_By_Coach_ID,Calories_Burnt=@Calories_Burnt,Reps_Per_Set=@Reps_Per_Set,Sets=@Sets,Duration_min=@Duration_min WHERE Workout_ID=@Workout_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Muscle_Targeted",entry.Muscle_Targeted);
+                    command.Parameters.AddWithValue("@Goal",entry.Goal );
+                    command.Parameters.AddWithValue("@Created_By_Coach_ID",entry.Created_By_Coach_ID );
+                    command.Parameters.AddWithValue("@Calories_Burnt",entry.Calories_Burnt );
+                    command.Parameters.AddWithValue("@Reps_Per_Set",entry.Reps_Per_Set );
+                    command.Parameters.AddWithValue("@Sets",entry.Sets );
+                    command.Parameters.AddWithValue("@Duration_min",entry.Duration_min );
+                    command.Parameters.AddWithValue("@Workout_ID",entry.Workout_ID );
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Workout Updated successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Update Workout");
+                    }
+                }
+            }
+
         }
     }
 }

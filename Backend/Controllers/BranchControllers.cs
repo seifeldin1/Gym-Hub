@@ -67,7 +67,7 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpPut]
+        [HttpPut("update-branch")]
         public IActionResult UpdateBranch([FromBody] BranchModel UpdatedBranch)
         {
             // Call the service to update the Branch
@@ -89,11 +89,11 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-        [HttpPut]
-        public IActionResult SetWorkingHours([FromBody] BranchModel UpdatedBranch)
+        [HttpPut("set-working-hours")]
+        public IActionResult SetWorkingHours([FromBody] int id,TimeSpan opt,TimeSpan clt)
         {
             // Call the service to set new working Hours
-            var result = branchService.SetWorkingHours(UpdatedBranch);            // Return success response after update
+            var result = branchService.SetWorkingHours(id,opt,clt);            // Return success response after update
             if (result.success)
             {
                 return Ok(new

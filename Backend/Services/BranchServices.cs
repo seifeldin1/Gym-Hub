@@ -95,7 +95,7 @@ namespace Backend.Services
                 }
             }
         }
-        public (bool success, string message) SetWorkingHours(BranchModel entry)
+        public (bool success, string message) SetWorkingHours(int id,TimeSpan opt,TimeSpan clt)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -103,9 +103,9 @@ namespace Backend.Services
                 string query = "UPDATE Branch SET Opening_Time = @Opening_Time , Closing_Time = @Closing_Time  WHERE  Branch_ID =@Id;";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Opening_Time", entry.Opening_Time);
-                    command.Parameters.AddWithValue("@Closing_Time", entry.Closing_Time);
-                    command.Parameters.AddWithValue("@Id", entry.Branch_ID);
+                    command.Parameters.AddWithValue("@Opening_Time",opt);
+                    command.Parameters.AddWithValue("@Closing_Time",clt );
+                    command.Parameters.AddWithValue("@Id",id );
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {

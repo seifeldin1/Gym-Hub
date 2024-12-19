@@ -23,6 +23,8 @@ builder.Services.AddScoped<MySqlConnection>(provider =>
 builder.Services.AddScoped<CredentialServices>();
 builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<Workout>();
+builder.Services.AddScoped<Supplements>();
+builder.Services.AddScoped<Branch>();
 
 
 
@@ -58,7 +60,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthentication();
-app.UseMiddleware<AuthorizationMiddleware>();
+//app.UseMiddleware<AuthorizationMiddleware>();
 
 app.UseAuthorization();
 
