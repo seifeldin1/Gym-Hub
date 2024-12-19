@@ -36,17 +36,15 @@ namespace Backend.Controllers
                 message = result.message
             });
 
-
             // Return the JSON result
-
         }
-        /*
+        
         [HttpGet]
-        public IActionResult GetWorkouts()
+        public IActionResult GetAnnouncments()
         {
-            var workoutList = WorkoutService.GetWorkouts();
-            return Ok(workoutList);
-        }*/
+            var announcmentsList = AnnouncmentsServices.GetAnnouncments();
+            return Ok(announcmentsList);
+        }
 
     }
 }
