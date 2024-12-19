@@ -16,37 +16,45 @@ namespace Backend.Services
         }
         public (bool success, string message) AddSupplements(SupplementsModel entry)
         {
-            using (var connection = database.ConnectToDatabase())
+            try
             {
-                connection.Open();
-                string query = "INSERT INTO Supplements (Name,Brand,Selling_Price,Purchased_Price,Type,Flavor,Manufactured_Date,Expiration_Date,Purchase_Date,Scoop_Size_grams,Scoop_Number_package,Scoop_Detail) VALUES (@Name,@Brand,@Selling_Price,@Purchased_Price,@Type,@Flavor,@Manufactured_Date,@Expiration_Date,@Purchase_Date,@Scoop_Size_grams,@Scoop_Number_package,@Scoop_Detail);";
-                using (var command = new MySqlCommand(query, connection))
+                using (var connection = database.ConnectToDatabase())
                 {
-                    command.Parameters.AddWithValue("@Name", entry.Name);
-                      if(entry.Brand != null) command.Parameters.AddWithValue("@Brand", entry.Brand);
-                    command.Parameters.AddWithValue("@Selling_Price", entry.Selling_Price);
-                    command.Parameters.AddWithValue("@Purchased_Price", entry.Purchased_Price);
-                    command.Parameters.AddWithValue("@Type", entry.Type);
-                    command.Parameters.AddWithValue("@Flavor", entry.Flavor);
-                    command.Parameters.AddWithValue("@Manufactured_Date", entry.Manufactured_Date);
-                    command.Parameters.AddWithValue("@Expiration_Date", entry.Expiration_Date);
-                    command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date);
-                    command.Parameters.AddWithValue("@Scoop_Size_grams", entry.Scoop_Size_grams);
-                    command.Parameters.AddWithValue("@Scoop_Number_package", entry.Scoop_Number_package);
-                    command.Parameters.AddWithValue("@Scoop_Detail", entry.Scoop_Detail);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
+                    connection.Open();
+                    string query = "INSERT INTO Supplements (Name,Brand,Selling_Price,Purchased_Price,Type,Flavor,Manufactured_Date,Expiration_Date,Purchase_Date,Scoop_Size_grams,Scoop_Number_package,Scoop_Detail) VALUES (@Name,@Brand,@Selling_Price,@Purchased_Price,@Type,@Flavor,@Manufactured_Date,@Expiration_Date,@Purchase_Date,@Scoop_Size_grams,@Scoop_Number_package,@Scoop_Detail);";
+                    using (var command = new MySqlCommand(query, connection))
                     {
+                        command.Parameters.AddWithValue("@Name", entry.Name);
+                        if (entry.Brand != null) command.Parameters.AddWithValue("@Brand", entry.Brand);
+                        command.Parameters.AddWithValue("@Selling_Price", entry.Selling_Price);
+                        command.Parameters.AddWithValue("@Purchased_Price", entry.Purchased_Price);
+                        command.Parameters.AddWithValue("@Type", entry.Type);
+                        command.Parameters.AddWithValue("@Flavor", entry.Flavor);
+                        command.Parameters.AddWithValue("@Manufactured_Date", entry.Manufactured_Date);
+                        command.Parameters.AddWithValue("@Expiration_Date", entry.Expiration_Date);
+                        command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date);
+                        command.Parameters.AddWithValue("@Scoop_Size_grams", entry.Scoop_Size_grams);
+                        command.Parameters.AddWithValue("@Scoop_Number_package", entry.Scoop_Number_package);
+                        command.Parameters.AddWithValue("@Scoop_Detail", entry.Scoop_Detail);
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                        {
 
-                        return (true, "Supplement added successfully");
-                    }
-                    else
-                    {
-                        return (false, "Failed to add Supplement");
+                            return (true, "Supplement added successfully");
+                        }
+                        else
+                        {
+                            return (false, "Failed to add Supplement");
+                        }
                     }
                 }
-            }
 
+            }
+            catch (Exception ex)
+            {
+                // Log general exceptions
+                return (false, $"An unexpected error occurred: {ex.Message}");
+            }
         }
 
         //Get Function

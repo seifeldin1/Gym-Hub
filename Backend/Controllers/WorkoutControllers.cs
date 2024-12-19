@@ -47,6 +47,29 @@ namespace Backend.Controllers
             var workoutList = WorkoutService.GetWorkouts();
             return Ok(workoutList);
         }
+         [HttpDelete("{id}")]
+        public IActionResult DeleteBranch(int id)
+        {
+
+            var result = WorkoutService.DeleteWorkout(id);
+            // Return success response after deletion
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+
 
     }
 }
