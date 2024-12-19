@@ -23,6 +23,7 @@ builder.Services.AddScoped<MySqlConnection>(provider =>
 builder.Services.AddScoped<CredentialServices>();
 builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<Workout>();
+builder.Services.AddScoped<Supplements>();
 
 
 

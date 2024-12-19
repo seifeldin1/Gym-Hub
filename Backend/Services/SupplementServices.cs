@@ -19,11 +19,11 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "INSERT INTO Supplements (Name,Brand ,Selling_Price,Purchased_Price,Type,Flavor,Manufactured_Date,Expiration_Date,Purchase_Date,Scoop_Size_grams,Scoop_Number_package,Scoop_Detail) VALUES (@Name, @Brand, @Selling_Price,@Purchased_Price,@Type,@Flavor,@Manufactured_Date,@Expiration_Date,@Purchase_Date,@Scoop_Size_grams,@Scoop_Number_package,@Scoop_Detail);";
+                string query = "INSERT INTO Supplements (Name,Brand,Selling_Price,Purchased_Price,Type,Flavor,Manufactured_Date,Expiration_Date,Purchase_Date,Scoop_Size_grams,Scoop_Number_package,Scoop_Detail) VALUES (@Name,@Brand,@Selling_Price,@Purchased_Price,@Type,@Flavor,@Manufactured_Date,@Expiration_Date,@Purchase_Date,@Scoop_Size_grams,@Scoop_Number_package,@Scoop_Detail);";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Name", entry.Name);
-                    command.Parameters.AddWithValue("@Brand ", entry.Brand);
+                      if(entry.Brand != null) command.Parameters.AddWithValue("@Brand", entry.Brand);
                     command.Parameters.AddWithValue("@Selling_Price", entry.Selling_Price);
                     command.Parameters.AddWithValue("@Purchased_Price", entry.Purchased_Price);
                     command.Parameters.AddWithValue("@Type", entry.Type);
