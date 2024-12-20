@@ -110,7 +110,7 @@ namespace Backend.Services{
                         query = "INSERT INTO Applications VALUES(@ApplicantId,@PostId , @Applied_Date , @Years_Of_Experience)";
                         using(var command = new MySqlCommand(query, connection)){
                             command.Parameters.AddWithValue("@ApplicantId" , candidate.Id);
-                            command.Parameters.AddWithValue("@PostId" , job.JobPostID);
+                            command.Parameters.AddWithValue("@PostId" , job.Post_ID);
                             command.Parameters.AddWithValue("@Applied_Date" , DateTime.Now);
                             command.Parameters.AddWithValue("@Years_Of_Experience" , candidate.ExperienceYears);
                         }
@@ -137,7 +137,7 @@ namespace Backend.Services{
                 connection.Open();
                 string query = "SELECT * FROM Applications WHERE Job_Post_ID = @JobPostID";
                 using(var command = new MySqlCommand(query, connection)){
-                    command.Parameters.AddWithValue("@JobPostID" , job.JobPostID);
+                    command.Parameters.AddWithValue("@JobPostID" , job.Post_ID);
                     using(var reader = command.ExecuteReader()){
                         while(reader.Read()){
                             applications.Add(new Application
