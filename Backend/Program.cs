@@ -33,13 +33,14 @@ builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<Workout>();
 builder.Services.AddScoped<Supplements>();
 builder.Services.AddScoped<Branch>();
+builder.Services.AddScoped<NotificationServices>();
 
 
+builder.Services.AddSignalR();
+//builder.Services.AddSingleton<NotificationServices>();
 
 var app = builder.Build();
-builder.Services.AddSignalR();
 app.MapHub<NotificationHub>("/notifications");
-builder.Services.AddSingleton<NotificationServices>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
