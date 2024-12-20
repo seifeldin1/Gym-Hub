@@ -1,3 +1,5 @@
+using Backend.Utils;
+
 namespace Backend.Models
 {
     public class SupplementsModel

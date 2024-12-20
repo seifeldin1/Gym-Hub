@@ -1,6 +1,7 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Utils;
 
 namespace Backend.Controllers
 {
@@ -18,6 +19,10 @@ namespace Backend.Controllers
         [HttpPost("add")]
         public IActionResult AddSupplement([FromBody] SupplementsModel entry)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Returns detailed validation errors
+            }
             // Call the service method to add the workout
             var result = supplementsService.AddSupplements(entry);
             if (result.success)
