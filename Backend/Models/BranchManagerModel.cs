@@ -12,5 +12,6 @@ namespace Backend.Models
         public int Employee_Under_Supervision { get; set; }
         public DateTime Fire_Date { get; set; }
         public int Manages_Branch_ID { get; set; }
+        public int Contract_Length { get; set; }
     }
 }

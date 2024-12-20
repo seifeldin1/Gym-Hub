@@ -4,73 +4,74 @@ using MySql.Data.MySqlClient;
 
 namespace Backend.Services
 {
-    public class BranchManagers
+    public class CoachesServices
     {
         private readonly GymDatabase database;
-        public BranchManagers(GymDatabase gymDatabase)
+        public CoachesServices(GymDatabase gymDatabase)
         {
             this.database = gymDatabase;
         }
 
-        //* AddBranchManager : Adds a Branch Manager into Branch Manager Relation
-        public (bool success, string message) AddBranchManager(BranchManagerModel entry)
+        //* AddCoach : Adds a Coach into Coach Relation
+        public (bool success, string message) AddCoach(CoachModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-
-                string query = @"INSERT INTO Branch_Manager 
-                    (Branch_Manager_ID, Salary, Penalties, Bonuses, Hire_Date, Employee_Under_Supervision, Fire_Date, Manages_Branch_ID, Contract_Length)
-                    VALUES (@Branch_Manager_ID, @Salary, @Penalties, @Bonuses, @Hire_Date, @Employee_Under_Supervision, @Fire_Date, @Manages_Branch_ID, @Contract_Length);";
-
+                string query = "INSERT INTO Coach(Coach_ID,Salary,Penalties,Bonuses,Hire_Date,Fire_Date,Experience_Years,Works_For_Branch,Daily_Hours_Worked,Shift_Start,Shift_Ends,Speciality,Status,Contract_Length) VALUES (@Coach_ID,@Salary,@Penalties,@Bonuses,@Hire_Date,@Fire_Date,@Experience_Years,@Works_For_Branch,@Daily_Hours_Worked,@Shift_Start,@Shift_Ends,@Speciality,@Status,@Contract_Length);";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Branch_Manager_ID", entry.Branch_Manager_ID);
-                    command.Parameters.AddWithValue("@Salary", entry.Salary);
-                    command.Parameters.AddWithValue("@Penalties", entry.Penalties);
-                    command.Parameters.AddWithValue("@Bonuses", entry.Bonuses);
-                    command.Parameters.AddWithValue("@Hire_Date", entry.Hire_Date);
-                    command.Parameters.AddWithValue("@Employee_Under_Supervision", entry.Employee_Under_Supervision);
-                    command.Parameters.AddWithValue("@Fire_Date", entry.Fire_Date);
-                    command.Parameters.AddWithValue("@Manages_Branch_ID", entry.Manages_Branch_ID);
-                    command.Parameters.AddWithValue("@Contract_Length", entry.Contract_Length);
+                    command.Parameters.AddWithValue("@Coach_ID",entry.Coach_ID);
+                    command.Parameters.AddWithValue("@Salary",entry.Salary);
+                    command.Parameters.AddWithValue("@Penalties",entry.Penalties);
+                    command.Parameters.AddWithValue("@Bonuses",entry.Bonuses);
+                    command.Parameters.AddWithValue("@Hire_Date",entry.Hire_Date);
+                    command.Parameters.AddWithValue("@Fire_Date",entry.Fire_Date);
+                    command.Parameters.AddWithValue("@Experience_Years",entry.Experience_Years);
+                    command.Parameters.AddWithValue("@Works_For_Branch",entry.Works_For_Branch);
+                    command.Parameters.AddWithValue("@Daily_Hours_Worked",entry.Daily_Hours_Worked);
+                    command.Parameters.AddWithValue("@Shift_Start",entry.Shift_Start);
+                    command.Parameters.AddWithValue("@Shift_Ends",entry.Shift_Ends);
+                    command.Parameters.AddWithValue("@Speciality",entry.Speciality);
+                    command.Parameters.AddWithValue("@Status",entry.Status);
+                    command.Parameters.AddWithValue("@Contract_Length",entry.Contract_Length);
 
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
-                        return (true, "Branch Manager added successfully");
+                        return (true, "Coach added successfully");
                     else
-                        return (false, "Failed to add Branch Manager");
+                        return (false, "Failed to add Coach");
                 }
             }
         }
 
-        //* DeleteBranchManager : Deletes a Branch Manager from Branch Manager Relation
-        public (bool success, string message) DeleteBranchManager(int id)
+        //* DeleteCoach : Deletes a Coach from Coach Relation
+        public (bool success, string message) DeleteCoach(int id)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "DELETE FROM Branch_Manager WHERE Branch_Manager_ID=@Id;";
+                string query = "DELETE FROM Coach WHERE Coach_ID=@Id;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
-                        return (true, "Branch Manager Deleted successfully");
+                        return (true, "Coach Deleted successfully");
                     else
-                        return (false, "Failed to Delete Branch Manager");
+                        return (false, "Failed to Delete Coach");
                 }
             }
         }
 
-        //* GetBranchManager : Gets Branch Manager Data from Branch Manager Relation
-        public List<BranchManagerModel> GetBranchManager()
+        //* GetCoach : Gets Coach Data from Coach Relation
+        public List<CoachModel> GetCoach() //Gets Coach Data from Coach Relation
         {
-            var BranchManagerList = new List<BranchManagerModel>();
+            var CoachList = new List<CoachModel>();
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "SELECT * FROM Branch_Manager;";
+                string query = "SELECT * FROM Coach;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -79,57 +80,32 @@ namespace Backend.Services
                         //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
                         while (reader.Read())
                         {
-                            BranchManagerList.Add(new BranchManagerModel
+                            CoachList.Add(new CoachModel
                             {
-                                Branch_Manager_ID = reader.GetInt32("Branch_Manager_ID"),
+                                Coach_ID = reader.GetInt32("Coach_ID"),
                                 Salary = reader.GetInt32("Salary"),
                                 Penalties = reader.GetInt32("Penalties"),
                                 Bonuses = reader.GetInt32("Bonuses"),
                                 Hire_Date = DateOnly.FromDateTime(reader.GetDateTime("Hire_Date")),
-                                Employee_Under_Supervision = reader.GetInt32("Employee_Under_Supervision"),
                                 Fire_Date = DateOnly.FromDateTime(reader.GetDateTime("Fire_Date")),
-                                Manages_Branch_ID = reader.GetInt32("Manages_Branch_ID"),
-                                Contract_Length = reader.GetInt32("Contract_Length")
+                                Experience_Years = reader.GetInt32("Experience_Years"),
+                                Works_For_Branch = reader.GetInt32("Works_For_Branch"),
+                                Daily_Hours_Worked = reader.GetInt32("Daily_Hours_Worked"),
+                                Shift_Start = reader.GetTimeSpan("Shift_Start"),
+                                Shift_Ends = reader.GetTimeSpan("Shift_Ends"),
+                                Speciality = reader.GetString("Speciality"),
+                                Status = reader.GetString("Status"),
+                                Contract_Length = reader.GetInt32("Contract_Length"),
                             });
                         }
-                        return BranchManagerList;
+                        return CoachList;
                     }
                 }
             }
         }
-
-        //* MoveCoach : Branch Manager can move coach to another branch
-        public (bool success, string message) MoveCoach(CoachModel entry)
-        {
-            if (entry == null)
-                return (false, "Coach data is null.");
-                
-            try
-            {
-                using (var connection = database.ConnectToDatabase())
-                {
-                    connection.Open();
-                    string query = "UPDATE Coach SET Works_For_Branch=@newbranchID WHERE Coach_ID=@Coach_ID";
-                    using (var command = new MySqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@newbranchID", entry.Works_For_Branch);
-                        command.Parameters.AddWithValue("@Coach_ID", entry.Coach_ID);
-                        int rowsAffected = command.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                            return (true, "Coach Moved  successfully");
-                        else        
-                            return (false, "Failed to Move Coach");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return (false, $"Error: {ex.Message}");
-            }
-        }
-
-        //* UpdateBranchManagerData : Update Branch Manager Data in Branch Manager relation
-        public (bool success, string message) UpdateBranchManagerData(BranchManagerModel entry)
+        
+        //* UpdateCoachData : Update Coach Data in Coach Relation
+        public (bool success, string message) UpdateCoachData(CoachModel entry)
         {
             //? Check if An Entry is Given
             if (entry == null)
@@ -137,7 +113,7 @@ namespace Backend.Services
 
             try
             {
-                string updateQuery = "UPDATE Branch_Manager SET ";                        //! Query String
+                string updateQuery = "UPDATE Coach SET ";                       //! Query String
                 List<string> setClauses = new List<string>();                   //! List of clauses added to query 
                 List<MySqlParameter> parameters = new List<MySqlParameter>();   //! Query params
 
@@ -167,22 +143,52 @@ namespace Backend.Services
                     parameters.Add(new MySqlParameter("@Hire_Date", entry.Hire_Date));
                 }
 
-                if (entry.Employee_Under_Supervision != null)
-                {
-                    setClauses.Add("Employee_Under_Supervision = @Employee_Under_Supervision");
-                    parameters.Add(new MySqlParameter("@Employee_Under_Supervision", entry.Employee_Under_Supervision));
-                }
-
                 if (entry.Fire_Date != null)
                 {
                     setClauses.Add("Fire_Date = @Fire_Date");
                     parameters.Add(new MySqlParameter("@Fire_Date", entry.Fire_Date));
                 }
 
-                if (entry.Manages_Branch_ID != null)
+                if (entry.Experience_Years != null)
                 {
-                    setClauses.Add("Manages_Branch_ID = @Manages_Branch_ID");
-                    parameters.Add(new MySqlParameter("@Manages_Branch_ID", entry.Manages_Branch_ID));
+                    setClauses.Add("Experience_Years = @Experience_Years");
+                    parameters.Add(new MySqlParameter("@Experience_Years", entry.Experience_Years));
+                }
+
+                if (entry.Works_For_Branch != null)
+                {
+                    setClauses.Add("Works_For_Branch = @Works_For_Branch");
+                    parameters.Add(new MySqlParameter("@Works_For_Branch", entry.Works_For_Branch));
+                }
+
+                if (entry.Daily_Hours_Worked != null)
+                {
+                    setClauses.Add("Daily_Hours_Worked = @Daily_Hours_Worked");
+                    parameters.Add(new MySqlParameter("@Daily_Hours_Worked", entry.Daily_Hours_Worked));
+                }
+
+                if (entry.Shift_Start != null)
+                {
+                    setClauses.Add("Shift_Start = @Shift_Start");
+                    parameters.Add(new MySqlParameter("@Shift_Start", entry.Shift_Start));
+                }
+
+                if (entry.Shift_Ends != null)
+                {
+                    setClauses.Add("Shift_Ends = @Shift_Ends");
+                    parameters.Add(new MySqlParameter("@Shift_Ends", entry.Shift_Ends));
+                }
+
+                if (entry.Speciality != null)
+                {
+                    setClauses.Add("Speciality = @Speciality");
+                    parameters.Add(new MySqlParameter("@Speciality", entry.Speciality));
+                }
+
+                if (entry.Status != null)
+                {
+                    setClauses.Add("Status = @Status");
+                    parameters.Add(new MySqlParameter("@Status", entry.Status));
                 }
 
                 if (entry.Contract_Length != null)
@@ -197,7 +203,7 @@ namespace Backend.Services
                 //? Join Query
                 updateQuery += string.Join(", ", setClauses) + " WHERE Coach_ID = @Coach_ID";
 
-                parameters.Add(new MySqlParameter("@User_ID", entry.Branch_Manager_ID));
+                parameters.Add(new MySqlParameter("@User_ID", entry.Coach_ID));
 
                 using (var connection = database.ConnectToDatabase())
                 {
@@ -223,16 +229,16 @@ namespace Backend.Services
             }
         }
 
-        //* UpdateBranchManagerData : Update Branch Manager Data in User relation
-        public (bool success, string message) UpdateManagerUserData(BranchManagerModel entry)
+        //* UpdateCoachUserData : Update Coach Data in User Relation
+        public (bool success, string message) UpdateCoachUserData(CoachModel entry)
         {
             //? Check if An Entry is Given
             if (entry == null)
-                return (false, "Branch Manager data is null.");
+                return (false, "Coach data is null.");
 
             try
             {
-                string updateQuery = "UPDATE Branch_Manager SET ";              //! Query String
+                string updateQuery = "UPDATE User SET ";                        //! Query String
                 List<string> setClauses = new List<string>();                   //! List of clauses added to query 
                 List<MySqlParameter> parameters = new List<MySqlParameter>();   //! Query params
 
@@ -265,7 +271,7 @@ namespace Backend.Services
                 if (entry.Email != null)
                 {
                     setClauses.Add("Email = @Email");
-                    parameters.Add(new MySqlParameter("@Email", entry.Email)); 
+                    parameters.Add(new MySqlParameter("@Email", entry.Email));
                 }
 
                 if (entry.Phone_Number != null)
@@ -298,7 +304,7 @@ namespace Backend.Services
                 //? Join Query
                 updateQuery += string.Join(", ", setClauses) + " WHERE User_ID = @User_ID";
 
-                parameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
+                parameters.Add(new MySqlParameter("@User_ID", entry.Coach_ID));
 
                 using (var connection = database.ConnectToDatabase())
                 {
