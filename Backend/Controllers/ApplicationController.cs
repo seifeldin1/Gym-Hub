@@ -37,7 +37,7 @@ namespace Backend.Controllers {
             return Ok(result);
         }
 
-        [Authorize(Roles="Branch Manager")]
+        [RoleAuthorize("Branch Manager")]
         [HttpGet("{candidateID}")]
         public IActionResult GetApplicantByID(int candidateID){
             var result = services.GetApplicantForPost(candidateID);

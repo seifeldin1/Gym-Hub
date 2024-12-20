@@ -3,15 +3,43 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Asn1.Ocsp;
+using Backend.Database;
+using MySql.Data.MySqlClient;
 
 namespace Backend.Middleware
 {
     public class AuthorizationMiddleware{
         private readonly RequestDelegate nextPipline; //request delegate handles the http requests by taking http context and returning a taask 
+        private readonly GymDatabase database;
 
-        public AuthorizationMiddleware(RequestDelegate next){
+        public AuthorizationMiddleware(RequestDelegate next , GymDatabase db){
             nextPipline = next;
+            database = db;
         }
+
+        private bool IsTokenBlacklisted(string token)
+        {
+            try
+            {
+                using (var connection = database.ConnectToDatabase())
+                {
+                    connection.Open();
+                    string query = "SELECT COUNT(*) FROM BlacklistedTokens WHERE Token = @token";
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@token", token);
+                        var count = Convert.ToInt32(command.ExecuteScalar());
+                        return count > 0;
+                    }
+                }
+            }
+            catch
+            {
+                // Log the error for debugging and return false if any exception occurs
+                return false;
+            }
+        }
+    
 
 
         //the core of the middleware where logic is implemented , it is called in every middleware request
@@ -28,11 +56,20 @@ namespace Backend.Middleware
 
             var extractedToken = incomingContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last(); //extracting the token
             
-            if (extractedToken == null){
+            if(extractedToken == null){
                 incomingContext.Response.StatusCode = 401; // Unauthorized
                 await incomingContext.Response.WriteAsync("Token is required.");
                 return;
             }
+            else{
+                if(IsTokenBlacklisted(extractedToken)){
+                    incomingContext.Response.StatusCode = 401; // Unauthorized
+                    await incomingContext.Response.WriteAsync("Token is blacklisted.");
+                    return;
+                }
+            }
+
+            
 
 
             if(extractedToken != null){

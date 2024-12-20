@@ -12,6 +12,16 @@ namespace Backend.Services{
         public (bool success  , string message) AddToInterests(int clientID , int interestID){
             using(var connection = database.ConnectToDatabase()){
                 connection.Open();
+                // Check if the record already exists
+                string checkQuery = "SELECT COUNT(*) FROM Interested WHERE Client_ID = @clientID AND Session_ID = @sessionID";
+                using (var checkCommand = new MySqlCommand(checkQuery, connection)){
+                    checkCommand.Parameters.AddWithValue("@clientID", clientID);
+                    checkCommand.Parameters.AddWithValue("@sessionID", interestID);
+                    int count = Convert.ToInt32(checkCommand.ExecuteScalar());
+
+                    if (count > 0)
+                        return (false, "Already exists in Interested table");
+                }
                 string query = "INSERT INTO Interested (Client_ID,Session_ID) VALUES (@clientID , @sessionID)";
                 using(var command = new MySqlCommand(query , connection)){
                     command.Parameters.AddWithValue("@clientID" , clientID);

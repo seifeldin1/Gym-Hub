@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MySql.Data.MySqlClient;
 using Backend.Middleware;
 using Backend.Utils;
+using Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,12 +33,19 @@ builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<Workout>();
 builder.Services.AddScoped<Supplements>();
 builder.Services.AddScoped<Branch>();
+<<<<<<< HEAD
 builder.Services.AddScoped<JobPosting>();
 builder.Services.AddScoped<Equipments>();
+=======
+builder.Services.AddScoped<NotificationServices>();
+>>>>>>> 1f9c48ebf1658d7f9897785ab2ef11a7f0390e87
 
 
+builder.Services.AddSignalR();
+//builder.Services.AddSingleton<NotificationServices>();
 
 var app = builder.Build();
+app.MapHub<NotificationHub>("/notifications");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
