@@ -2,19 +2,20 @@ using Backend.Models;
 using Backend.Database;
 using MySql.Data.MySqlClient;
 namespace Backend.Services {
-    public class AnnouncmentsServices{
+    public class AnnouncementsServices{
         private readonly GymDatabase database;
-        public AnnouncmentsServices(GymDatabase gymDatabase)
+        public AnnouncementsServices(GymDatabase gymDatabase)
         {
             this.database = gymDatabase;
         }
 
-        public (bool success, string message) AddAnnouncment(AnnouncmentsModel entry)
+        //* AddAnnouncement : Adds an Announcement into Announcement Relation
+        public (bool success, string message) AddAnnouncement(AnnouncementsModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "INSERT INTO Announcments(Author_ID,Author_Role,Title,Content,Date_Posted,Type) VALUES (@Author_ID,@Author_Role,@Title,@Content,@Date_Posted,@Type);";
+                string query = "INSERT INTO Announcements(Author_ID,Author_Role,Title,Content,Date_Posted,Type) VALUES (@Author_ID,@Author_Role,@Title,@Content,@Date_Posted,@Type);";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Author_ID", entry.Author_ID);
@@ -25,26 +26,21 @@ namespace Backend.Services {
                     command.Parameters.AddWithValue("@Type", entry.Type);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
-                    {
-
-                        return (true, "Announcment added successfully");
-                    }
+                        return (true, "Announcement added successfully");
                     else
-                    {
-
-                        return (false, "Failed to add Announcment");
-                    }
+                        return (false, "Failed to add Announcement");
                 }
             }
         }
 
-        public List<AnnouncmentsModel> GetAnnouncments()
+        //* AddAnnouncement : Gets an Announcement from Announcement Relation
+        public List<AnnouncmentsModel> GetAnnouncements()
         {
-            var announcmentsList = new List<AnnouncmentsModel>();
+            var announcementsList = new List<AnnouncementsModel>();
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "SELECT * FROM Announcments ;";
+                string query = "SELECT * FROM Announcements;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -53,9 +49,9 @@ namespace Backend.Services {
                         //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
                         while (reader.Read())
                         {
-                            announcmentsList.Add(new AnnouncmentsModel
+                            announcementsList.Add(new AnnouncementsModel
                             {
-                                // Announcments_ID = reader.GetInt32("Announcments_ID"),
+                                Announcements_ID = reader.GetInt32("Announcements_ID"),
                                 Author_ID = reader.GetInt32("Author_ID"),
                                 Author_Role = reader.GetString("Author_Role"),
                                 Title = reader.GetString("Title"),
@@ -64,10 +60,29 @@ namespace Backend.Services {
                                 Type = reader.GetString("Type"),
                             });
                         }
-
-                        return announcmentsList;
+                        return announcementsList;
                     }
                 }
+            }
+        }
+
+        //* DeleteAnnouncement : Deletes an Announcement from Announcement Relation
+        public (bool success, string message) DeleteAnnouncement(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "DELETE FROM Announcements WHERE Announcements_ID=@Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                        return (true, "Announcement Deleted successfully");
+                    else
+                        return (false, "Failed to Delete Announcement");
+                }
+
             }
         }
     }

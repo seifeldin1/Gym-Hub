@@ -1,8 +1,8 @@
 namespace Backend.Models
 {
-    public class AnnouncmentsModel //Note Used same name as in databse {Announcments} (true spelling Announcments)
+    public class AnnouncementsModel
     {
-        public int ? Announcments_ID {get; set;}
+        public int ? Announcements_ID { get; set; }
         public int Author_ID { get; set; }
         public string Author_Role { get; set; }
         public string Title { get; set; }

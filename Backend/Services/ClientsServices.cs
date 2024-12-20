@@ -1,6 +1,7 @@
 using Backend.Database;
 using Backend.Models;
 using MySql.Data.MySqlClient;
+using System.Collections.Generic;
 
 namespace Backend.Services
 {
@@ -11,7 +12,9 @@ namespace Backend.Services
         {
             this.database = gymDatabase;
         }
-        public (bool success, string message) AddClients(ClientsModel entry)
+
+        //* AddClient : Adds a Client into Client Relation
+        public (bool success, string message) AddClient(ClientsModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -27,7 +30,7 @@ namespace Backend.Services
                 {
                     command.Parameters.AddWithValue("@Client_ID", entry.Client_ID);
                     command.Parameters.AddWithValue("@Join_Date", entry.Join_Date);
-                    command.Parameters.AddWithValue("@@BMR", entry.BMR);
+                    command.Parameters.AddWithValue("@BMR", entry.BMR);
                     command.Parameters.AddWithValue("@Weight_kg", entry.Weight_kg);
                     command.Parameters.AddWithValue("@Height_cm", entry.Height_cm);
                     command.Parameters.AddWithValue("@Belong_To_Coach_ID", entry.Belong_To_Coach_ID);
@@ -44,34 +47,86 @@ namespace Backend.Services
                         return (false, "Failed to add Client");
                 }
             }
-
         }
+
+        //* DeleteClient : Deletes a Client from Client Relation
+        public (bool success, string message) DeleteClient(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "DELETE FROM Client WHERE Client_ID=@Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                        return (true, "Client Deleted successfully");
+                    else
+                        return (false, "Failed to Delete Client");
+                }
+            }
+        }
+
+        //* GetClient : Gets Client Data from Client Relation
+        public List<ClientsModel> GetClient()
+        {
+            var ClientsList = new List<ClientsModel>();
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "SELECT * FROM Client;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        //The while loop iterates through each row of the query result.
+                        //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
+                        while (reader.Read())
+                        {
+                            ClientsList.Add(new ClientsModel
+                            {
+                                Client_ID = reader.GetInt32("Client_ID"),
+                                Join_Date = DateOnly.FromDateTime(reader.GetDateTime("Join_Date")),
+                                BMR = reader.GetInt32("BMR"),
+                                Weight_kg = reader.GetDouble("Weight_kg"),
+                                Height_cm = reader.GetDouble("Height_cm"),
+                                Belong_To_Coach_ID = reader.GetInt32("Belong_To_Coach_ID"),
+                                AccountActivated = reader.GetBoolean("AccountActivated"),
+                                Start_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("Start_Date_Membership")),
+                                End_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("End_Date_Membership")),
+                                Membership_Type = reader.GetString("Membership_Type"),
+                                Fees_Of_Membership = reader.GetInt32("Fees_Of_Membership"),
+                                Membership_Period_Months = reader.GetInt32("Membership_Period_Months"),
+                            });
+                        }
+                        return ClientsList;
+                    }
+                }
+            }
+        }
+
+        //* AssignClientToCoach : Assign a coach to a Client
         public (bool success, string message) AssignClientToCoach(ClientsModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "UPDATE Client SET Belong_To_Coach_ID = @Belong_To_Coach_ID WHERE  Client_ID=@Id;";
+                string query = "UPDATE Client SET Belong_To_Coach_ID = @Belong_To_Coach_ID WHERE Client_ID=@Id;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Belong_To_Coach_ID", entry.Belong_To_Coach_ID);
                     command.Parameters.AddWithValue("@Id", entry.Client_ID);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
-                    {
-
                         return (true, "Assign Client To Coach successfully");
-                    }
                     else
-                    {
-
                         return (false, "Failed to Assign Client To Coach");
-                    }
                 }
             }
         }
 
-        //* UpdateClientData : Update Data in client DataTable
+        //* UpdateClientData : Update Client Data in Client relation
         public (bool success, string message) UpdateClientData(ClientsModel entry)
         {
             //? Check if An Entry is Given
@@ -143,7 +198,7 @@ namespace Backend.Services
         }
 
 
-        //* UpdateClientUserData: Update Client Data in User DataTable
+        //* UpdateClientUserData: Update Client Data in User relation
         public (bool success, string message) UpdateClientUserData(ClientsModel entry)
         {
             //? Check if An Entry is Given

@@ -6,20 +6,20 @@ using Microsoft.AspNetCore.Authorization;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/AnnouncmentsModel")]
-    public class AnnouncmentsController : ControllerBase
+    [Route("api/AnnouncementsModel")]
+    public class AnnouncementsController : ControllerBase
     {
-        private readonly AnnouncmentsServices ann_Service;
+        private readonly AnnouncementsServices ann_Service;
 
-        public AnnouncmentsController(AnnouncmentsServices ann_Service)
+        public AnnouncementsController(AnnouncementsServices ann_Service)
         {
             this.ann_Service = ann_Service;
         }
         [HttpPost("add")]
-        public IActionResult AddAnnouncment([FromBody] AnnouncmentsModel entry)
+        public IActionResult AddAnnouncement([FromBody] AnnouncementsModel entry)
         {
             // Call the service method to add the workout
-            var result = ann_Service.AddAnnouncment(entry);
+            var result = ann_Service.AddAnnouncement(entry);
             if (result.success)
             {
                 return Ok(new
@@ -40,10 +40,32 @@ namespace Backend.Controllers
         }
         
         [HttpGet]
-        public IActionResult GetAnnouncments()
+        public IActionResult GetAnnouncements()
         {
-            var announcmentsList = ann_Service.GetAnnouncments();
-            return Ok(announcmentsList);
+            var announcementsList = ann_Service.GetAnnouncements();
+            return Ok(announcementsList);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteAnnouncement(int id)
+        {
+            var result = ann_Service.DeleteAnnouncement(id);
+            // Return success response after deletion
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
         }
 
     }
