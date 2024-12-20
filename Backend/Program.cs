@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using MySql.Data.MySqlClient;
 using Backend.Middleware;
+using Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,9 @@ builder.Services.AddScoped<Branch>();
 
 
 var app = builder.Build();
+builder.Services.AddSignalR();
+app.MapHub<NotificationHub>("/notifications");
+builder.Services.AddSingleton<NotificationServices>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
