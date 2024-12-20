@@ -91,6 +91,7 @@ namespace Backend.Database{
                         Employee_Under_Supervision INT NOT NULL DEFAULT 0,
                         Fire_Date DATE,
                         Manages_Branch_ID INT,
+                        Contract_Length INT,
                         FOREIGN KEY (Manages_Branch_ID) REFERENCES Branch(Branch_ID) ON DELETE SET NULL ON UPDATE CASCADE,
                         FOREIGN KEY(Branch_Manager_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
@@ -111,6 +112,8 @@ namespace Backend.Database{
                         Shift_Start TIME,
                         Shift_Ends TIME, 
                         Speciality VARCHAR(50) NOT NULL,
+                        Status VARCHAR(50),
+                        Contract_Length INT,
                         FOREIGN KEY(Works_For_Branch) REFERENCES Branch(Branch_ID) ON DELETE SET NULL ON UPDATE CASCADE,
                         FOREIGN KEY(Coach_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
@@ -126,16 +129,15 @@ namespace Backend.Database{
                 ", connection);
                 createSkillsTableCommand.ExecuteNonQuery();
 
-                //i want to change weight , height to double 
                 var createClientTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Client(
                         Client_ID INT NOT NULL PRIMARY KEY,
                         Join_Date DATE NOT NULL, 
                         BMR INT, 
-                        Weight_kg INT, 
-                        Height_cm INT, 
+                        Weight_kg DOUBLE, 
+                        Height_cm DOUBLE, 
                         Belong_To_Coach_ID INT , 
-                        AcountActivated BOOLEAN DEFAULT false,
+                        AccountActivated BOOLEAN DEFAULT false,
                         Start_Date_Membership DATE NOT NULL, 
                         End_Date_Membership DATE NOT NULL, 
                         Membership_Type VARCHAR(255) NOT NULL DEFAULT 'Silver',
@@ -361,9 +363,9 @@ namespace Backend.Database{
                 " , connection);
                 createDietTableCommand.ExecuteNonQuery();
 
-                var createAnnouncmentTableCommand = new MySqlCommand(@"
-                    CREATE TABLE IF NOT EXISTS Announcments(
-                        Announcments_ID INT AUTO_INCREMENT PRIMARY KEY, 
+                var createAnnouncementTableCommand = new MySqlCommand(@"
+                    CREATE TABLE IF NOT EXISTS Announcements(
+                        Announcements_ID INT AUTO_INCREMENT PRIMARY KEY, 
                         Author_ID INT NOT NULL,
                         Author_Role VARCHAR(50) NOT NULL,
                         Title VARCHAR(255) NOT NULL, 
@@ -373,7 +375,7 @@ namespace Backend.Database{
                         FOREIGN KEY(Author_ID) REFERENCES User(User_ID)ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
-                createAnnouncmentTableCommand.ExecuteNonQuery();
+                createAnnouncementTableCommand.ExecuteNonQuery();
 
                 var createProgressTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Progress(
@@ -390,36 +392,12 @@ namespace Backend.Database{
                     CREATE TABLE IF NOT EXISTS Recommandation(
                         Recommendation_ID INT PRIMARY KEY AUTO_INCREMENT,
                         Client_ID INT NOT NULL,
-                        Plan_ID INT,
-                        Supplement_ID INT,
-                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
-                        FOREIGN KEY(Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE SET NULL ON UPDATE CASCADE ,
-                        FOREIGN KEY(Supplement_ID) REFERENCES Supplement(Supplement_ID) ON DELETE SET NULL ON UPDATE CASCADE
+                        Plan_ID,
+                        Supplement_ID,
+                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
-                createRecommendationTableCommand.ExecuteNonQuery();
-
-                var createSessionTableCommand = new MySqlCommand(@"
-                    CREATE TABLE IF NOT EXISTS Session(
-                        Session_ID INT PRIMARY KEY AUTO_INCREMENT,
-                        Category VARCHAR(50) NOT NULL,
-                        Title VARCHAR(50) NOT NULL,
-                        Date_Time DATETIME NOT NULL,
-                        Location VARCHAR(70)
-                    );
-                ", connection);
-                createSessionTableCommand.ExecuteNonQuery();
-
-                var createInterestedTableCommand = new MySqlCommand(@"
-                    CREATE TABLE IF NOT EXISTS Interested(
-                        Interest_ID INT PRIMARY KEY AUTO_INCREMENT,
-                        Client_ID INT NOT NULL,
-                        Session_ID INT NOT NULL,
-                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
-                        FOREIGN KEY(Session_ID) REFERENCES Session(Session_ID) ON DELETE CASCADE ON UPDATE CASCADE
-                    );
-                ", connection);
-                createInterestedTableCommand.ExecuteNonQuery();
+                createProgressTableCommand.ExecuteNonQuery();
 
             }
         }
