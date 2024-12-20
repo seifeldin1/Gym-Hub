@@ -31,7 +31,7 @@ namespace Backend.Database{
             return new MySqlConnection(connectionString);
         }
 
-        
+    
         public void DatabaseSetUp(){
             using(var connection = ConnectToDatabase()){
                 connection.Open();

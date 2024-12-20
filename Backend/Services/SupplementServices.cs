@@ -3,6 +3,7 @@ using Backend.Models;
 using BCrypt.Net;
 using Newtonsoft.Json;
 using MySql.Data.MySqlClient;
+using Backend.Utils;
 
 namespace Backend.Services
 {
@@ -21,7 +22,11 @@ namespace Backend.Services
                 using (var connection = database.ConnectToDatabase())
                 {
                     connection.Open();
-                    string query = "INSERT INTO Supplements (Name,Brand,Selling_Price,Purchased_Price,Type,Flavor,Manufactured_Date,Expiration_Date,Purchase_Date,Scoop_Size_grams,Scoop_Number_package,Scoop_Detail) VALUES (@Name,@Brand,@Selling_Price,@Purchased_Price,@Type,@Flavor,@Manufactured_Date,@Expiration_Date,@Purchase_Date,@Scoop_Size_grams,@Scoop_Number_package,@Scoop_Detail);";
+                    string query = @"INSERT INTO Supplements (Name,Brand,Selling_Price,Purchased_Price,Type,Flavor,
+                    Manufactured_Date,Expiration_Date,Purchase_Date,Scoop_Size_grams,Scoop_Number_package,Scoop_Detail) VALUES 
+                    (@Name,@Brand,@Selling_Price,@Purchased_Price,@Type,@Flavor,@Manufactured_Date,@Expiration_Date,
+                    @Purchase_Date,@Scoop_Size_grams,
+                    @Scoop_Number_package,@Scoop_Detail);";
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Name", entry.Name);

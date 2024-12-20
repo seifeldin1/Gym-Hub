@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using MySql.Data.MySqlClient;
 using Backend.Middleware;
+using Backend.Utils;
 using Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,10 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<GymDatabase>();      // Add Database service as Scoped (to be injected into controllers)
 
+    builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new Backend.Utils.DateOnlyJsonConverter());
+    });
 builder.Services.AddScoped<MySqlConnection>(provider =>
 {
     // Get the connection string from the configuration
     var connectionString = builder.Configuration.GetConnectionString("myConnectionString"); //change the value for the myConnectionString , you will find it in "appsettings.Development.json" ... also you need to change the connection in the ProductDatabase
+
     return new MySqlConnection(connectionString);  // Return a new MySqlConnection using the connection string
 });
 

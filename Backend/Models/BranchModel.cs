@@ -1,5 +1,3 @@
-using Org.BouncyCastle.Asn1.Cms;
-
 namespace Backend.Models
 {
     public class BranchModel

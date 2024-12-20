@@ -19,7 +19,7 @@ namespace Backend.Controllers
         public IActionResult AddClient([FromBody] ClientsModel entry)
         {
             // Call the service method to add the client
-            var result = ClientsService.AddClients(entry);
+            var result = ClientsService.AddClient(entry);
             if (result.success)
             {
                 return Ok(new

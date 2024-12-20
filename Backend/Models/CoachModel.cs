@@ -1,6 +1,6 @@
 using Org.BouncyCastle.Asn1.Cms;
 
-namespace Backend.Models : UserModel
+namespace Backend.Models 
 {
     public class CoachModel : UserModel
     {
@@ -8,8 +8,8 @@ namespace Backend.Models : UserModel
         public int Salary { get; set; }
         public int Penalties { get; set; }
         public int Bonuses { get; set; }
-        public DateTime Hire_Date { get; set; }
-        public DateTime Fire_Date { get; set; }
+        public DateOnly Hire_Date { get; set; }
+        public DateOnly Fire_Date { get; set; }
         public int Experience_Years { get; set; }
         public int Works_For_Branch { get; set; }
         public int Daily_Hours_Worked { get; set; }
