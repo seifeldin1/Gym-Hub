@@ -34,7 +34,7 @@ namespace Backend.Services {
         }
 
         //* AddAnnouncement : Gets an Announcement from Announcement Relation
-        public List<AnnouncmentsModel> GetAnnouncements()
+        public List<AnnouncementsModel> GetAnnouncements()
         {
             var announcementsList = new List<AnnouncementsModel>();
             using (var connection = database.ConnectToDatabase())

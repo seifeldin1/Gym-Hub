@@ -8,9 +8,9 @@ namespace Backend.Models
         public int Salary { get; set; }
         public int Penalties { get; set; }
         public int Bonuses { get; set; }
-        public DateTime Hire_Date { get; set; }
+        public DateOnly Hire_Date { get; set; }
         public int Employee_Under_Supervision { get; set; }
-        public DateTime Fire_Date { get; set; }
+        public DateOnly Fire_Date { get; set; }
         public int Manages_Branch_ID { get; set; }
         public int Contract_Length { get; set; }
     }

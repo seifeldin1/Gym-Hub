@@ -69,7 +69,7 @@ namespace Backend.Services
                                 Title = reader.GetString("Title"),
                                 DatePosted = reader.GetDateTime("Date_Posted"),
                                 SkillsRequired = reader.GetString("Skills_Required"),
-                               ExperienceYearsRequired = reader.GetInt32("Experience_Years_Required"),
+                                ExperienceYearsRequired = reader.GetInt32("Experience_Years_Required"),
                                 Deadline = reader.GetDateTime("Deadline"),
                                 Location = reader.GetString("Location"),
                             });

@@ -399,6 +399,50 @@ namespace Backend.Database{
                 ", connection);
                 createProgressTableCommand.ExecuteNonQuery();
 
+                var createMeetingsTableCommand = new MySqlCommand(@"
+                    CREATE TABLE IF NOT EXISTS Meetings(
+                        Meeting_ID INT PRIMARY KEY AUTO_INCREMENT,
+                        Coach_ID INT NOT NULL,
+                        Title VARCHAR(70) NOT NULL,
+                        Time DATETIME NOT NULL,
+                        FOREIGN KEY(Coach_ID) REFERENCES Coach(Coach_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                    );
+                ", connection);
+                createMeetingsTableCommand.ExecuteNonQuery();
+
+                //Created by => branch manager or coach just like announcements 
+                var createEventsTableCommand = new MySqlCommand(@"
+                    CREATE TABLE IF NOT EXISTS Events(
+                        Event_ID INT PRIMARY KEY AUTO_INCREMENT,
+                        Title VARCHAR(70) NOT NULL,
+                        Type VARCHAR(100) NOT NULL,
+                        Start_Date DATETIME NOT NULL,
+                        End_Date DATETIME NOT NULL , 
+                        Description VARCHAR(500) , 
+                        Location VARCHAR(200),
+                        Created_By_ID INT , 
+                        FOREIGN KEY(Created_By_ID) REFERENCES User(Created_By_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                    );
+                ", connection);
+                createEventsTableCommand.ExecuteNonQuery();
+
+                var createHolidayTableCommand = new MySqlCommand(@"
+                    CREATE TABLE IF NOT EXISTS Holiday(
+                        Holiday_ID INT PRIMARY KEY AUTO_INCREMENT,
+                        Title VARCHAR(70) NOT NULL,
+                        Start_Date DATETIME NOT NULL,
+                        End_Date DATETIME NOT NULL 
+                    );
+                ", connection);
+                createHolidayTableCommand.ExecuteNonQuery();
+
+                var creatBlackListedTokenTable = new MySqlCommand(@"
+                    CREATE TABLE BlacklistedTokens (
+                        Token VARCHAR(500) NOT NULL
+                    );
+                " , connection);
+                creatBlackListedTokenTable.ExecuteNonQuery();
+
             }
         }
 
