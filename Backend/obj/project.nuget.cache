@@ -147,12 +147,6 @@
   ],
   "logs": [
     {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file D:\\My_Database_Project\\Gym-Hub\\Backend\\obj\\project.nuget.cache : After parsing a value an unexpected character was encountered: \". Path 'expectedPackageFiles[139]', line 149, position 4."
-    },
-    {
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,

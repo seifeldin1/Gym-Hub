@@ -38,6 +38,7 @@ builder.Services.AddScoped<Equipments>();
 builder.Services.AddScoped<NotificationServices>();
 
 
+
 builder.Services.AddSignalR();
 //builder.Services.AddSingleton<NotificationServices>();
 
