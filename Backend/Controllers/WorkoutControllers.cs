@@ -16,7 +16,7 @@ namespace Backend.Controllers
             this.WorkoutService = WorkoutService;
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public IActionResult AddWorkout([FromBody] WorkoutModel entry)
         {
             // Call the service method to add the workout
@@ -70,10 +70,10 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpDelete]
-        public IActionResult DeleteWorkout([FromBody]int id)
+       [HttpDelete("{id}")]
+        public IActionResult DeleteWorkout(int id)
         {
-
+            Console.WriteLine("Hel!!!!");
             var result = WorkoutService.DeleteWorkout(id);
             // Return success response after deletion
             if (result.success)

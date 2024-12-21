@@ -34,8 +34,11 @@ builder.Services.AddScoped<Workout>();
 builder.Services.AddScoped<Supplements>();
 builder.Services.AddScoped<Branch>();
 builder.Services.AddScoped<JobPosting>();
+builder.Services.AddScoped<Clients>();
 builder.Services.AddScoped<Equipments>();
 builder.Services.AddScoped<NotificationServices>();
+builder.Services.AddScoped<NutritionPlan>();
+
 
 
 

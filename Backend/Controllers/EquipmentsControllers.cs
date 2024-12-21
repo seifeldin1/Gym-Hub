@@ -45,8 +45,8 @@ namespace Backend.Controllers
             return Ok(equipmentList);
         }
 
-        [HttpDelete]
-        public IActionResult DeleteEquipment([FromBody] int id)
+       [HttpDelete("{id}")]
+        public IActionResult DeleteEquipment( int id)
         {
 
             var result = equipmentsService.DeleteEquipment(id);

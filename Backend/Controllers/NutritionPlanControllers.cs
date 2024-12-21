@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/NutritionPlanModel")]
+    [Route("api/NutritionPlan")]
     public class NutritionPlanController : ControllerBase
     {
         private readonly NutritionPlan NutritionPlanService;

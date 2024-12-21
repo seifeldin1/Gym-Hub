@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HashPasswordApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5dd1ef5fece587a41a09810d827777fa25d793f8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+11f95142318cc91638aeb935e08e2487fc769900")]
 [assembly: System.Reflection.AssemblyProductAttribute("HashPasswordApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HashPasswordApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

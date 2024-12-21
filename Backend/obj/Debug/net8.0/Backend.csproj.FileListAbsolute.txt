@@ -1,154 +1,42 @@
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\appsettings.Development.json
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\appsettings.json
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.staticwebassets.runtime.json
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.exe
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.deps.json
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.runtimeconfig.json
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.pdb
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\BCrypt.Net-Next.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Google.Protobuf.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\K4os.Compression.LZ4.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\K4os.Compression.LZ4.Streams.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\K4os.Hash.xxHash.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\MySql.Data.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Newtonsoft.Json.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Security.Permissions.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Windows.Extensions.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\ZstdSharp.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\comerr64.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\gssapi64.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\k5sprt64.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\krb5_64.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\krbcc64.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.csproj.AssemblyReference.cache
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.GeneratedMSBuildEditorConfig.editorconfig
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.AssemblyInfoInputs.cache
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.AssemblyInfo.cs
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.csproj.CoreCompileInputs.cache
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.MvcApplicationPartsAssemblyInfo.cache
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.RazorAssemblyInfo.cache
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.RazorAssemblyInfo.cs
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.sourcelink.json
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets.build.json
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets.development.json
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets\msbuild.Backend.Microsoft.AspNetCore.StaticWebAssets.props
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets\msbuild.build.Backend.props
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.Backend.props
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.Backend.props
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets.pack.json
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\scopedcss\bundle\Backend.styles.css
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\scopedcss\projectbundle\Backend.bundle.scp.css
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.csproj.Up2Date
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.dll
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\refint\Backend.dll
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.pdb
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.genruntimeconfig.cache
-D:\Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\ref\Backend.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.exe
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\MySql.Data.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Security.Permissions.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\DotNetEnv.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Sprache.dll
-D:\Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.csproj.AssemblyReference.cache
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.GeneratedMSBuildEditorConfig.editorconfig
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.AssemblyInfoInputs.cache
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.AssemblyInfo.cs
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.csproj.CoreCompileInputs.cache
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.MvcApplicationPartsAssemblyInfo.cache
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.RazorAssemblyInfo.cache
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.RazorAssemblyInfo.cs
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.sourcelink.json
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.dll
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\refint\Backend.dll
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.pdb
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\appsettings.Development.json
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\appsettings.json
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.staticwebassets.runtime.json
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.exe
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.deps.json
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.runtimeconfig.json
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.pdb
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\BCrypt.Net-Next.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\DotNetEnv.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Google.Protobuf.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\K4os.Compression.LZ4.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\K4os.Compression.LZ4.Streams.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\K4os.Hash.xxHash.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\MySql.Data.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Newtonsoft.Json.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\BouncyCastle.Crypto.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Sprache.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Drawing.Common.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Security.Permissions.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Windows.Extensions.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\ZstdSharp.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\comerr64.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\gssapi64.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\k5sprt64.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\krb5_64.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\native\krbcc64.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets.build.json
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets.development.json
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets\msbuild.Backend.Microsoft.AspNetCore.StaticWebAssets.props
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets\msbuild.build.Backend.props
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.Backend.props
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.Backend.props
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\staticwebassets.pack.json
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\scopedcss\bundle\Backend.styles.css
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\scopedcss\projectbundle\Backend.bundle.scp.css
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.csproj.Up2Date
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.genruntimeconfig.cache
-D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\ref\Backend.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\appsettings.Development.json
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\appsettings.json
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.staticwebassets.runtime.json
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.exe
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.deps.json
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.runtimeconfig.json
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.pdb
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\BCrypt.Net-Next.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\DotNetEnv.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Google.Protobuf.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\K4os.Compression.LZ4.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\K4os.Compression.LZ4.Streams.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\K4os.Hash.xxHash.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.AspNetCore.Connections.Abstractions.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.AspNetCore.SignalR.Common.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.Features.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\MySql.Data.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Newtonsoft.Json.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\BouncyCastle.Crypto.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Sprache.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Drawing.Common.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.IO.Pipelines.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Security.Permissions.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Text.Encodings.Web.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Text.Json.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Windows.Extensions.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\ZstdSharp.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
@@ -160,6 +48,7 @@ D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win-x64\na
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\Backend.csproj.AssemblyReference.cache
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\Backend.GeneratedMSBuildEditorConfig.editorconfig
@@ -184,32 +73,5 @@ D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\Backend.csproj.Up2D
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\Backend.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\refint\Backend.dll
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\Backend.pdb
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.deps.json
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.runtimeconfig.json
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Backend.pdb
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\Backend.genruntimeconfig.cache
 D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\obj\Debug\net8.0\ref\Backend.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.AspNetCore.Connections.Abstractions.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.AspNetCore.SignalR.Common.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.Features.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.IO.Pipelines.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Text.Encodings.Web.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\System.Text.Json.dll
-D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.AspNetCore.Connections.Abstractions.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.AspNetCore.SignalR.Common.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.Features.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.IO.Pipelines.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Text.Encodings.Web.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\System.Text.Json.dll
-D:\amr ashraf\CCE\Data Base\Gym-Hub\Backend\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll

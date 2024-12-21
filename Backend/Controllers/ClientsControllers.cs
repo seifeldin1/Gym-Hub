@@ -15,7 +15,7 @@ namespace Backend.Controllers
             this.ClientsService = ClientsService;
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public IActionResult AddClient([FromBody] ClientsModel entry)
         {
             // Call the service method to add the client
@@ -41,13 +41,11 @@ namespace Backend.Controllers
 
         }
 
-        
-
-        [HttpPut]
-        public IActionResult AssignClientToCoach([FromBody] ClientsModel entry)
+         [HttpPut("AccountActivity")]
+        public IActionResult AccountActivity([FromBody] activeModel activ)
         {
             // Call the service to Assign client To coach
-            var result = ClientsService.AssignClientToCoach(entry);            // Return success response after update
+            var result = ClientsService.AccountActivity(activ.activ,activ.id);            // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -65,5 +63,35 @@ namespace Backend.Controllers
             });
         }
 
+        [HttpPut("AssignClientToCoach")]
+        public IActionResult AssignClientToCoach([FromBody] CTC ctc)
+        {
+            // Call the service to Assign client To coach
+            var result = ClientsService.AssignClientToCoach(ctc.idcoach,ctc.idclient);            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+
+    }
+    public class CTC{
+        public int idcoach { get; set; }
+        public int idclient { get; set; }
+    }
+    public class activeModel{
+        public bool activ { get; set; }
+        public int id { get; set; }
     }
 }
