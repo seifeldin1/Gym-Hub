@@ -35,9 +35,9 @@ namespace Backend.Services
                         command.Parameters.AddWithValue("@Purchased_Price", entry.Purchased_Price);
                         command.Parameters.AddWithValue("@Type", entry.Type);
                         command.Parameters.AddWithValue("@Flavor", entry.Flavor);
-                        command.Parameters.AddWithValue("@Manufactured_Date", entry.Manufactured_Date);
-                        command.Parameters.AddWithValue("@Expiration_Date", entry.Expiration_Date);
-                        command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date);
+                        command.Parameters.AddWithValue("@Manufactured_Date", entry.Manufactured_Date.ToString("yyyy-MM-dd"));
+                        command.Parameters.AddWithValue("@Expiration_Date", entry.Expiration_Date.ToString("yyyy-MM-dd"));
+                        command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date.ToString("yyyy-MM-dd"));
                         command.Parameters.AddWithValue("@Scoop_Size_grams", entry.Scoop_Size_grams);
                         command.Parameters.AddWithValue("@Scoop_Number_package", entry.Scoop_Number_package);
                         command.Parameters.AddWithValue("@Scoop_Detail", entry.Scoop_Detail);
@@ -61,7 +61,7 @@ namespace Backend.Services
                 return (false, $"An unexpected error occurred: {ex.Message}");
             }
         }
-            public (bool success, string message) DeleteSupplement(int id)
+        public (bool success, string message) DeleteSupplement(int id)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -85,7 +85,7 @@ namespace Backend.Services
 
             }
         }
-                public (bool success, string message) UpdateSupplement(SupplementsModel entry)
+        public (bool success, string message) UpdateSupplement(SupplementsModel entry)
         {
             //? Check if An Entry is Given
             if (entry == null)
@@ -98,53 +98,53 @@ namespace Backend.Services
                 List<MySqlParameter> parameters = new List<MySqlParameter>();   //! Query params
 
                 //! Check In Entry for Params To Be edited By query
-                if (entry.Name  != null)
+                if (entry.Name != null)
                 {
                     setClauses.Add("Name = @Name");
-                    parameters.Add(new MySqlParameter("@Name", entry.Name ));
+                    parameters.Add(new MySqlParameter("@Name", entry.Name));
                 }
                 if (entry.Brand != null)
                 {
                     setClauses.Add("Brand= @Brand");
                     parameters.Add(new MySqlParameter("@Brand", entry.Brand));
                 }
-                    setClauses.Add("Selling_Price= @Selling_Price");
-                    parameters.Add(new MySqlParameter("@Selling_Price", entry.Selling_Price));
-                
-                
-                    setClauses.Add("Purchased_Price= @Purchased_Price");
-                    parameters.Add(new MySqlParameter("@Purchased_Price", entry.Purchased_Price));
-                
-                  if (entry.Type != null)
+                setClauses.Add("Selling_Price= @Selling_Price");
+                parameters.Add(new MySqlParameter("@Selling_Price", entry.Selling_Price));
+
+
+                setClauses.Add("Purchased_Price= @Purchased_Price");
+                parameters.Add(new MySqlParameter("@Purchased_Price", entry.Purchased_Price));
+
+                if (entry.Type != null)
                 {
                     setClauses.Add("Type= @Type");
                     parameters.Add(new MySqlParameter("@Type", entry.Type));
                 }
-                  if (entry.Flavor != null)
+                if (entry.Flavor != null)
                 {
                     setClauses.Add("Flavor= @Flavor");
                     parameters.Add(new MySqlParameter("@Flavor", entry.Flavor));
                 }
-                    setClauses.Add("Manufactured_Date= @Manufactured_Date");
-                    parameters.Add(new MySqlParameter("@Manufactured_Date", entry.Manufactured_Date));
+                setClauses.Add("Manufactured_Date= @Manufactured_Date");
+                parameters.Add(new MySqlParameter("@Manufactured_Date", entry.Manufactured_Date.ToString("yyyy-MM-dd")));
 
-                     setClauses.Add("Expiration_Date= @Expiration_Date");
-                    parameters.Add(new MySqlParameter("@Expiration_Date", entry.Expiration_Date));
+                setClauses.Add("Expiration_Date= @Expiration_Date");
+                parameters.Add(new MySqlParameter("@Expiration_Date", entry.Expiration_Date.ToString("yyyy-MM-dd")));
 
-                     setClauses.Add("Purchase_Date= @Purchase_Date");
-                    parameters.Add(new MySqlParameter("@Purchase_Date", entry.Purchase_Date));
+                setClauses.Add("Purchase_Date= @Purchase_Date");
+                parameters.Add(new MySqlParameter("@Purchase_Date", entry.Purchase_Date.ToString("yyyy-MM-dd")));
 
-                     setClauses.Add("Scoop_Size_grams= @Scoop_Size_grams");
-                    parameters.Add(new MySqlParameter("@Scoop_Size_grams", entry.Scoop_Size_grams));
+                setClauses.Add("Scoop_Size_grams= @Scoop_Size_grams");
+                parameters.Add(new MySqlParameter("@Scoop_Size_grams", entry.Scoop_Size_grams));
 
-                    setClauses.Add("Scoop_Number_package= @Scoop_Number_package");
-                    parameters.Add(new MySqlParameter("@Scoop_Number_package", entry.Scoop_Number_package));
+                setClauses.Add("Scoop_Number_package= @Scoop_Number_package");
+                parameters.Add(new MySqlParameter("@Scoop_Number_package", entry.Scoop_Number_package));
 
-                    setClauses.Add("Scoop_Detail= @Scoop_Detail");
-                    parameters.Add(new MySqlParameter("@Scoop_Detail", entry.Scoop_Detail));
-                
+                setClauses.Add("Scoop_Detail= @Scoop_Detail");
+                parameters.Add(new MySqlParameter("@Scoop_Detail", entry.Scoop_Detail));
 
-                
+
+
 
                 if (setClauses.Count == 0)
                     return (false, "No fields to update.");
@@ -177,6 +177,7 @@ namespace Backend.Services
                 return (false, $"Error: {ex.Message}");
             }
         }
+
 
         //Get Function
         public List<SupplementsModel> GetSupplements()

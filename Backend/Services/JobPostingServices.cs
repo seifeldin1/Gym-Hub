@@ -14,20 +14,77 @@ namespace Backend.Services
         {
             this.database = gymDatabase;
         }
+        public (bool success, string message) DeleteJobPost(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "DELETE FROM Job_Posting  WHERE  Post_ID = @Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "JobPost Deleted successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Delete JobPost");
+                    }
+                }
+
+            }
+        }
+    public (bool success, string message) UpdateJobPost(JobPost entry)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Job_Posting  SET Branch_Posted_ID=@Branch_Posted_ID,Description=@Description,Title=@Title,Date_Posted=@Date_Posted,Skills_Required=@Skills_Required,Experience_Years_Required=@Experience_Years_Required,Deadline=@Deadline,Location=@Location WHERE Post_ID=@Post_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Branch_Posted_ID",entry.Branch_Posted_ID);
+                    command.Parameters.AddWithValue("@Description",entry.Description);
+                    command.Parameters.AddWithValue("@Title",entry.Title );
+                    command.Parameters.AddWithValue("@Date_Posted",entry.Date_Posted);
+                    command.Parameters.AddWithValue("@Skills_Required",entry.Skills_Required);
+                    command.Parameters.AddWithValue("@Experience_Years_Required",entry.Experience_Years_Required );
+                    command.Parameters.AddWithValue("@Deadline",entry.Deadline);
+                    command.Parameters.AddWithValue("@Location",entry.Location);
+                    command.Parameters.AddWithValue("@Post_ID",entry.Post_ID);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "JobPost Updated successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Update JobPost");
+                    }
+                }
+            }
+
+        }
+
         public (bool success, string message) AddJobPost(JobPost entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "INSERT INTO Job_Posting(Branch_Posted_ID,Description,Title,Date_Posted,Skills_Required,Experience_Years_Required,Deadline,Location) VALUES (@Branch_Posted_ID,@Description,@Title,@Date_Posted,@Skills_Required,@Experience_Years_Required,@Deadline,@Location);";
+                string query = "INSERT INTO Job_Posting (Branch_Posted_ID,Description,Title,Date_Posted,Skills_Required,Experience_Years_Required,Deadline,Location) VALUES (@Branch_Posted_ID,@Description,@Title,@Date_Posted,@Skills_Required,@Experience_Years_Required,@Deadline,@Location);";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Branch_Posted_ID", entry.BranchPostedID);
+                    command.Parameters.AddWithValue("@Branch_Posted_ID", entry.Branch_Posted_ID);
                     command.Parameters.AddWithValue("@Description", entry.Description);
                     command.Parameters.AddWithValue("@Title", entry.Title);
-                    command.Parameters.AddWithValue("@@Date_Posted", entry.DatePosted);
-                    command.Parameters.AddWithValue("@Skills_Required", entry.SkillsRequired);
-                    command.Parameters.AddWithValue("@Experience_Years_Required", entry.ExperienceYearsRequired);
+                    command.Parameters.AddWithValue("@@Date_Posted", entry.Date_Posted);
+                    command.Parameters.AddWithValue("@Skills_Required", entry.Skills_Required);
+                    command.Parameters.AddWithValue("@Experience_Years_Required", entry.Experience_Years_Required);
                     command.Parameters.AddWithValue("@Deadline", entry.Deadline);
                     command.Parameters.AddWithValue("@Location", entry.Location);
                     int rowsAffected = command.ExecuteNonQuery();
@@ -62,14 +119,20 @@ namespace Backend.Services
                         {
                             jobPostsList.Add(new JobPost
                             {
-                               // Workout_ID = reader.GetInt32("Workout_ID"),
-                                JobPostID = reader.GetInt32("Post_ID"),
-                                BranchPostedID = reader.GetInt32("Branch_Posted_ID"),
+
+                                Post_ID = reader.GetInt32("Post_ID"),
+                                Branch_Posted_ID = reader.GetInt32("Branch_Posted_ID"),
                                 Description = reader.GetString("Description"),
                                 Title = reader.GetString("Title"),
+<<<<<<< HEAD
+                                Date_Posted = reader.GetDateTime("Date_Posted"),
+                                Skills_Required = reader.GetString("Skills_Required"),
+                                Experience_Years_Required = reader.GetInt32("Experience_Years_Required"),
+=======
                                 DatePosted = reader.GetDateTime("Date_Posted"),
                                 SkillsRequired = reader.GetString("Skills_Required"),
                                 ExperienceYearsRequired = reader.GetInt32("Experience_Years_Required"),
+>>>>>>> 1f9c48ebf1658d7f9897785ab2ef11a7f0390e87
                                 Deadline = reader.GetDateTime("Deadline"),
                                 Location = reader.GetString("Location"),
                             });

@@ -5,19 +5,21 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/EquipmentsModel")]
-    public class EquipmentsController : ControllerBase
+    [Route("api/JobPost")]
+    public class JobPostingController : ControllerBase
     {
-        private readonly Equipments equipmentsService;
-        public EquipmentsController(Equipments equipmentsService)
+        private readonly JobPosting jobpostService;
+
+        public JobPostingController(JobPosting jobpostService)
         {
-            this.equipmentsService = equipmentsService;
+            this.jobpostService = jobpostService;
         }
+
         [HttpPost("add")]
-        public IActionResult AddEquipment([FromBody] EquipmentsModel entry)
+        public IActionResult AddJobPost([FromBody] JobPost entry)
         {
-            // Call the service method to add the workout
-            var result = equipmentsService.AddEquipments(entry);
+            // Call the service method to add the Branch
+            var result = jobpostService.AddJobPost(entry);
             if (result.success)
             {
                 return Ok(new
@@ -35,21 +37,18 @@ namespace Backend.Controllers
             });
             // Return the JSON result
         }
-
-
-
         [HttpGet]
-        public IActionResult GetEquipments()
+        public IActionResult GetJobPosts()
         {
-            var equipmentList = equipmentsService.GetEquipments();
-            return Ok(equipmentList);
+            var jobpostList = jobpostService.GetJobPosts();
+            return Ok(jobpostList);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteEquipment(int id)
+        public IActionResult DeleteJobPost(int id)
         {
 
-            var result = equipmentsService.DeleteEquipment(id);
+            var result = jobpostService.DeleteJobPost(id);
             // Return success response after deletion
             if (result.success)
             {
@@ -68,11 +67,11 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpPut("updateEquipment")]
-        public IActionResult UpdateWorkout([FromBody] EquipmentsModel entry)
+        [HttpPut("update-jobpost")]
+        public IActionResult UpdateJopPost([FromBody] JobPost entry)
         {
-            // Call the service to update the Branch
-            var result = equipmentsService.UpdateEquipment(entry);
+            // Call the service to update the JobPost
+            var result = jobpostService.UpdateJobPost(entry);
             // Return success response after update
             if (result.success)
             {

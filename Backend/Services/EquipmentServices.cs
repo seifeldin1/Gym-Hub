@@ -25,7 +25,7 @@ namespace Backend.Services
                     command.Parameters.AddWithValue("@Status", entry.Status);
                     command.Parameters.AddWithValue("@Purchase_Price", entry.Purchase_Price);
                     command.Parameters.AddWithValue("@Category", entry.Category);
-                    command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date);
+                    command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date.ToString("yyyy-MM-dd"));
                     command.Parameters.AddWithValue("@Name", entry.Name);
                     command.Parameters.AddWithValue("@Serial_Number", entry.Serial_Number);
                     command.Parameters.AddWithValue("@Belong_To_Branch_ID", entry.Belong_To_Branch_ID);
@@ -47,37 +47,94 @@ namespace Backend.Services
         }
         public List<EquipmentsModel> GetEquipments()
         {
-            var equipmentList = new List<EquipmentsModel>();
+            var equipmentsList = new List<EquipmentsModel>();
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-
-                string query = "SELECT * FROM Equipments;";
+                string query = "SELECT * FROM Equipments ;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
                     {
+                        //The while loop iterates through each row of the query result.
+                        //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
                         while (reader.Read())
                         {
-                            equipmentList.Add(new EquipmentsModel
+                            equipmentsList.Add(new EquipmentsModel
                             {
-                                Equipment_ID = reader.GetInt16("Equipment_ID"),
+                                Equipment_ID = reader.GetInt32("Equipment_ID"),
                                 Status = reader.GetString("Status"),
-                                Purchase_Price = reader.GetInt16("Purchase_Price"),
-                                Category = reader.GetString("Category "),
+                                Purchase_Price = reader.GetInt32("Purchase_Price"),
+                                Category= reader.GetString("Category"),
                                 Purchase_Date = DateOnly.FromDateTime(reader.GetDateTime("Purchase_Date")),
                                 Name = reader.GetString("Name"),
                                 Serial_Number = reader.GetString("Serial_Number"),
-                                Belong_To_Branch_ID = reader.GetInt16("Belong_To_Branch_ID")
+                                Belong_To_Branch_ID = reader.GetInt32("Belong_To_Branch_ID"),
                             });
                         }
 
-                        return equipmentList;
-                    }
 
+                        return equipmentsList;
+                    }
                 }
             }
         }
+         public (bool success, string message) UpdateEquipment(EquipmentsModel entry)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Equipments SET Status=@Status,Purchase_Price=@Purchase_Price,Category=@Category,Purchase_Date=@Purchase_Date,Name=@Name,Serial_Number=@Serial_Number,Belong_To_Branch_ID=@Belong_To_Branch_ID WHERE Equipment_ID=@Equipment_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Status",entry.Status);
+                    command.Parameters.AddWithValue("@Purchase_Price",entry.Purchase_Price);
+                    command.Parameters.AddWithValue("@Category",entry.Category );
+                    command.Parameters.AddWithValue("@Purchase_Date",entry.Purchase_Date.ToString("yyyy-MM-dd"));
+                    command.Parameters.AddWithValue("@Name",entry.Name);
+                    command.Parameters.AddWithValue("@Serial_Number",entry.Serial_Number);
+                    command.Parameters.AddWithValue("@Belong_To_Branch_ID",entry.Belong_To_Branch_ID);
+                    command.Parameters.AddWithValue("@Equipment_ID",entry.Equipment_ID );
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Equipment Updated successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Update Equipment");
+                    }
+                }
+            }
+
+        }
+        public (bool success, string message) DeleteEquipment(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "DELETE FROM Equipments WHERE Equipment_ID=@Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Equipment Deleted successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Delete Equipment");
+                    }
+                }
+
+            }
+        }
+
     }
 }
 
