@@ -124,15 +124,9 @@ namespace Backend.Services
                                 Branch_Posted_ID = reader.GetInt32("Branch_Posted_ID"),
                                 Description = reader.GetString("Description"),
                                 Title = reader.GetString("Title"),
-<<<<<<< HEAD
                                 Date_Posted = reader.GetDateTime("Date_Posted"),
                                 Skills_Required = reader.GetString("Skills_Required"),
                                 Experience_Years_Required = reader.GetInt32("Experience_Years_Required"),
-=======
-                                DatePosted = reader.GetDateTime("Date_Posted"),
-                                SkillsRequired = reader.GetString("Skills_Required"),
-                                ExperienceYearsRequired = reader.GetInt32("Experience_Years_Required"),
->>>>>>> 1f9c48ebf1658d7f9897785ab2ef11a7f0390e87
                                 Deadline = reader.GetDateTime("Deadline"),
                                 Location = reader.GetString("Location"),
                             });
