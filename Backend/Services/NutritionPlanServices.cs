@@ -19,7 +19,7 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "INSERT INTO Nutrition(Goal,Protein_grams,Carbohydrates_grams,Fat_grams,Calories,Name,Description) VALUES (@Goal,@Protein_grams,@Carbohydrates_grams,@Fat_grams,@Calories,@Description);";
+                string query = "INSERT INTO Nutrition(Goal,Protein_grams,Carbohydrates_grams,Fat_grams,Calories,Name,Description) VALUES (@Goal,@Protein_grams,@Carbohydrates_grams,@Fat_grams,@Calories,@Name,@Description);";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Goal", entry.Goal);
@@ -50,7 +50,7 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "SELECT * FROM Nutrition ;";
+                string query = "SELECT * FROM Nutrition;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -61,14 +61,14 @@ namespace Backend.Services
                         {
                             nutritionplanList.Add(new NutritionPlanModel
                             {
-                                Nutrition_ID = reader.GetInt32(" Nutrition_ID"),
-                                Goal = reader.GetString(" Goal"),
+                                Nutrition_ID = reader.GetInt32("Nutrition_ID"),
+                                Goal = reader.GetString("Goal"),
                                 Protein_grams = reader.GetInt32("Protein_grams"),
-                                Carbohydrates_grams = reader.GetInt32("Carbohydrates_grams "),
-                                Fat_grams = reader.GetInt32("Fat_grams "),
+                                Carbohydrates_grams = reader.GetInt32("Carbohydrates_grams"),
+                                Fat_grams = reader.GetInt32("Fat_grams"),
                                 Calories = reader.GetInt32("Calories"),
                                 Name = reader.GetString("Name"),
-                                Description = reader.GetString("Description "),
+                                Description = reader.GetString("Description"),
                             });
                         }
 

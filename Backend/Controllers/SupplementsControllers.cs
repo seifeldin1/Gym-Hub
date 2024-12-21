@@ -6,7 +6,7 @@ using Backend.Utils;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/SupplementsModel")]
+    [Route("api/Supplements")]
     public class SupplementsController : ControllerBase
     {
         private readonly Supplements supplementsService;
@@ -16,7 +16,7 @@ namespace Backend.Controllers
             this.supplementsService = supplementsService;
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public IActionResult AddSupplement([FromBody] SupplementsModel entry)
         {
             if (!ModelState.IsValid)
@@ -35,14 +35,14 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
             });
             // Return the JSON result
         }
-        [HttpPut("updateSupplements")]
+        [HttpPut]
         public IActionResult UpdateSupplement([FromBody] SupplementsModel UpdatedWorkout)
         {
             // Call the service to update the Branch
@@ -58,7 +58,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
@@ -70,8 +70,8 @@ namespace Backend.Controllers
             var supplementList = supplementsService.GetSupplements();
             return Ok(supplementList);
         }
-        [HttpDelete("{id}")]
-        public IActionResult DeleteSupplement(int id)
+        [HttpDelete]
+        public IActionResult DeleteSupplement([FromBody] int id)
         {
 
             var result = supplementsService.DeleteSupplement(id);
@@ -86,7 +86,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message

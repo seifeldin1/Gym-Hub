@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/WorkoutModel")]
+    [Route("api/Workout")]
     public class WorkoutController : ControllerBase
     {
         private readonly Workout WorkoutService;
@@ -47,7 +47,7 @@ namespace Backend.Controllers
             var workoutList = WorkoutService.GetWorkouts();
             return Ok(workoutList);
         }
-        [HttpPut("updateWorkout")]
+        [HttpPut]
         public IActionResult UpdateWorkout([FromBody] WorkoutModel entry)
         {
             // Call the service to update the Branch
@@ -63,17 +63,17 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
             });
         }
 
-        [HttpDelete("{id}")]
+       [HttpDelete("{id}")]
         public IActionResult DeleteWorkout(int id)
         {
-
+            Console.WriteLine("Hel!!!!");
             var result = WorkoutService.DeleteWorkout(id);
             // Return success response after deletion
             if (result.success)
@@ -86,7 +86,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message

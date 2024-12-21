@@ -21,14 +21,13 @@ namespace Backend.Services{
             }
         }
 
-        public (bool sucess , string message) updateBranchManagerSalary(BranchManagerModel manager){
-            if(manager == null) return(false , "no branch manager is choosen");
+        public (bool sucess , string message) updateBranchManagerSalary(int salary , int id){
             using(var connection = database.ConnectToDatabase()){
                 connection.Open();
                 string query = "UPDATE Coach SET Salary = @Salary WHERE Coach_ID = @CoachID";
                 using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@Salary" , manager.Salary);
-                    command.Parameters.AddWithValue("@CoachID" , manager.Branch_Manager_ID);
+                    command.Parameters.AddWithValue("@Salary" , salary);
+                    command.Parameters.AddWithValue("@CoachID" , id);
                     command.ExecuteNonQuery();
                 }
                 return(true , "salary for branch manager updated successfully");

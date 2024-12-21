@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/AnnouncementsModel")]
+    [Route("api/Announcements")]
     public class AnnouncementsController : ControllerBase
     {
         private readonly AnnouncementsServices ann_Service;
@@ -15,7 +15,7 @@ namespace Backend.Controllers
         {
             this.ann_Service = ann_Service;
         }
-        [HttpPost("add")]
+        [HttpPost]
         public IActionResult AddAnnouncement([FromBody] AnnouncementsModel entry)
         {
             // Call the service method to add the workout
@@ -30,7 +30,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
@@ -46,8 +46,8 @@ namespace Backend.Controllers
             return Ok(announcementsList);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteAnnouncement(int id)
+        [HttpDelete]
+        public IActionResult DeleteAnnouncement([FromBody] int id)
         {
             var result = ann_Service.DeleteAnnouncement(id);
             // Return success response after deletion
@@ -61,7 +61,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message

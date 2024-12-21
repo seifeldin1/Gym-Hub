@@ -11,7 +11,7 @@ namespace Backend.Services{
             this.database = gymDatabase;
         }
 
-        public async Task<(bool success , string message)> AddProgress(int clientId, double weight){
+        public (bool success , string message) AddProgress(int clientId, double weight){
             using (var connection = database.ConnectToDatabase()){
                 connection.Open();
 
@@ -30,7 +30,7 @@ namespace Backend.Services{
             }
         }
 
-        public async Task<List<ProgressModel>> GetProgressByClientId(int clientId){
+        public List<ProgressModel> GetProgressByClientId(int clientId){
             var progressList = new List<ProgressModel>();
 
             using (var connection = database.ConnectToDatabase()){

@@ -46,12 +46,15 @@ namespace Backend.Services
         }
         public (bool success, string message) DeleteWorkout(int id)
         {
+             Console.WriteLine("Hello, World!");
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
                 string query = "DELETE FROM Workout WHERE Workout_ID=@Id;";
+                Console.WriteLine("Hello, World!!!!");
                 using (var command = new MySqlCommand(query, connection))
                 {
+                    Console.WriteLine("Hellor!!!!");
                     command.Parameters.AddWithValue("@Id", id);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)

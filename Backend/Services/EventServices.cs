@@ -9,7 +9,7 @@ namespace Backend.Services{
             this.database = gymDatabase;
         }
 
-        public (bool success, string message) AddEvent(Events events , int id){
+        public (bool success, string message) AddEvent(Events events , int creatorId){
             using (var connection = database.ConnectToDatabase()){
                 connection.Open();
 
@@ -22,7 +22,7 @@ namespace Backend.Services{
                     command.Parameters.AddWithValue("@endDate", events.End_Date);
                     command.Parameters.AddWithValue("@location", events.Location);
                     command.Parameters.AddWithValue("@description", events.Description);
-                    command.Parameters.AddWithValue("@createdBy", id);
+                    command.Parameters.AddWithValue("@createdBy", creatorId);
                     command.ExecuteNonQuery();
                 }
                 return (true, "Event added successfully.");

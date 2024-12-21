@@ -21,9 +21,9 @@ namespace Backend.Services
                 connection.Open();
 
                 string query = @"INSERT INTO Client 
-                    (Client_ID, Join_Date,BMR, Weight_kg, Height_cm, Belong_To_Coach_ID, Start_Date_Membership, End_Date_Membership, Membership_Type,
+                    (Client_ID, Join_Date,BMR, Weight_kg, Height_cm, Belong_To_Coach_ID,AccountActivated, Start_Date_Membership, End_Date_Membership, Membership_Type,
                     Fees_Of_Membership, Membership_Period_Months)
-                    VALUES (@Client_ID, @Join_Date, @BMR, @Weight_kg, @Height_cm, @Belong_To_Coach_ID, @Start_Date_Membership, @End_Date_Membership,
+                    VALUES (@Client_ID, @Join_Date, @BMR, @Weight_kg, @Height_cm, @Belong_To_Coach_ID,@AccountActivated,@Start_Date_Membership, @End_Date_Membership,
                     @Membership_Type, @Fees_Of_Membership, @Membership_Period_Months);";
 
                 using (var command = new MySqlCommand(query, connection))
@@ -34,6 +34,7 @@ namespace Backend.Services
                     command.Parameters.AddWithValue("@Weight_kg", entry.Weight_kg);
                     command.Parameters.AddWithValue("@Height_cm", entry.Height_cm);
                     command.Parameters.AddWithValue("@Belong_To_Coach_ID", entry.Belong_To_Coach_ID);
+                    command.Parameters.AddWithValue("@AccountActivated", entry.AccountActivated);
                     command.Parameters.AddWithValue("@Start_Date_Membership", entry.Start_Date_Membership);
                     command.Parameters.AddWithValue("@End_Date_Membership", entry.End_Date_Membership);
                     command.Parameters.AddWithValue("@Membership_Type", entry.Membership_Type);
@@ -105,9 +106,35 @@ namespace Backend.Services
                 }
             }
         }
+          public (bool success, string message) AccountActivity(bool activ,int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+
+                connection.Open();
+                string query = "UPDATE Client SET AccountActivated = @AccountActivated WHERE Client_ID = @Client_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@AccountActivated",activ);
+                    command.Parameters.AddWithValue("@Client_ID",id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Account Activated/deactivated successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Activated/deactivated Account ");
+                    }
+                }
+            }
+
+        }
 
         //* AssignClientToCoach : Assign a coach to a Client
-        public (bool success, string message) AssignClientToCoach(ClientsModel entry)
+        public (bool success, string message) AssignClientToCoach(int idcoach ,int idclient)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -115,8 +142,8 @@ namespace Backend.Services
                 string query = "UPDATE Client SET Belong_To_Coach_ID = @Belong_To_Coach_ID WHERE Client_ID=@Id;";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Belong_To_Coach_ID", entry.Belong_To_Coach_ID);
-                    command.Parameters.AddWithValue("@Id", entry.Client_ID);
+                    command.Parameters.AddWithValue("@Belong_To_Coach_ID", idcoach);
+                    command.Parameters.AddWithValue("@Id", idclient);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                         return (true, "Assign Client To Coach successfully");
