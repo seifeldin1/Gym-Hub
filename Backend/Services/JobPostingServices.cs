@@ -49,9 +49,9 @@ namespace Backend.Services
                     command.Parameters.AddWithValue("@Branch_Posted_ID",entry.Branch_Posted_ID);
                     command.Parameters.AddWithValue("@Description",entry.Description);
                     command.Parameters.AddWithValue("@Title",entry.Title );
-                    command.Parameters.AddWithValue("@Date_Posted",entry.DatePosted);
-                    command.Parameters.AddWithValue("@Skills_Required",entry.SkillsRequired);
-                    command.Parameters.AddWithValue("@Experience_Years_Required",entry.ExperienceYearsRequired );
+                    command.Parameters.AddWithValue("@Date_Posted",entry.Date_Posted);
+                    command.Parameters.AddWithValue("@Skills_Required",entry.Skills_Required);
+                    command.Parameters.AddWithValue("@Experience_Years_Required",entry.Experience_Years_Required );
                     command.Parameters.AddWithValue("@Deadline",entry.Deadline);
                     command.Parameters.AddWithValue("@Location",entry.Location);
                     command.Parameters.AddWithValue("@Post_ID",entry.Post_ID);
@@ -82,9 +82,9 @@ namespace Backend.Services
                     command.Parameters.AddWithValue("@Branch_Posted_ID", entry.Branch_Posted_ID);
                     command.Parameters.AddWithValue("@Description", entry.Description);
                     command.Parameters.AddWithValue("@Title", entry.Title);
-                    command.Parameters.AddWithValue("@@Date_Posted", entry.DatePosted);
-                    command.Parameters.AddWithValue("@Skills_Required", entry.SkillsRequired);
-                    command.Parameters.AddWithValue("@Experience_Years_Required", entry.ExperienceYearsRequired);
+                    command.Parameters.AddWithValue("@@Date_Posted", entry.Date_Posted);
+                    command.Parameters.AddWithValue("@Skills_Required", entry.Skills_Required);
+                    command.Parameters.AddWithValue("@Experience_Years_Required", entry.Experience_Years_Required);
                     command.Parameters.AddWithValue("@Deadline", entry.Deadline);
                     command.Parameters.AddWithValue("@Location", entry.Location);
                     int rowsAffected = command.ExecuteNonQuery();
@@ -124,9 +124,9 @@ namespace Backend.Services
                                 Branch_Posted_ID = reader.GetInt32("Branch_Posted_ID"),
                                 Description = reader.GetString("Description"),
                                 Title = reader.GetString("Title"),
-                                DatePosted = reader.GetDateTime("Date_Posted"),
-                                SkillsRequired = reader.GetString("Skills_Required"),
-                                ExperienceYearsRequired = reader.GetInt32("Experience_Years_Required"),
+                                Date_Posted = reader.GetDateTime("Date_Posted"),
+                                Skills_Required = reader.GetString("Skills_Required"),
+                                Experience_Years_Required = reader.GetInt32("Experience_Years_Required"),
                                 Deadline = reader.GetDateTime("Deadline"),
                                 Location = reader.GetString("Location"),
                             });

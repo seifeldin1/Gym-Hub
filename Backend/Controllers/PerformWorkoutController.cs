@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/PerformWorkoutModel")]
+    [Route("api/Perform-Workout")]
     public class PerformWorkoutController : ControllerBase
     {
         private readonly PerformWorkout performWorkoutService;
@@ -15,7 +15,7 @@ namespace Backend.Controllers
             this.performWorkoutService = performWorkoutService;
         }
         [HttpGet]
-        public IActionResult GetSessionsHistory(PerformWorkoutModel entry)
+        public IActionResult GetSessionsHistory([FromBody] PerformWorkoutModel entry)
         {
             if (entry.Client_ID <= 0)
             {

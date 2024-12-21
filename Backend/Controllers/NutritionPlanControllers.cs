@@ -30,7 +30,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message

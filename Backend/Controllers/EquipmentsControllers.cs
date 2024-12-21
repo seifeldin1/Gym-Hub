@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/EquipmentsModel")]
+    [Route("api/Equipments")]
     public class EquipmentsController : ControllerBase
     {
         private readonly Equipments equipmentsService;
@@ -13,7 +13,7 @@ namespace Backend.Controllers
         {
             this.equipmentsService = equipmentsService;
         }
-        [HttpPost("add")]
+        [HttpPost]
         public IActionResult AddEquipment([FromBody] EquipmentsModel entry)
         {
             // Call the service method to add the workout
@@ -28,7 +28,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
@@ -45,8 +45,8 @@ namespace Backend.Controllers
             return Ok(equipmentList);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteEquipment(int id)
+        [HttpDelete]
+        public IActionResult DeleteEquipment([FromBody] int id)
         {
 
             var result = equipmentsService.DeleteEquipment(id);
@@ -61,14 +61,14 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
             });
         }
 
-        [HttpPut("updateEquipment")]
+        [HttpPut]
         public IActionResult UpdateWorkout([FromBody] EquipmentsModel entry)
         {
             // Call the service to update the Branch
@@ -84,7 +84,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message

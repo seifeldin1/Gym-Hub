@@ -14,7 +14,7 @@ namespace Backend.Controllers {
             services = appService;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpPost]
         public IActionResult ApplyForJob([FromBody] JobApplicationRequest request){// ApplyForJob should have a single parameter object (wrap Candidate and JobPost)
             var result = services.ApplyForJob(request.candidate , request.job);
@@ -30,16 +30,16 @@ namespace Backend.Controllers {
             });
         }
 
-        [RoleAuthorize("Branch Manager")]
+        //[RoleAuthorize("Branch Manager")]
         [HttpGet]
-        public IActionResult GetAllApplications(JobPost post){
+        public IActionResult GetAllApplications([FromBody] JobPost post){
             var result = services.GetAllApplicationsForPost(post);
             return Ok(result);
         }
 
-        [RoleAuthorize("Branch Manager")]
-        [HttpGet("{candidateID}")]
-        public IActionResult GetApplicantByID(int candidateID){
+        //[RoleAuthorize("Branch Manager")]
+        [HttpGet("candidate")]
+        public IActionResult GetApplicantByID([FromBody] int candidateID){
             var result = services.GetApplicantForPost(candidateID);
             return Ok(result);
         }

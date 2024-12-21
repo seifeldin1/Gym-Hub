@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/ClientsModel")]
+    [Route("api/Clients")]
     public class ClientsController : ControllerBase
     {
         private readonly Clients ClientsService;
@@ -15,7 +15,7 @@ namespace Backend.Controllers
             this.ClientsService = ClientsService;
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public IActionResult AddClient([FromBody] ClientsModel entry)
         {
             // Call the service method to add the client
@@ -30,7 +30,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/BranchModel")]
+    [Route("api/Branch")]
     public class BranchController : ControllerBase
     {
         private readonly Branch branchService;
@@ -15,7 +15,7 @@ namespace Backend.Controllers
             this.branchService = branchService;
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public IActionResult AddBranch([FromBody] BranchModel entry)
         {
             // Call the service method to add the Branch
@@ -30,7 +30,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
@@ -44,8 +44,8 @@ namespace Backend.Controllers
             return Ok(branchList);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteBranch(int id)
+        [HttpDelete]
+        public IActionResult DeleteBranch([FromBody] int id)
         {
 
             var result = branchService.DeleteBranch(id);
@@ -60,14 +60,14 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
             });
         }
 
-        [HttpPut("update-branch")]
+        [HttpPut]
         public IActionResult UpdateBranch([FromBody] BranchModel UpdatedBranch)
         {
             // Call the service to update the Branch
@@ -83,17 +83,17 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
             });
         }
-        [HttpPut("set-working-hours")]
-        public IActionResult SetWorkingHours([FromBody] int id,TimeSpan opt,TimeSpan clt)
+        [HttpPut("woking-hours")]
+        public IActionResult SetWorkingHours([FromBody] TimeModel time)
         {
             // Call the service to set new working Hours
-            var result = branchService.SetWorkingHours(id,opt,clt);            // Return success response after update
+            var result = branchService.SetWorkingHours(time.BranchId,time.opt,time.clt);            // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -104,12 +104,19 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
             });
         }
+
+    }
+
+    public class TimeModel{
+        public TimeSpan opt { get; set; }
+        public TimeSpan clt { get; set; }
+        public int BranchId {get; set;}
 
     }
 }

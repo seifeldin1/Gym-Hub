@@ -15,7 +15,7 @@ namespace Backend.Controllers
             this.jobpostService = jobpostService;
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         public IActionResult AddJobPost([FromBody] JobPost entry)
         {
             // Call the service method to add the Branch
@@ -30,7 +30,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
@@ -44,8 +44,8 @@ namespace Backend.Controllers
             return Ok(jobpostList);
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteJobPost(int id)
+        [HttpDelete]
+        public IActionResult DeleteJobPost([FromBody] int id)
         {
 
             var result = jobpostService.DeleteJobPost(id);
@@ -60,14 +60,14 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
             });
         }
 
-        [HttpPut("update-jobpost")]
+        [HttpPut]
         public IActionResult UpdateJopPost([FromBody] JobPost entry)
         {
             // Call the service to update the JobPost
@@ -83,7 +83,7 @@ namespace Backend.Controllers
                 });
             }
 
-            return Unauthorized(new
+            return BadRequest(new
             {
                 success = false,
                 message = result.message
