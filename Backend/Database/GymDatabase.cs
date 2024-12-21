@@ -25,7 +25,7 @@ namespace Backend.Database{
         }*/
 
        
-        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=AmrAshraf@0135789@;";
+        private const string connectionString = "Server=127.0.0.1;User=root;Password=$$eif@eldin_1020;";
         //Create connection 
         public MySqlConnection ConnectToDatabase(){
             return new MySqlConnection(connectionString);
@@ -421,7 +421,7 @@ namespace Backend.Database{
                         Description VARCHAR(500) , 
                         Location VARCHAR(200),
                         Created_By_ID INT , 
-                        FOREIGN KEY(Created_By_ID) REFERENCES User(Created_By_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                        FOREIGN KEY(Created_By_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
                 createEventsTableCommand.ExecuteNonQuery();
