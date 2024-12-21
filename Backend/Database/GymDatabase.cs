@@ -437,7 +437,7 @@ namespace Backend.Database{
                 createHolidayTableCommand.ExecuteNonQuery();
 
                 var creatBlackListedTokenTable = new MySqlCommand(@"
-                    CREATE TABLE BlacklistedTokens (
+                    CREATE TABLE IF NOT EXISTS BlacklistedTokens (
                         Token VARCHAR(500) NOT NULL
                     );
                 " , connection);
