@@ -146,7 +146,7 @@ namespace Backend.Services
                     command.Parameters.AddWithValue("@Id", idclient);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
-                        return (true, "Assign Client To Coach successfully");
+                        return (true, $"Assign Client:{idclient} To Coach:{idcoach} successfully");
                     else
                         return (false, "Failed to Assign Client To Coach");
                 }

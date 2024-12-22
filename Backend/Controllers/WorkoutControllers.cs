@@ -73,7 +73,6 @@ namespace Backend.Controllers
        [HttpDelete("{id}")]
         public IActionResult DeleteWorkout(int id)
         {
-            Console.WriteLine("Hel!!!!");
             var result = WorkoutService.DeleteWorkout(id);
             // Return success response after deletion
             if (result.success)

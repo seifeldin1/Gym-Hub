@@ -103,6 +103,32 @@ namespace Backend.Services
                 }
             }
         }
+        //* MoveCoach : Branch Manager can move coach to another branch
+          public (bool success, string message)MoveCoach(int wfb,int coachid)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Coach SET Works_For_Branch = @Works_For_Branch WHERE  Coach_ID =@Coach_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Works_For_Branch",wfb);
+                    command.Parameters.AddWithValue("@Coach_ID",coachid);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, $"Coach:{coachid} moved to Branch:{wfb} successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Set Moving coach");
+                    }
+                }
+            }
+
+        }
         
         //* UpdateCoachData : Update Coach Data in Coach Relation
         public (bool success, string message) UpdateCoachData(CoachModel entry)

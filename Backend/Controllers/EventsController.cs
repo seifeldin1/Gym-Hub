@@ -28,9 +28,9 @@ namespace Backend.Controllers
         }
 
 
-        [HttpDelete]
-        public IActionResult DeleteEvent([FromBody] int eventID){
-            var result = eventService.DeleteEvent(eventID);
+        [HttpDelete("{id}")]
+        public IActionResult DeleteEvent( int id){
+            var result = eventService.DeleteEvent(id);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }

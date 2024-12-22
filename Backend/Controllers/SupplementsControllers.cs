@@ -70,8 +70,8 @@ namespace Backend.Controllers
             var supplementList = supplementsService.GetSupplements();
             return Ok(supplementList);
         }
-        [HttpDelete]
-        public IActionResult DeleteSupplement([FromBody] int id)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteSupplement(int id)
         {
 
             var result = supplementsService.DeleteSupplement(id);

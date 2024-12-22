@@ -44,8 +44,8 @@ namespace Backend.Controllers
             return Ok(jobpostList);
         }
 
-        [HttpDelete]
-        public IActionResult DeleteJobPost([FromBody] int id)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteJobPost(int id)
         {
 
             var result = jobpostService.DeleteJobPost(id);
