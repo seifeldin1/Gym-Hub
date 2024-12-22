@@ -104,7 +104,7 @@ namespace Backend.Services
             }
         }
         //* MoveCoach : Branch Manager can move coach to another branch
-          public (bool success, string message)MoveCoach(int wfb,int coachid)
+        public (bool success, string message) MoveCoach(int wfb, int coachid)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -112,8 +112,8 @@ namespace Backend.Services
                 string query = "UPDATE Coach SET Works_For_Branch = @Works_For_Branch WHERE  Coach_ID =@Coach_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Works_For_Branch",wfb);
-                    command.Parameters.AddWithValue("@Coach_ID",coachid);
+                    command.Parameters.AddWithValue("@Works_For_Branch", wfb);
+                    command.Parameters.AddWithValue("@Coach_ID", coachid);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -129,7 +129,7 @@ namespace Backend.Services
             }
 
         }
-        
+
         //* UpdateCoachData : Update Coach Data in Coach Relation
         public (bool success, string message) UpdateCoachData(CoachModel entry)
         {
@@ -276,10 +276,10 @@ namespace Backend.Services
                     parameters.Add(new MySqlParameter("@Username", entry.Username));
                 }
 
-                if (entry.PasswordHashed != null)
+                if (entry.Password != null)
                 {
                     setClauses.Add("PasswordHashed = @PasswordHashed");
-                    parameters.Add(new MySqlParameter("@PasswordHashed", entry.PasswordHashed));
+                    parameters.Add(new MySqlParameter("@PasswordHashed", entry.Password));
                 }
 
                 if (entry.First_Name != null)

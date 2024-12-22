@@ -44,10 +44,13 @@ namespace Backend.Controllers
             return Ok(branchList);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult DeleteBranch([FromBody] int id)
         {
-
+             if (id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Branch ID provided." });
+            }
             var result = branchService.DeleteBranch(id);
             // Return success response after deletion
             if (result.success)

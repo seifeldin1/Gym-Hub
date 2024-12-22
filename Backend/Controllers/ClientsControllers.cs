@@ -40,6 +40,12 @@ namespace Backend.Controllers
             // Return the JSON result
 
         }
+          [HttpGet]
+        public IActionResult GetWorkouts()
+        {
+            var clientList = ClientsService.GetClient();
+            return Ok(clientList);
+        }
 
          [HttpPut("AccountActivity")]
         public IActionResult AccountActivity([FromBody] activeModel activ)

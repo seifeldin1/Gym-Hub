@@ -73,7 +73,10 @@ namespace Backend.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteSupplement(int id)
         {
-
+             if (id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Supplement ID provided." });
+            }
             var result = supplementsService.DeleteSupplement(id);
             // Return success response after deletion
             if (result.success)

@@ -20,11 +20,8 @@ namespace Backend.Services
             {
                 connection.Open();
 
-                string query = @"INSERT INTO Client 
-                    (Client_ID, Join_Date,BMR, Weight_kg, Height_cm, Belong_To_Coach_ID,AccountActivated, Start_Date_Membership, End_Date_Membership, Membership_Type,
-                    Fees_Of_Membership, Membership_Period_Months)
-                    VALUES (@Client_ID, @Join_Date, @BMR, @Weight_kg, @Height_cm, @Belong_To_Coach_ID,@AccountActivated,@Start_Date_Membership, @End_Date_Membership,
-                    @Membership_Type, @Fees_Of_Membership, @Membership_Period_Months);";
+                string query = @"INSERT INTO Client (Client,Join_Date, BMR, Weight_kg, Height_cm, Belong_To_Coach_ID, AccountActivated, Start_Date_Membership, End_Date_Membership, Membership_Type,  Fees_Of_Membership, Membership_Period_Months) VALUES (@Client_ID,@Join_Date, @BMR, @Weight_kg, @Height_cm, @Belong_To_Coach_ID, @AccountActivated, @Start_Date_Membership, @End_Date_Membership,  @Membership_Type, @Fees_Of_Membership, @Membership_Period_Months);";
+                ;
 
                 using (var command = new MySqlCommand(query, connection))
                 {
@@ -76,7 +73,7 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "SELECT * FROM Client;";
+                string query = "SELECT * FROM User AS U JOIN Client AS C ON U.User_ID = C.Client_ID";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -87,6 +84,17 @@ namespace Backend.Services
                         {
                             ClientsList.Add(new ClientsModel
                             {
+                                User_ID = reader.GetInt32("User_ID"),
+                                Username = reader.GetString("Username"),
+                                Password = reader.GetString("Password"),
+                                Type = reader.GetString("Type"),
+                                First_Name = reader.GetString("First_Name"),
+                                Last_Name = reader.GetString("Last_Name"),
+                                Email = reader.GetString("Email"),
+                                Phone_Number = reader.GetString("Phone_Number"),
+                                Gender = reader.GetString("Gender"),
+                                Age  = reader.GetInt32("Age "),
+                                National_Number=reader.GetOrdinal("National_Number"),
                                 Client_ID = reader.GetInt32("Client_ID"),
                                 Join_Date = DateOnly.FromDateTime(reader.GetDateTime("Join_Date")),
                                 BMR = reader.GetInt32("BMR"),
@@ -246,10 +254,10 @@ namespace Backend.Services
                     parameters.Add(new MySqlParameter("@Username", entry.Username));
                 }
 
-                if (entry.PasswordHashed != null)
+                if (entry.Password != null)
                 {
                     setClauses.Add("PasswordHashed = @PasswordHashed");
-                    parameters.Add(new MySqlParameter("@PasswordHashed", entry.PasswordHashed));
+                    parameters.Add(new MySqlParameter("@PasswordHashed", entry.Password));
                 }
 
                 if (entry.First_Name != null)

@@ -47,7 +47,10 @@ namespace Backend.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteJobPost(int id)
         {
-
+             if (id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Job Post ID provided." });
+            }
             var result = jobpostService.DeleteJobPost(id);
             // Return success response after deletion
             if (result.success)

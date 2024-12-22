@@ -20,6 +20,14 @@ namespace Backend.Controllers
          [HttpPut("MoveCoach")]
         public IActionResult MoveCoach([FromBody] MovingModel entry )
         {
+             if (entry.coachid <= 0)
+            {
+                return BadRequest(new { message = "Invalid Coach ID provided." });
+            }
+             if (entry.wfb <= 0)
+            {
+                return BadRequest(new { message = "Invalid Branch ID provided." });
+            }
             // Call the service to Assign client To coach
             var result =coachservice.MoveCoach(entry.wfb,entry.coachid);         // Return success response after update
             if (result.success)

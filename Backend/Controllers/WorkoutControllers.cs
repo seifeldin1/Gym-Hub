@@ -73,6 +73,10 @@ namespace Backend.Controllers
        [HttpDelete("{id}")]
         public IActionResult DeleteWorkout(int id)
         {
+             if (id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Workout ID provided." });
+            }
             var result = WorkoutService.DeleteWorkout(id);
             // Return success response after deletion
             if (result.success)
