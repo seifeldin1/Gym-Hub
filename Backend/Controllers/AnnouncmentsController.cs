@@ -15,7 +15,7 @@ namespace Backend.Controllers
         {
             this.ann_Service = ann_Service;
         }
-        [HttpPost]
+        [HttpPost("add")]
         public IActionResult AddAnnouncement([FromBody] AnnouncementsModel entry)
         {
             // Call the service method to add the workout

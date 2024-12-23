@@ -5,21 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/Branch")]
-    public class BranchController : ControllerBase
+    [Route("api/Coach")]
+    public class CoachController : ControllerBase
     {
-        private readonly Branch branchService;
+        private readonly CoachesServices coachservice;
 
-        public BranchController(Branch branchService)
+        public CoachController(CoachesServices coachservice)
         {
-            this.branchService = branchService;
+            this.coachservice = coachservice;
         }
 
-        [HttpPost]
-        public IActionResult AddBranch([FromBody] BranchModel entry)
+        [HttpPost("add")]
+        public IActionResult AddCoach([FromBody] CoachModel entry)
         {
-            // Call the service method to add the Branch
-            var result = branchService.AddBranch(entry);
+            var result = coachservice.AddCoach(entry);
             if (result.success)
             {
                 return Ok(new
@@ -35,23 +34,22 @@ namespace Backend.Controllers
                 success = false,
                 message = result.message
             });
-            // Return the JSON result
+
         }
         [HttpGet]
-        public IActionResult GetBranches()
+        public IActionResult GetCoaches()
         {
-            var branchList = branchService.GetBranches();
-            return Ok(branchList);
+            var coachList =coachservice.GetCoach();
+            return Ok(coachList);
         }
-
         [HttpDelete("{id}")]
-        public IActionResult DeleteBranch([FromBody] int id)
+        public IActionResult DeleteCoach(int id)
         {
-             if (id <= 0)
+            if (id <= 0)
             {
-                return BadRequest(new { message = "Invalid Branch ID provided." });
+                return BadRequest(new { message = "Invalid Coach ID provided." });
             }
-            var result = branchService.DeleteBranch(id);
+            var result = coachservice.DeleteCoach(id);
             // Return success response after deletion
             if (result.success)
             {
@@ -69,12 +67,11 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-
-        [HttpPut]
-        public IActionResult UpdateBranch([FromBody] BranchModel UpdatedBranch)
+        [HttpPut("UpdateCoachData")]
+        public IActionResult UpdateCoachData([FromBody] CoachModel entry)
         {
             // Call the service to update the Branch
-            var result = branchService.UpdateBranch(UpdatedBranch);
+            var result = coachservice.UpdateCoachData(entry);
             // Return success response after update
             if (result.success)
             {
@@ -92,11 +89,22 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-        [HttpPut("woking-hours")]
-        public IActionResult SetWorkingHours([FromBody] TimeModel time)
+
+
+
+        [HttpPut("MoveCoach")]
+        public IActionResult MoveCoach([FromBody] MovingModel entry)
         {
-            // Call the service to set new working Hours
-            var result = branchService.SetWorkingHours(time.BranchId,time.opt,time.clt);            // Return success response after update
+            if (entry.coachid <= 0)
+            {
+                return BadRequest(new { message = "Invalid Coach ID provided." });
+            }
+            if (entry.wfb <= 0)
+            {
+                return BadRequest(new { message = "Invalid Branch ID provided." });
+            }
+            // Call the service to Assign client To coach
+            var result = coachservice.MoveCoach(entry.wfb, entry.coachid);         // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -114,12 +122,13 @@ namespace Backend.Controllers
             });
         }
 
-    }
 
-    public class TimeModel{
-        public TimeSpan opt { get; set; }
-        public TimeSpan clt { get; set; }
-        public int BranchId {get; set;}
 
     }
+    public class MovingModel
+    {
+        public int wfb { get; set; }
+        public int coachid { get; set; }
+    }
+
 }

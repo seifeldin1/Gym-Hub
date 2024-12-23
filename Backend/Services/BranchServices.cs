@@ -95,6 +95,7 @@ namespace Backend.Services
                 }
             }
         }
+        
         public (bool success, string message) SetWorkingHours(int id,TimeSpan opt,TimeSpan clt)
         {
             using (var connection = database.ConnectToDatabase())

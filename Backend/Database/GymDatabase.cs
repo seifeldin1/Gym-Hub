@@ -392,9 +392,11 @@ namespace Backend.Database{
                     CREATE TABLE IF NOT EXISTS Recommandation(
                         Recommendation_ID INT PRIMARY KEY AUTO_INCREMENT,
                         Client_ID INT NOT NULL,
-                        Plan_ID,
-                        Supplement_ID,
-                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                        Plan_ID INT,
+                        Supplement_ID INT,
+                        FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                         FOREIGN KEY(Plan_ID) REFERENCES Client(Plan_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                          FOREIGN KEY(Supplement_ID) REFERENCES Client(Supplement_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
                 createProgressTableCommand.ExecuteNonQuery();

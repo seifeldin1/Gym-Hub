@@ -18,29 +18,57 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "INSERT INTO Coach(Coach_ID,Salary,Penalties,Bonuses,Hire_Date,Fire_Date,Experience_Years,Works_For_Branch,Daily_Hours_Worked,Shift_Start,Shift_Ends,Speciality,Status,Contract_Length) VALUES (@Coach_ID,@Salary,@Penalties,@Bonuses,@Hire_Date,@Fire_Date,@Experience_Years,@Works_For_Branch,@Daily_Hours_Worked,@Shift_Start,@Shift_Ends,@Speciality,@Status,@Contract_Length);";
-                using (var command = new MySqlCommand(query, connection))
+                var userQuery = @"
+                    INSERT INTO User 
+                    (Username,PasswordHashed,Type,First_Name,Last_Name,Email,Phone_Number,Gender,National_Number)
+                    VALUES (@Username,@PasswordHashed,@Type, @First_Name,@Last_Name,@Email,@Phone_Number,@Gender,@National_Number);
+                    SELECT LAST_INSERT_ID();
+                ";
+                using (var usercommand = new MySqlCommand(userQuery, connection))
                 {
-                    command.Parameters.AddWithValue("@Coach_ID",entry.Coach_ID);
-                    command.Parameters.AddWithValue("@Salary",entry.Salary);
-                    command.Parameters.AddWithValue("@Penalties",entry.Penalties);
-                    command.Parameters.AddWithValue("@Bonuses",entry.Bonuses);
-                    command.Parameters.AddWithValue("@Hire_Date",entry.Hire_Date);
-                    command.Parameters.AddWithValue("@Fire_Date",entry.Fire_Date);
-                    command.Parameters.AddWithValue("@Experience_Years",entry.Experience_Years);
-                    command.Parameters.AddWithValue("@Works_For_Branch",entry.Works_For_Branch);
-                    command.Parameters.AddWithValue("@Daily_Hours_Worked",entry.Daily_Hours_Worked);
-                    command.Parameters.AddWithValue("@Shift_Start",entry.Shift_Start);
-                    command.Parameters.AddWithValue("@Shift_Ends",entry.Shift_Ends);
-                    command.Parameters.AddWithValue("@Speciality",entry.Speciality);
-                    command.Parameters.AddWithValue("@Status",entry.Status);
-                    command.Parameters.AddWithValue("@Contract_Length",entry.Contract_Length);
 
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                        return (true, "Coach added successfully");
-                    else
-                        return (false, "Failed to add Coach");
+                    var userCommand = new MySqlCommand(userQuery, connection);
+                    userCommand.Parameters.AddWithValue("@Username", entry.Username);
+                    userCommand.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
+                    userCommand.Parameters.AddWithValue("@Type", entry.Type);
+                    userCommand.Parameters.AddWithValue("@Email", entry.Email);
+                    userCommand.Parameters.AddWithValue("@First_Name", entry.First_Name);
+                    userCommand.Parameters.AddWithValue("@Last_Name", entry.Last_Name);
+                    userCommand.Parameters.AddWithValue("@Phone_Number", entry.Phone_Number);
+                    userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
+                    userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
+                    int Coach_ID = (int)Convert.ToInt64(userCommand.ExecuteScalar());
+                    string query = "INSERT INTO Coach(Coach_ID,Salary,Penalties,Bonuses,Hire_Date,Fire_Date,Experience_Years,Works_For_Branch,Daily_Hours_Worked,Shift_Start,Shift_Ends,Speciality,Status,Contract_Length) VALUES (@Coach_ID,@Salary,@Penalties,@Bonuses,@Hire_Date,@Fire_Date,@Experience_Years,@Works_For_Branch,@Daily_Hours_Worked,@Shift_Start,@Shift_Ends,@Speciality,@Status,@Contract_Length);";
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Coach_ID", Coach_ID);
+                        command.Parameters.AddWithValue("@Salary", entry.Salary);
+                        command.Parameters.AddWithValue("@Penalties", entry.Penalties);
+                        command.Parameters.AddWithValue("@Bonuses", entry.Bonuses);
+                        command.Parameters.AddWithValue("@Hire_Date", entry.Hire_Date.ToString("yyyy-MM-dd"));
+                        if (entry.Fire_Date.HasValue)
+                        {
+                            command.Parameters.AddWithValue("@Fire_Date", entry.Fire_Date.Value.ToString("yyyy-MM-dd"));
+                        }
+                        else
+                        {
+                            command.Parameters.AddWithValue("@Fire_Date", DBNull.Value);
+                        }
+                        command.Parameters.AddWithValue("@Experience_Years", entry.Experience_Years);
+                        command.Parameters.AddWithValue("@Works_For_Branch", entry.Works_For_Branch);
+                        command.Parameters.AddWithValue("@Daily_Hours_Worked", entry.Daily_Hours_Worked);
+                        command.Parameters.AddWithValue("@Shift_Start", entry.Shift_Start);
+                        command.Parameters.AddWithValue("@Shift_Ends", entry.Shift_Ends);
+                        command.Parameters.AddWithValue("@Speciality", entry.Speciality);
+                        command.Parameters.AddWithValue("@Status", entry.Status);
+                        command.Parameters.AddWithValue("@Contract_Length", entry.Contract_Length);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                            return (true, "Coach added successfully");
+                        else
+                            return (false, "Failed to add Coach");
+                    }
                 }
             }
         }
@@ -51,10 +79,10 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "DELETE FROM Coach WHERE Coach_ID=@Id;";
+                string query = "DELETE FROM User WHERE User_ID=@User_ID  ;";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Id", id);
+                    command.Parameters.AddWithValue("@User_ID", id);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                         return (true, "Coach Deleted successfully");
@@ -80,6 +108,11 @@ namespace Backend.Services
                         //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
                         while (reader.Read())
                         {
+                            DateTime? Fire_Date = null;
+                            if (!reader.IsDBNull(reader.GetOrdinal("Fire_Date")))
+                            {
+                                Fire_Date = reader.GetDateTime(reader.GetOrdinal("Fire_Date"));
+                            }
                             CoachList.Add(new CoachModel
                             {
                                 Coach_ID = reader.GetInt32("Coach_ID"),
@@ -87,7 +120,7 @@ namespace Backend.Services
                                 Penalties = reader.GetInt32("Penalties"),
                                 Bonuses = reader.GetInt32("Bonuses"),
                                 Hire_Date = DateOnly.FromDateTime(reader.GetDateTime("Hire_Date")),
-                                Fire_Date = DateOnly.FromDateTime(reader.GetDateTime("Fire_Date")),
+                                Fire_Date = Fire_Date.HasValue ? DateOnly.FromDateTime(Fire_Date.Value) : (DateOnly?)null,
                                 Experience_Years = reader.GetInt32("Experience_Years"),
                                 Works_For_Branch = reader.GetInt32("Works_For_Branch"),
                                 Daily_Hours_Worked = reader.GetInt32("Daily_Hours_Worked"),
@@ -103,7 +136,33 @@ namespace Backend.Services
                 }
             }
         }
-        
+        //* MoveCoach : Branch Manager can move coach to another branch
+        public (bool success, string message) MoveCoach(int wfb, int coachid)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Coach SET Works_For_Branch = @Works_For_Branch WHERE  Coach_ID =@Coach_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Works_For_Branch", wfb);
+                    command.Parameters.AddWithValue("@Coach_ID", coachid);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, $"Coach:{coachid} moved to Branch:{wfb} successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Set Moving coach");
+                    }
+                }
+            }
+
+        }
+
         //* UpdateCoachData : Update Coach Data in Coach Relation
         public (bool success, string message) UpdateCoachData(CoachModel entry)
         {

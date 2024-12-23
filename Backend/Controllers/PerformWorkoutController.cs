@@ -15,20 +15,23 @@ namespace Backend.Controllers
             this.performWorkoutService = performWorkoutService;
         }
         [HttpGet]
-        public IActionResult GetSessionsHistory([FromBody] PerformWorkoutModel entry)
+        public IActionResult GetSessionsHistory([FromBody] Sessionshistory Sessionshistory)
         {
-            if (entry.Client_ID <= 0)
+            if (Sessionshistory.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Client ID provided." });
             }
 
-            var result = performWorkoutService.GetSessionsHistory(entry);
+            var result = performWorkoutService.GetPerformWorkoutsByClientId(Sessionshistory.id);
             if (result == null || result.Count == 0)
             {
-                return NotFound(new { message = "No sessions found for the given client ID." });
+                return NotFound(new { message = "No sessions found for the given client ID."});
             }
             return Ok(result);
         }
     }
-
+public class Sessionshistory
+{
+ public int id { get; set; }
+}
 }

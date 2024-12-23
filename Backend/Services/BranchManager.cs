@@ -62,6 +62,31 @@ namespace Backend.Services
                 }
             }
         }
+         public (bool success, string message) ChangeBranchManager(int branchid,int branchmanagerid)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Branch_Manager SET Manages_Branch_ID=@Manages_Branch_ID WHERE Branch_Manager_ID=@Branch_Manager_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Manages_Branch_ID",branchid);
+                    command.Parameters.AddWithValue("@Branch_Manager_ID",branchmanagerid );
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, $"Branch:{branchid} changed its Manager to :{branchmanagerid}");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Change Branch Manager");
+                    }
+                }
+            }
+
+        }
 
         //* GetBranchManager : Gets Branch Manager Data from Branch Manager Relation
         public List<BranchManagerModel> GetBranchManager()
@@ -98,35 +123,6 @@ namespace Backend.Services
             }
         }
 
-        //* MoveCoach : Branch Manager can move coach to another branch
-        public (bool success, string message) MoveCoach(CoachModel entry)
-        {
-            if (entry == null)
-                return (false, "Coach data is null.");
-                
-            try
-            {
-                using (var connection = database.ConnectToDatabase())
-                {
-                    connection.Open();
-                    string query = "UPDATE Coach SET Works_For_Branch=@newbranchID WHERE Coach_ID=@Coach_ID";
-                    using (var command = new MySqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@newbranchID", entry.Works_For_Branch);
-                        command.Parameters.AddWithValue("@Coach_ID", entry.Coach_ID);
-                        int rowsAffected = command.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                            return (true, "Coach Moved  successfully");
-                        else        
-                            return (false, "Failed to Move Coach");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return (false, $"Error: {ex.Message}");
-            }
-        }
 
         //* UpdateBranchManagerData : Update Branch Manager Data in Branch Manager relation
         public (bool success, string message) UpdateBranchManagerData(BranchManagerModel entry)
