@@ -32,10 +32,10 @@ namespace Backend.Services
                     parameters.Add(new MySqlParameter("@Username", entry.Username));
                 }
 
-                if (entry.Password != null)
+                if (entry.PasswordHashed != null)
                 {
                     setClauses.Add("PasswordHashed = @PasswordHashed");
-                    parameters.Add(new MySqlParameter("@PasswordHashed", entry.Password));
+                    parameters.Add(new MySqlParameter("@PasswordHashed", entry.PasswordHashed));
                 }
 
                 if (entry.First_Name != null)

@@ -18,14 +18,19 @@ namespace Backend.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult AddJobPost([FromBody] UserModel entry)
+        public IActionResult AddUser([FromBody] UserModel entry)
         {
-            if (entry.National_Number != null)
-        {
-            // If the National_Number comes as a string, parse it
-            entry.National_Number = BigInteger.Parse(entry.National_Number.ToString());
-        }
-            // Call the service method to add the Branch
+            if (!string.IsNullOrEmpty(entry.National_Number))
+            {
+                try
+                {
+                    var nationalNumber = BigInteger.Parse(entry.National_Number);
+                }
+                catch
+                {
+                    return BadRequest(new { success = false, message = "Invalid format for National_Number." });
+                }
+            }
             var result = UsersServices.AddUser(entry);
             if (result.success)
             {

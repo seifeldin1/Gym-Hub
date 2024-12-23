@@ -9,16 +9,20 @@ namespace Backend.Controllers
     public class ClientsController : ControllerBase
     {
         private readonly Clients ClientsService;
+        private readonly UsersServices UsersServices;
 
-        public ClientsController(Clients ClientsService)
+        public ClientsController(Clients ClientsService, UsersServices UsersServices)
         {
             this.ClientsService = ClientsService;
+            this.UsersServices = UsersServices;
         }
 
         [HttpPost("add")]
         public IActionResult AddClient([FromBody] ClientsModel entry)
         {
             // Call the service method to add the client
+            // var result2=UsersServices.AddUser(entry.user);
+            //int id=ClientsService.GetUserID(entry.user.Username);
             var result = ClientsService.AddClient(entry);
             if (result.success)
             {
@@ -40,18 +44,18 @@ namespace Backend.Controllers
             // Return the JSON result
 
         }
-          [HttpGet]
+        [HttpGet]
         public IActionResult GetWorkouts()
         {
             var clientList = ClientsService.GetClient();
             return Ok(clientList);
         }
 
-         [HttpPut("AccountActivity")]
+        [HttpPut("AccountActivity")]
         public IActionResult AccountActivity([FromBody] activeModel activ)
         {
             // Call the service to Assign client To coach
-            var result = ClientsService.AccountActivity(activ.activ,activ.id);            // Return success response after update
+            var result = ClientsService.AccountActivity(activ.activ, activ.id);            // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -73,7 +77,7 @@ namespace Backend.Controllers
         public IActionResult AssignClientToCoach([FromBody] CTC ctc)
         {
             // Call the service to Assign client To coach
-            var result = ClientsService.AssignClientToCoach(ctc.idcoach,ctc.idclient);            // Return success response after update
+            var result = ClientsService.AssignClientToCoach(ctc.idcoach, ctc.idclient);            // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -92,11 +96,13 @@ namespace Backend.Controllers
         }
 
     }
-    public class CTC{
+    public class CTC
+    {
         public int idcoach { get; set; }
         public int idclient { get; set; }
     }
-    public class activeModel{
+    public class activeModel
+    {
         public bool activ { get; set; }
         public int id { get; set; }
     }

@@ -19,13 +19,13 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query ="INSERT INTO User (Username,Password,Type,First_Name,Last_Name,Email,Phone_Number,Gender,Age,National_Number) VALUES (@Username,@Password,@Type,@First_Name,@Last_Name,@Email,@Phone_Number,@Gender,@Age,@National_Number);";
+                string query ="INSERT INTO User (Username,PasswordHashed,Type,First_Name,Last_Name,Email,Phone_Number,Gender,Age,National_Number) VALUES (@Username,@PasswordHashed,@Type,@First_Name,@Last_Name,@Email,@Phone_Number,@Gender,@Age,@National_Number);";
                 
 
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Username", entry.Username);
-                    command.Parameters.AddWithValue(BCrypt.Net.BCrypt.HashPassword("@password"), entry.Password);
+                    command.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
                     command.Parameters.AddWithValue("@Type", entry.Type);
                     command.Parameters.AddWithValue("@First_Name", entry.First_Name);
                     command.Parameters.AddWithValue("@Last_Name", entry.Last_Name);

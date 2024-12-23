@@ -42,6 +42,9 @@ builder.Services.AddScoped<CoachesServices>();
 builder.Services.AddScoped<BranchManagers>();
 builder.Services.AddScoped<PerformWorkout>();
 builder.Services.AddScoped<UsersServices>();
+builder.Services.AddScoped<AnnouncementsServices>();
+
+
 
 
 
