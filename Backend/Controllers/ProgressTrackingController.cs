@@ -13,21 +13,45 @@ namespace Backend.Controllers{
         }
 
         [HttpPost]
-        public IActionResult CreateProgress([FromBody] PersonModel person){
-            var result = progressService.AddProgress(person.Id , person.Weight);
+        public IActionResult CreateProgress([FromBody] ProgressModel entry){
+            var result = progressService.AddProgress(entry);
             if(result.success) return Ok(new{success = result.success , message = result.message});
             return BadRequest(new { success = result.success , message = result.message });
         }
 
         [HttpGet]
-        public IActionResult GetProgress([FromBody] int id){
-            var result = progressService.GetProgressByClientId(id);
+        public IActionResult GetProgress([FromBody] GetByIDModel getByID){
+            var result = progressService.GetProgressByClientId(getByID.id);
             return Ok(result);
         }
+        [HttpPut]
+        public IActionResult Updateprogress([FromBody] ProgressModel entry)
+        {
+            // Call the service to update the Branch
+            var result = progressService.UpdateProgress(entry);
+            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+
 
     }
-    public class PersonModel{
-        public int Id { get; set; }
-        public double Weight { get; set; }
+     public class GetByIDModel
+    {
+        public int id { get; set; }
     }
+    
 }

@@ -46,6 +46,9 @@ builder.Services.AddScoped<AnnouncementsServices>();
 builder.Services.AddScoped<SalaryServices>();
 builder.Services.AddScoped<PenaltyServices>();
 builder.Services.AddScoped<BonusServices>();
+builder.Services.AddScoped<MeetingsServices>();
+builder.Services.AddScoped<ProgressServices>();
+
 
 
 

@@ -166,6 +166,33 @@ namespace Backend.Services
             }
 
         }
+        
+        public (bool success, string message) AddRateCoach(RatingModel entry)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "INSERT INTO Ratings (Coach_ID,Client_ID,Rate) VALUES (@Coach_ID,@Client_ID,@Rate);";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Coach_ID",entry.Coach_ID);
+                    command.Parameters.AddWithValue("@Client_ID",entry.Client_ID);
+                    command.Parameters.AddWithValue("@Rate",entry.Rate);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Rating added successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to add Rating");
+                    }
+                }
+            }
+
+        }
 
         //* AssignClientToCoach : Assign a coach to a Client
         public (bool success, string message) AssignClientToCoach(int idcoach, int idclient)

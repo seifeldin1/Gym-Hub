@@ -17,7 +17,7 @@ namespace Backend.Controllers
             this.UsersServices = UsersServices;
         }
 
-        [HttpPost("add")]
+        [HttpPost("addclient")]
         public IActionResult AddClient([FromBody] ClientsModel entry)
         {
             var result = ClientsService.AddClient(entry);
@@ -36,10 +36,26 @@ namespace Backend.Controllers
                 success = false,
                 message = result.message
             });
+        }
+               [HttpPost("addrating")]
+        public IActionResult AddRating([FromBody] RatingModel entry)
+        {
+            var result = ClientsService.AddRateCoach(entry);
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
 
+                });
+            }
 
-            // Return the JSON result
-
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
         }
         [HttpGet]
         public IActionResult GetWorkouts()
