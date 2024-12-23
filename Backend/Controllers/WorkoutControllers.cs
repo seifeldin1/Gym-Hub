@@ -40,7 +40,7 @@ namespace Backend.Controllers
 
             // Return the JSON result
         }
-        
+
         [HttpGet]
         public IActionResult GetWorkouts()
         {
@@ -70,10 +70,10 @@ namespace Backend.Controllers
             });
         }
 
-       [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteWorkout(int id)
         {
-             if (id <= 0)
+            if (id <= 0)
             {
                 return BadRequest(new { message = "Invalid Workout ID provided." });
             }

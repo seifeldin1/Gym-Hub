@@ -20,9 +20,6 @@ namespace Backend.Controllers
         [HttpPost("add")]
         public IActionResult AddClient([FromBody] ClientsModel entry)
         {
-            // Call the service method to add the client
-            // var result2=UsersServices.AddUser(entry.user);
-            //int id=ClientsService.GetUserID(entry.user.Username);
             var result = ClientsService.AddClient(entry);
             if (result.success)
             {

@@ -9,7 +9,7 @@ namespace Backend.Models
         public int Penalties { get; set; }
         public int Bonuses { get; set; }
         public DateOnly Hire_Date { get; set; }
-        public DateOnly Fire_Date { get; set; }
+        public DateOnly? Fire_Date { get; set; }
         public int Experience_Years { get; set; }
         public int Works_For_Branch { get; set; }
         public int Daily_Hours_Worked { get; set; }
