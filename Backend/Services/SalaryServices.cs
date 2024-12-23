@@ -8,18 +8,31 @@ namespace Backend.Services{
             this.database = database;
         }
 
-        public (bool sucess , string message) updateCoachSalary(int salary , int id){
-            using(var connection = database.ConnectToDatabase()){
+        public (bool sucess, string message) updateCoachSalary(int salary, int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
                 connection.Open();
                 string query = "UPDATE Coach SET Salary = @Salary WHERE Coach_ID = @CoachID";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@Salary" , salary);
-                    command.Parameters.AddWithValue("@CoachID" , id);
-                    command.ExecuteNonQuery();
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Salary", salary);
+                    command.Parameters.AddWithValue("@CoachID", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Salary Udated successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Update Salary");
+                    }
                 }
-                return(true , "salary for coach updated successfully");
             }
         }
+    
 
         public (bool sucess , string message) updateBranchManagerSalary(int salary , int id){
             using(var connection = database.ConnectToDatabase()){

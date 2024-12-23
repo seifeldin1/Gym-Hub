@@ -43,6 +43,11 @@ builder.Services.AddScoped<BranchManagers>();
 builder.Services.AddScoped<PerformWorkout>();
 builder.Services.AddScoped<UsersServices>();
 builder.Services.AddScoped<AnnouncementsServices>();
+builder.Services.AddScoped<SalaryServices>();
+builder.Services.AddScoped<PenaltyServices>();
+builder.Services.AddScoped<BonusServices>();
+
+
 
 
 

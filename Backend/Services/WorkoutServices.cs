@@ -50,7 +50,6 @@ namespace Backend.Services
             {
                 connection.Open();
                 string query = "DELETE FROM Workout WHERE Workout_ID=@Id;";
-                Console.WriteLine("Hello, World!!!!");
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
