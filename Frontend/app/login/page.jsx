@@ -131,9 +131,9 @@ const LoginPage = () => {
                                         // '&.Mui-focused': {
                                         //     color: darkMode ? 'white' : '#FDE047', // Color when focused
                                         // },
-                                        color: darkMode ? 'white' : '#FDE047', // Default label color
+                                        color: '#FDE047', // Default label color
                                         '&.Mui-focused': {
-                                            color: darkMode ? 'white' : '#FDE047', // Color when focused
+                                            color: '#FDE047', // Color when focused
                                         },
                                     },
                                 }}
@@ -159,9 +159,9 @@ const LoginPage = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                                 InputLabelProps={{
                                     sx: {
-                                        color: darkMode ? 'white' : '#FDE047', // Default label color
+                                        color: '#FDE047', // Default label color
                                         '&.Mui-focused': {
-                                            color: darkMode ? 'white' : '#FDE047', // Color when focused
+                                            color: '#FDE047', // Color when focused
                                         },
                                     },
                                 }}

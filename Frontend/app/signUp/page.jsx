@@ -5,7 +5,11 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
+import styles from '@styles/signUp.module.css'
+import { Typography  , MenuItem , RadioGroup , FormControlLabel , Radio} from "@mui/material";
 //import style from '@styles/signup.module.css'
+import HomeImage from '@public/images/signUp_photo1.png';
+
 
 const SignUpPage = ()=>{
     const[formData , setFormData] = useState({
@@ -46,12 +50,10 @@ const SignUpPage = ()=>{
             newErrors.lastName = "Last name must be at least 3 characters long"
         if(formData.email.length < 5)
             newErrors.email = "Email must be at least 5 characters long"
-        if(formData.phoneNumber.length < 10)
-            newErrors.phoneNumber = "Phone number must be at least 10 characters long"
+        if(formData.phoneNumber.length < 13)
+            newErrors.phoneNumber = "Phone number must be at least 13 characters long"
         if(formData.nationalNumber.length < 14)
             newErrors.nationalNumber = "National number must be at least 14 characters long"
-        if(formData.age < 16)
-            newErrors.age = "Age must be at least 16 years old"
         if(!formData.username)
             newErrors.username = "Username is required"
         if(!formData.password)
@@ -68,164 +70,463 @@ const SignUpPage = ()=>{
             newErrors.phoneNumber = "Phone number is required"
         if(!formData.nationalNumber)
             newErrors.nationalNumber = "National number is required"
-        if(formData.age && isNaN(formData.age))
-            newErrors.age = "Age must be a number"
+        if(!formData.age)
+            newErrors.age = "Age is required"
+        if(!formData.gender)
+            newErrors.gender = "Gender is required"
 
-        if(Object.keys(newErrors)>0){
+        if(Object.keys(newErrors).length>0){
             setErrors(newErrors)
             return
         }
-        if (Object.keys(newErrors)==0)alert("Form submitted successfully!")
+        alert("Form submitted successfully!")
 
     };
             
         
-    return(
-        <div className="min-h-screen flex justify-center items-center bg-gray-100 p-4">
-            <form className="bg-white p-6 rounded shadow-md w-full max-w-md " onSubmit={handleSubmit}>
-                <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">
+    return (
+        <>
+        <div className={` ${styles.MainSignUp} ${styles.AnimBackgroundPhoto}`}>
+            <div className="relative">
+                <img className="z-10" src={HomeImage.src} alt="Description of the image" />
+                <div className="absolute inset-0 flex items-center justify-center right-7 ">
+                    <span className="text-white text-5xl ">START</span>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center right-7 top-32">
+                <span className="text-white text-5xl ">TRAINING</span>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center right-7 top-64">
+                <span className="text-white text-5xl  ">TODAY</span>
+                </div>
+
+                
+            </div>
+
+            
+            <div className="text-center mt-12">
+                <h1 className="text-3xl mb-4 text-white">Welcome to Our Gym!</h1>
+                <p className="text-xl text-white">Start your fitness journey today with us.</p>
+                <p className="text-xl text-white">❝ I hated every minute of training, but I said,</p>
+                <p className="text-xl text-white"> ‘Don’t quit. Suffer now and live the rest of your life as a champion.❞ – Muhammad Ali</p>
+            </div>  
+            <div className="p-8 rounded w-full shadow-md max-w-2xl mt-10">
+
+            
+            <form
+                className="rounded shadow-md w-full max-w-2xl"
+                onSubmit={handleSubmit}
+                style={{border:'none' , boxShadow: 'none'}}
+            >
+            
+                <h2 className=" text-3xl mb-8 text-yellow-300 flex items-center justify-center">
                     Sign Up
                 </h2>
-                <TextField
-                id="username"
-                label="Username"
-                name = "username"
-                variant = "outlined"
-                className="mb-4"
-                onChange={handleInputChanges}
-                value={formData.username}
-                fullWidth
-                error={!!errors.username}
-                helperText={errors.username}
-                />
-                <TextField
-                label="Password"
-                variant="outlined"
-                type={showPassword? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleInputChanges}
-                fullWidth
-                className="mb-2"
-                error={!!errors.password}
-                helperText={errors.password}
-                />
-
-                <TextField
-                label="Confirm Password"
-                variant="outlined"
-                type={showPassword? "text" : "password"}
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleInputChanges}
-                fullWidth
-                className="mb-2"
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword}
-                />
-
-                <TextField
-                label="First Name"
-                variant="outlined"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChanges}
-                fullWidth
-                className="mb-2"
-                error={!!errors.firstName}
-                helperText={errors.firstName}
-                />
-
-                <TextField
-                label="Last Name"
-                variant="outlined"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChanges}
-                fullWidth
-                className="mb-2"
-                error={!!errors.lastName}
-                helperText={errors.lastName}
-                />
-
-                <TextField
-                label="Email"
-                variant="outlined"
-                name="email"
-                type = "email"
-                value={formData.email}
-                onChange={handleInputChanges}
-                fullWidth
-                className="mb-2"
-                error={!!errors.email}
-                helperText={errors.email}
-                />
-
-                <TextField
-                label="Phone Number"
-                variant="outlined"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleInputChanges}
-                fullWidth
-                className="mb-2"
-                error={!!errors.phoneNumber}
-                helperText={errors.phoneNumber}
-                />
-
-                <TextField
-                label="Gender"
-                variant="outlined"
-                name="gender"
-                value={formData.gender}
-                onChange={handleInputChanges}
-                fullWidth
-                className="mb-2"
-                />
-
-                <TextField
-                label="Age"
-                variant="outlined"
-                name="age"
-                value={formData.age}
-                onChange={handleInputChanges}
-                fullWidth
-                className="mb-2"
-                error={!!errors.age}
-                helperText={errors.age}
-                />
-
-                <TextField
-                label="National Number"
-                variant="outlined"
-                name="nationalNumber"
-                value={formData.nationalNumber}
-                onChange={handleInputChanges}
-                fullWidth
-                className="mb-2"
-                error={!!errors.nationalNumber}
-                helperText={errors.nationalNumber}
-                />
-
+             
+            
+                <div className="grid grid-cols-2 gap-4">
+                    <TextField
+                    label="First Name"
+                    name="firstName"
+                    variant="outlined"
+                    placeholder="Enter your first name"
+                    value={formData.firstName}
+                    onChange={handleInputChanges}
+                    error={!!errors.firstName}
+                    helperText={errors.firstName}
+                    fullWidth
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none', // Remove border
+                            },
+                            '&:hover fieldset': {
+                                border: 'none', // Remove border on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                border: 'none', // Remove border when focused
+                            },
+                        }}}
+                    InputProps={{
+                        style: {
+                            color: 'yellow', // Input text color
+                            
+                        },
+                        }}
+                    InputLabelProps={{
+                        sx: {
+                            color: '#FDE047', // Default label color
+                            '&.Mui-focused': {
+                                color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+                    />
+                    <TextField
+                    label="Last Name"
+                    name="lastName"
+                    variant="outlined"
+                    placeholder="Enter your last name"
+                    value={formData.lastName}
+                    onChange={handleInputChanges}
+                    error={!!errors.lastName}
+                    helperText={errors.lastName}
+                    fullWidth
+                    InputProps={{
+                        style: {
+                            color: 'yellow', // Input text color
+                            
+                        },
+                        }}
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none', // Remove border
+                            },
+                            '&:hover fieldset': {
+                                border: 'none', // Remove border on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                border: 'none', // Remove border when focused
+                            },
+                        }}}
+                    InputLabelProps={{
+                        sx: {
+                            color: '#FDE047', // Default label color
+                            '&.Mui-focused': {
+                                color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+                    />
+                    <TextField
+                    label="Username"
+                    name="username"
+                    variant="outlined"
+                    placeholder="Choose a username"
+                    value={formData.username}
+                    onChange={handleInputChanges}
+                    error={!!errors.username}
+                    helperText={errors.username}
+                    fullWidth
+                    InputProps={{
+                        style: {
+                            color: 'yellow', // Input text color
+                            
+                        },
+                        }}
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none', // Remove border
+                            },
+                            '&:hover fieldset': {
+                                border: 'none', // Remove border on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                border: 'none', // Remove border when focused
+                            },
+                        }}}
+                    InputLabelProps={{
+                        sx: {
+                            color: '#FDE047', // Default label color
+                            '&.Mui-focused': {
+                                color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+                    />
+                    <TextField
+                    label="Email"
+                    name="email"
+                    variant="outlined"
+                    placeholder="example@example.com"
+                    value={formData.email}
+                    onChange={handleInputChanges}
+                    error={!!errors.email}
+                    helperText={errors.email}
+                    fullWidth
+                    InputProps={{
+                        style: {
+                            color: 'yellow', // Input text color
+                            
+                        },
+                        }}
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none', // Remove border
+                            },
+                            '&:hover fieldset': {
+                                border: 'none', // Remove border on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                border: 'none', // Remove border when focused
+                            },
+                        }}}
+                    InputLabelProps={{
+                        sx: {
+                            color: '#FDE047', // Default label color
+                            '&.Mui-focused': {
+                                color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+                    />
+                    <TextField
+                    label="Password"
+                    type={showPassword? "text" : "password"}
+                    name="password"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleInputChanges}
+                    error={!!errors.password}
+                    helperText={errors.password}
+                    fullWidth
+                    
+                    
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none', // Remove border
+                            },
+                            '&:hover fieldset': {
+                                border: 'none', // Remove border on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                border: 'none', // Remove border when focused
+                            },
+                        }}}
+                    InputLabelProps={{
+                        sx: {
+                            color: '#FDE047', // Default label color
+                            '&.Mui-focused': {
+                                color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+                    InputProps={{
+                        style: {
+                            color: 'yellow', // Input text color
+                        },
+                        endAdornment: (
+                            <IconButton onClick={handleShowPassword} edge="end">
+                                {showPassword ? <VisibilityOffIcon /> :  <VisibilityIcon />}
+                            </IconButton>
+                        )
+                    }}
+                    />
+                    <TextField
+                    label="Confirm Password"
+                    type={showConfirmPassword? "text" :"password"}
+                    name="confirmPassword"
+                    placeholder="Re-enter your password"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChanges}
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword}
+                    fullWidth
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none', // Remove border
+                            },
+                            '&:hover fieldset': {
+                                border: 'none', // Remove border on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                border: 'none', // Remove border when focused
+                            },
+                        }}}
+                    InputLabelProps={{
+                        sx: {
+                            
+                            color: '#FDE047', // Default label color
+                            '&.Mui-focused': {
+                                color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+                    InputProps={{
+                        style: {
+                            color: 'yellow',
+                         }, // Input text color
+                        endAdornment: (
+                            <IconButton onClick={handleShowConfirmPassword} edge="end">
+                                {showConfirmPassword ? <VisibilityOffIcon/> :  <VisibilityIcon/>}
+                            </IconButton>
+                        )
+                    }}
+                    />
+                    <TextField
+                    label="National Number"
+                    name="nationalNumber"
+                    variant="outlined"
+                    placeholder="Enter your national number"
+                    value={formData.nationalNumber}
+                    onChange={handleInputChanges}
+                    error={!!errors.nationalNumber}
+                    helperText={errors.nationalNumber}
+                    fullWidth
+                    InputProps={{
+                        style: {
+                            color: 'yellow', // Input text color
+                            
+                        },
+                        }}
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none', // Remove border
+                            },
+                            '&:hover fieldset': {
+                                border: 'none', // Remove border on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                border: 'none', // Remove border when focused
+                            },
+                        }}}
+                    InputLabelProps={{
+                        sx: {
+                            color: '#FDE047', // Default label color
+                            '&.Mui-focused': {
+                                color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+                    />
+                    <TextField
+                    label="Phone Number"
+                    name="phoneNumber"
+                    variant="outlined"
+                    placeholder="Enter your phone number:+20XXXXXXXXXX"
+                    value={formData.phoneNumber}
+                    onChange={handleInputChanges}
+                    error={!!errors.phoneNumber}
+                    helperText={errors.phoneNumber}
+                    fullWidth
+                    InputProps={{
+                        style: {
+                            color: 'yellow', // Input text color
+                            
+                        },
+                        }}
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none', // Remove border
+                            },
+                            '&:hover fieldset': {
+                                border: 'none', // Remove border on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                border: 'none', // Remove border when focused
+                            },
+                        }}}
+                    InputLabelProps={{
+                        sx: {
+                            color: '#FDE047', // Default label color
+                            '&.Mui-focused': {
+                                color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+                    />
+                    <TextField
+                    select
+                    label="Age"
+                    name="age"
+                    value={formData.age}
+                    onChange={handleInputChanges}
+                    error={!!errors.age}
+                    helperText={errors.age}
+                    fullWidth
+                    InputProps={{
+                        style: {
+                            color: 'yellow', // Input text color
+                            
+                        },
+                        }}
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none', // Remove border
+                            },
+                            '&:hover fieldset': {
+                                border: 'none', // Remove border on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                border: 'none', // Remove border when focused
+                            },
+                        }}}
+                    InputLabelProps={{
+                        sx: {
+                            color: '#FDE047', // Default label color
+                            '&.Mui-focused': {
+                                color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+                    >
+                    {Array.from({ length: 55 }, (_, i) => (
+                        <MenuItem key={i + 16} value={i + 16}>
+                            {i + 16}
+                        </MenuItem>
+                    ))}
+                    </TextField>
+                    
+                </div>
+                <div className="mt-4 ml-3">
+                    <Typography variant="subtitle1" className="mb-2 font-semibold text-yellow-300">
+                        Gender
+                    </Typography>
+                    <RadioGroup
+                    row
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChanges}
+                    >
+                    <FormControlLabel
+                    value="male"
+                    className="text-yellow-300"
+                    control={<Radio  sx={{ color: 'white' }} />}
+                    label="Male"
+                    />
+                    <FormControlLabel
+                    value="female"
+                    className="text-yellow-300"
+                    control={<Radio sx={{ color: 'white' }}  />}
+                    label="Female"
+                    />
+                    <FormControlLabel
+                    value="engineer"
+                    className="text-yellow-300"
+                    control={<Radio sx={{ color: 'white' }}/>}
+                    label="Engineer"
+                    />
+                    </RadioGroup>
+                        {errors.gender && (
+                            <Typography color="error" variant="caption">
+                                {errors.gender}
+                            </Typography>
+                        )}
+                </div>
                 <Button
                 type="submit"
                 variant="contained"
                 fullWidth
-                className="mt-4"
-                sx={{
-                        backgroundColor: "blue",
-                        color: "white",
-                        "&:hover": { backgroundColor: "darkblue" },
-                }}
+                className="mt-6"
+                sx={{ backgroundColor: "blue", color: "white", "&:hover": { backgroundColor: "darkblue" } }}
                 >
-                        Sign Up
+                    Sign Up
                 </Button>
-
             </form>
-
+            </div>
+            
         </div>
-    )
-
-}
-
-export default SignUpPage
+        </>
+        
+      );
+    };
+    
+    export default SignUpPage;
+    

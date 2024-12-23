@@ -11,7 +11,6 @@ namespace Backend.Controllers{
         public BounsController(BonusServices BonusServices){
             this.BonusServices = BonusServices;
         }
-
         [HttpPut("Coach")]
         public IActionResult AddPenaltyToCoach([FromBody] BounsModel bouns){
             var result = BonusServices.AddBonusToCoach(bouns.Bouns,bouns.Id);
