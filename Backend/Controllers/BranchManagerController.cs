@@ -14,6 +14,58 @@ namespace Backend.Controllers
         {
             this.branchmanagersService = branchmanagersService;
         }
+         [HttpPost("add")]
+        public IActionResult AddBranchManager([FromBody] BranchManagerModel entry)
+        {
+            var result = branchmanagersService.AddBranchManager(entry);
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+
+        }
+         [HttpDelete("{id}")]
+        public IActionResult DeleteBranchManager(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Branch Manager  ID provided." });
+            }
+            var result = branchmanagersService.DeleteBranchManager(id);
+            // Return success response after deletion
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+        [HttpGet]
+        public IActionResult GetBranchManagers()
+        {
+            var branchmanagerList =branchmanagersService.GetBranchManager();
+            return Ok(branchmanagerList);
+        }
 
         [HttpPut("ChangeBranchManager")]
         public IActionResult ChangeBranchManager([FromBody] ChangingManagerModel entry)

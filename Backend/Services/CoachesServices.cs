@@ -99,7 +99,11 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "SELECT * FROM Coach;";
+                string query = @"SELECT c.*, 
+u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, 
+u.Last_Name, u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+FROM Coach c
+LEFT JOIN User u ON c.Coach_ID = u.User_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -116,19 +120,30 @@ namespace Backend.Services
                             CoachList.Add(new CoachModel
                             {
                                 Coach_ID = reader.GetInt32("Coach_ID"),
-                                Salary = reader.GetInt32("Salary"),
+                                Salary =  reader.GetInt32("Salary"),
                                 Penalties = reader.GetInt32("Penalties"),
-                                Bonuses = reader.GetInt32("Bonuses"),
+                                Bonuses =  reader.GetInt32("Bonuses"),
                                 Hire_Date = DateOnly.FromDateTime(reader.GetDateTime("Hire_Date")),
                                 Fire_Date = Fire_Date.HasValue ? DateOnly.FromDateTime(Fire_Date.Value) : (DateOnly?)null,
-                                Experience_Years = reader.GetInt32("Experience_Years"),
-                                Works_For_Branch = reader.GetInt32("Works_For_Branch"),
+                                Experience_Years =  reader.GetInt32("Experience_Years"),
+                                Works_For_Branch =  reader.GetInt32("Works_For_Branch"),
                                 Daily_Hours_Worked = reader.GetInt32("Daily_Hours_Worked"),
-                                Shift_Start = reader.GetTimeSpan("Shift_Start"),
-                                Shift_Ends = reader.GetTimeSpan("Shift_Ends"),
+                                Shift_Start = reader.IsDBNull(reader.GetOrdinal("Shift_Start")) ? (TimeSpan?)null : reader.GetTimeSpan("Shift_Start"),
+                                Shift_Ends = reader.IsDBNull(reader.GetOrdinal("Shift_Ends")) ? (TimeSpan?)null : reader.GetTimeSpan("Shift_Ends"),
                                 Speciality = reader.GetString("Speciality"),
                                 Status = reader.GetString("Status"),
-                                Contract_Length = reader.GetInt32("Contract_Length"),
+                                Contract_Length =reader.GetInt32("Contract_Length"),
+                                User_ID = reader.GetInt32("User_ID"),
+                                Username = reader.GetString("Username"),
+                                PasswordHashed = reader.GetString("PasswordHashed"),
+                                Type = reader.GetString("Type"),
+                                First_Name = reader.GetString("First_Name"),
+                                Last_Name = reader.GetString("Last_Name"),
+                                Email = reader.GetString("Email"),
+                                Phone_Number = reader.GetString("Phone_Number"),
+                                Gender = reader.GetString("Gender"),
+                                Age = reader.GetInt32("Age"),
+                                National_Number = reader.GetString("National_Number"),
                             });
                         }
                         return CoachList;

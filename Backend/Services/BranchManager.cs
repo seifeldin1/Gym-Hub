@@ -18,6 +18,26 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
+                 var userQuery = @"
+                    INSERT INTO User 
+                    (Username,PasswordHashed,Type,First_Name,Last_Name,Email,Phone_Number,Gender,National_Number)
+                    VALUES (@Username,@PasswordHashed,@Type, @First_Name,@Last_Name,@Email,@Phone_Number,@Gender,@National_Number);
+                    SELECT LAST_INSERT_ID();
+                ";
+                using (var usercommand = new MySqlCommand(userQuery, connection))
+                {
+
+                    var userCommand = new MySqlCommand(userQuery, connection);
+                    userCommand.Parameters.AddWithValue("@Username", entry.Username);
+                    userCommand.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
+                    userCommand.Parameters.AddWithValue("@Type", entry.Type);
+                    userCommand.Parameters.AddWithValue("@Email", entry.Email);
+                    userCommand.Parameters.AddWithValue("@First_Name", entry.First_Name);
+                    userCommand.Parameters.AddWithValue("@Last_Name", entry.Last_Name);
+                    userCommand.Parameters.AddWithValue("@Phone_Number", entry.Phone_Number);
+                    userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
+                    userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
+                    int Branch_Manager_ID= (int)Convert.ToInt64(userCommand.ExecuteScalar());
 
                 string query = @"INSERT INTO Branch_Manager 
                     (Branch_Manager_ID, Salary, Penalties, Bonuses, Hire_Date, Employee_Under_Supervision, Fire_Date, Manages_Branch_ID, Contract_Length)
@@ -25,13 +45,20 @@ namespace Backend.Services
 
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Branch_Manager_ID", entry.Branch_Manager_ID);
+                    command.Parameters.AddWithValue("@Branch_Manager_ID",Branch_Manager_ID);
                     command.Parameters.AddWithValue("@Salary", entry.Salary);
                     command.Parameters.AddWithValue("@Penalties", entry.Penalties);
                     command.Parameters.AddWithValue("@Bonuses", entry.Bonuses);
-                    command.Parameters.AddWithValue("@Hire_Date", entry.Hire_Date);
+                    command.Parameters.AddWithValue("@Hire_Date", entry.Hire_Date.ToString("yyyy-MM-dd"));
                     command.Parameters.AddWithValue("@Employee_Under_Supervision", entry.Employee_Under_Supervision);
-                    command.Parameters.AddWithValue("@Fire_Date", entry.Fire_Date);
+                    if (entry.Fire_Date.HasValue)
+                        {
+                            command.Parameters.AddWithValue("@Fire_Date", entry.Fire_Date.Value.ToString("yyyy-MM-dd"));
+                        }
+                        else
+                        {
+                            command.Parameters.AddWithValue("@Fire_Date", DBNull.Value);
+                        }
                     command.Parameters.AddWithValue("@Manages_Branch_ID", entry.Manages_Branch_ID);
                     command.Parameters.AddWithValue("@Contract_Length", entry.Contract_Length);
 
@@ -43,14 +70,15 @@ namespace Backend.Services
                 }
             }
         }
+        }
 
-        //* DeleteBranchManager : Deletes a Branch Manager from Branch Manager Relation
+        //* DeleteBranchManager : Deletes a Branch Manager from Branch Manager Relation and user Relation
         public (bool success, string message) DeleteBranchManager(int id)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "DELETE FROM Branch_Manager WHERE Branch_Manager_ID=@Id;";
+                string query = "DELETE FROM User WHERE User_ID=@Id;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
@@ -95,7 +123,12 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "SELECT * FROM Branch_Manager;";
+                string query = @"
+            SELECT bm.*, 
+            u.User_ID, u.Username, u.PasswordHashed,u.Type,u.First_Name, u.Last_Name, 
+            u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+            FROM Branch_Manager bm
+            INNER JOIN User u ON bm.Branch_Manager_ID = u.User_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -104,6 +137,11 @@ namespace Backend.Services
                         //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
                         while (reader.Read())
                         {
+                            DateTime? Fire_Date = null;
+                            if (!reader.IsDBNull(reader.GetOrdinal("Fire_Date")))
+                            {
+                                Fire_Date = reader.GetDateTime(reader.GetOrdinal("Fire_Date"));
+                            }
                             BranchManagerList.Add(new BranchManagerModel
                             {
                                 Branch_Manager_ID = reader.GetInt32("Branch_Manager_ID"),
@@ -112,9 +150,20 @@ namespace Backend.Services
                                 Bonuses = reader.GetInt32("Bonuses"),
                                 Hire_Date = DateOnly.FromDateTime(reader.GetDateTime("Hire_Date")),
                                 Employee_Under_Supervision = reader.GetInt32("Employee_Under_Supervision"),
-                                Fire_Date = DateOnly.FromDateTime(reader.GetDateTime("Fire_Date")),
+                                Fire_Date = Fire_Date.HasValue ? DateOnly.FromDateTime(Fire_Date.Value) : (DateOnly?)null,
                                 Manages_Branch_ID = reader.GetInt32("Manages_Branch_ID"),
-                                Contract_Length = reader.GetInt32("Contract_Length")
+                                Contract_Length = reader.GetInt32("Contract_Length"),
+                                User_ID = reader.GetInt32("User_ID"),
+                                Username = reader.GetString("Username"),
+                                PasswordHashed = reader.GetString("PasswordHashed"),
+                                Type = reader.GetString("Type"),
+                                First_Name = reader.GetString("First_Name"),
+                                Last_Name = reader.GetString("Last_Name"),
+                                Email = reader.GetString("Email"),
+                                Phone_Number = reader.GetString("Phone_Number"),
+                                Gender = reader.GetString("Gender"),
+                                Age = reader.GetInt32("Age"),
+                                National_Number = reader.GetString("National_Number"),
                             });
                         }
                         return BranchManagerList;
