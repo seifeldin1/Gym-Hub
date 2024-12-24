@@ -58,11 +58,33 @@ namespace Backend.Controllers
             });
         }
         [HttpGet]
-        public IActionResult GetWorkouts()
+        public IActionResult GetClients()
         {
             var clientList = ClientsService.GetClient();
             return Ok(clientList);
         }
+         [HttpPut("UpdateClient")]
+        public IActionResult UpdateClient([FromBody] ClientsModel entry)
+        {
+            // Call the service to Assign client To coach
+            var result = ClientsService.UpdateClient(entry);            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+
 
         [HttpPut("AccountActivity")]
         public IActionResult AccountActivity([FromBody] activeModel activ)

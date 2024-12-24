@@ -48,6 +48,10 @@ builder.Services.AddScoped<PenaltyServices>();
 builder.Services.AddScoped<BonusServices>();
 builder.Services.AddScoped<MeetingsServices>();
 builder.Services.AddScoped<ProgressServices>();
+builder.Services.AddScoped<Owner>();
+builder.Services.AddScoped<TalentPoolServices>();
+
+
 
 
 

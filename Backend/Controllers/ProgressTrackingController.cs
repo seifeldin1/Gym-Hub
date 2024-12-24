@@ -24,29 +24,6 @@ namespace Backend.Controllers{
             var result = progressService.GetProgressByClientId(getByID.id);
             return Ok(result);
         }
-        [HttpPut]
-        public IActionResult Updateprogress([FromBody] ProgressModel entry)
-        {
-            // Call the service to update the Branch
-            var result = progressService.UpdateProgress(entry);
-            // Return success response after update
-            if (result.success)
-            {
-                return Ok(new
-                {
-                    success = true,
-                    message = result.message
-
-                });
-            }
-
-            return BadRequest(new
-            {
-                success = false,
-                message = result.message
-            });
-        }
-
 
     }
      public class GetByIDModel
