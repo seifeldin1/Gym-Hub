@@ -137,15 +137,16 @@ const SignUpPage = ()=>{
                     sx={{
                         '& .MuiOutlinedInput-root': {
                             '& fieldset': {
-                                border: 'none', // Remove border
+                                borderColor: '#FDE047', // Border color for default state
                             },
                             '&:hover fieldset': {
-                                border: 'none', // Remove border on hover
+                                borderColor: '#FFD700', // Border color on hover
                             },
                             '&.Mui-focused fieldset': {
-                                border: 'none', // Remove border when focused
+                                borderColor: '#FDE047', // Border color when focused
                             },
-                        }}}
+                        },
+                    }}
                     InputProps={{
                         style: {
                             color: 'yellow', // Input text color
@@ -177,18 +178,19 @@ const SignUpPage = ()=>{
                             
                         },
                         }}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none', // Remove border
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: '#FDE047', // Border color for default state
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: '#FFD700', // Border color on hover
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: '#FDE047', // Border color when focused
+                                },
                             },
-                            '&:hover fieldset': {
-                                border: 'none', // Remove border on hover
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: 'none', // Remove border when focused
-                            },
-                        }}}
+                        }}
                     InputLabelProps={{
                         sx: {
                             color: '#FDE047', // Default label color
@@ -214,18 +216,19 @@ const SignUpPage = ()=>{
                             
                         },
                         }}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none', // Remove border
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: '#FDE047', // Border color for default state
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: '#FFD700', // Border color on hover
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: '#FDE047', // Border color when focused
+                                },
                             },
-                            '&:hover fieldset': {
-                                border: 'none', // Remove border on hover
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: 'none', // Remove border when focused
-                            },
-                        }}}
+                        }}
                     InputLabelProps={{
                         sx: {
                             color: '#FDE047', // Default label color
@@ -251,18 +254,19 @@ const SignUpPage = ()=>{
                             
                         },
                         }}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none', // Remove border
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: '#FDE047', // Border color for default state
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: '#FFD700', // Border color on hover
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: '#FDE047', // Border color when focused
+                                },
                             },
-                            '&:hover fieldset': {
-                                border: 'none', // Remove border on hover
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: 'none', // Remove border when focused
-                            },
-                        }}}
+                        }}
                     InputLabelProps={{
                         sx: {
                             color: '#FDE047', // Default label color
@@ -287,15 +291,16 @@ const SignUpPage = ()=>{
                     sx={{
                         '& .MuiOutlinedInput-root': {
                             '& fieldset': {
-                                border: 'none', // Remove border
+                                borderColor: '#FDE047', // Border color for default state
                             },
                             '&:hover fieldset': {
-                                border: 'none', // Remove border on hover
+                                borderColor: '#FFD700', // Border color on hover
                             },
                             '&.Mui-focused fieldset': {
-                                border: 'none', // Remove border when focused
+                                borderColor: '#FDE047', // Border color when focused
                             },
-                        }}}
+                        },
+                    }}
                     InputLabelProps={{
                         sx: {
                             color: '#FDE047', // Default label color
@@ -307,9 +312,8 @@ const SignUpPage = ()=>{
                     InputProps={{
                         style: {
                             color: 'yellow', // Input text color
-                        },
-                        endAdornment: (
-                            <IconButton onClick={handleShowPassword} edge="end">
+                        },                        endAdornment: (
+                            <IconButton onClick={handleShowPassword} edge="end" sx={{color:"yellow"}}>
                                 {showPassword ? <VisibilityOffIcon /> :  <VisibilityIcon />}
                             </IconButton>
                         )
@@ -328,15 +332,16 @@ const SignUpPage = ()=>{
                     sx={{
                         '& .MuiOutlinedInput-root': {
                             '& fieldset': {
-                                border: 'none', // Remove border
+                                borderColor: '#FDE047', // Border color for default state
                             },
                             '&:hover fieldset': {
-                                border: 'none', // Remove border on hover
+                                borderColor: '#FFD700', // Border color on hover
                             },
                             '&.Mui-focused fieldset': {
-                                border: 'none', // Remove border when focused
+                                borderColor: '#FDE047', // Border color when focused
                             },
-                        }}}
+                        },
+                    }}
                     InputLabelProps={{
                         sx: {
                             
@@ -351,7 +356,7 @@ const SignUpPage = ()=>{
                             color: 'yellow',
                          }, // Input text color
                         endAdornment: (
-                            <IconButton onClick={handleShowConfirmPassword} edge="end">
+                            <IconButton onClick={handleShowConfirmPassword} edge="end" sx={{color:"yellow"}}>
                                 {showConfirmPassword ? <VisibilityOffIcon/> :  <VisibilityIcon/>}
                             </IconButton>
                         )
@@ -373,18 +378,19 @@ const SignUpPage = ()=>{
                             
                         },
                         }}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none', // Remove border
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: '#FDE047', // Border color for default state
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: '#FFD700', // Border color on hover
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: '#FDE047', // Border color when focused
+                                },
                             },
-                            '&:hover fieldset': {
-                                border: 'none', // Remove border on hover
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: 'none', // Remove border when focused
-                            },
-                        }}}
+                        }}
                     InputLabelProps={{
                         sx: {
                             color: '#FDE047', // Default label color
@@ -410,18 +416,19 @@ const SignUpPage = ()=>{
                             
                         },
                         }}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none', // Remove border
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: '#FDE047', // Border color for default state
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: '#FFD700', // Border color on hover
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: '#FDE047', // Border color when focused
+                                },
                             },
-                            '&:hover fieldset': {
-                                border: 'none', // Remove border on hover
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: 'none', // Remove border when focused
-                            },
-                        }}}
+                        }}
                     InputLabelProps={{
                         sx: {
                             color: '#FDE047', // Default label color
@@ -446,23 +453,43 @@ const SignUpPage = ()=>{
                             
                         },
                         }}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none', // Remove border
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: '#FDE047', // Border color for default state
+                                },
+                                '&:hover fieldset': {
+                                    borderColor: '#FFD700', // Border color on hover
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: '#FDE047', // Border color when focused
+                                },
+                                '& svg': {
+                                    color: 'yellow', // Dropdown icon color
+                                },
                             },
-                            '&:hover fieldset': {
-                                border: 'none', // Remove border on hover
-                            },
-                            '&.Mui-focused fieldset': {
-                                border: 'none', // Remove border when focused
-                            },
-                        }}}
+                        }}
                     InputLabelProps={{
                         sx: {
                             color: '#FDE047', // Default label color
                             '&.Mui-focused': {
                                 color: '#FDE047', // Color when focused
+                            },
+                        },
+                    }}
+
+                    SelectProps={{
+                        MenuProps: {
+                            PaperProps: {
+                                sx: {
+                                    bgcolor: '#002637', // Dropdown background color
+                                    '& .MuiMenuItem-root': {
+                                        color: 'yellow', // Dropdown text color
+                                        '&:hover': {
+                                            bgcolor: '#0026', // Background on hover
+                                        },
+                                    },
+                                },
                             },
                         },
                     }}
@@ -488,19 +515,19 @@ const SignUpPage = ()=>{
                     <FormControlLabel
                     value="male"
                     className="text-yellow-300"
-                    control={<Radio  sx={{ color: 'white' }} />}
+                    control={<Radio  sx={{ color: 'yellow' }} />}
                     label="Male"
                     />
                     <FormControlLabel
                     value="female"
                     className="text-yellow-300"
-                    control={<Radio sx={{ color: 'white' }}  />}
+                    control={<Radio sx={{ color: 'yellow' }}  />}
                     label="Female"
                     />
                     <FormControlLabel
                     value="engineer"
                     className="text-yellow-300"
-                    control={<Radio sx={{ color: 'white' }}/>}
+                    control={<Radio sx={{ color: 'yellow' }}/>}
                     label="Engineer"
                     />
                     </RadioGroup>
@@ -515,7 +542,7 @@ const SignUpPage = ()=>{
                 variant="contained"
                 fullWidth
                 className="mt-6"
-                sx={{ backgroundColor: "blue", color: "white", "&:hover": { backgroundColor: "darkblue" } }}
+                sx={{ backgroundColor: "blue", color: "white", "&:hover": { backgroundColor: "darkblue" }  }}
                 >
                     Sign Up
                 </Button>
