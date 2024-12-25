@@ -67,11 +67,11 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-        [HttpPut("UpdateCoachData")]
+        [HttpPut("UpdateCoach")]
         public IActionResult UpdateCoachData([FromBody] CoachModel entry)
         {
             // Call the service to update the Branch
-            var result = coachservice.UpdateCoachData(entry);
+            var result = coachservice.UpdateCoach(entry);
             // Return success response after update
             if (result.success)
             {
@@ -103,8 +103,56 @@ namespace Backend.Controllers
             {
                 return BadRequest(new { message = "Invalid Branch ID provided." });
             }
-            // Call the service to Assign client To coach
             var result = coachservice.MoveCoach(entry.wfb, entry.coachid);         // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+        
+        [HttpPut("UpdateCoachStatus")]
+        public IActionResult UpdateStatus([FromBody] updatingStatus entry)
+        {
+            if (entry.id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Coach ID provided." });
+            }
+            var result = coachservice.UpdateCoachStatus(entry.id,entry.Status);         // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+        [HttpPut("UpdateCoachContract")]
+        public IActionResult UpdateCoachContract([FromBody] updatingContract entry)
+        {
+            if (entry.id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Coach ID provided." });
+            }
+            var result = coachservice.UpdateCoachContract(entry.id, entry.Contract);         // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -129,6 +177,16 @@ namespace Backend.Controllers
     {
         public int wfb { get; set; }
         public int coachid { get; set; }
+    }
+    public class updatingStatus
+    {
+        public int id { get; set; }
+        public string Status { get; set; }
+    }
+    public class updatingContract
+    {
+        public int id { get; set; }
+        public int Contract { get; set; }
     }
 
 }

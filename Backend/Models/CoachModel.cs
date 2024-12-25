@@ -16,7 +16,7 @@ namespace Backend.Models
         public TimeSpan? Shift_Start { get; set; }
         public TimeSpan? Shift_Ends { get; set; }
         public string Speciality { get; set; }
-        public string? Status { get; set; }       //Can Have three values (OFF , Working , In a Meeting)
+        public string Status { get; set; }       //Can Have three values (OFF , Working , In a Meeting)
         public int? Contract_Length { get; set; } //can be null as coach may have left the gym as we keep track of fire date
     }
 }

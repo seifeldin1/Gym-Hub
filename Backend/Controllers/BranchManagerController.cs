@@ -14,7 +14,7 @@ namespace Backend.Controllers
         {
             this.branchmanagersService = branchmanagersService;
         }
-         [HttpPost("add")]
+        [HttpPost("add")]
         public IActionResult AddBranchManager([FromBody] BranchManagerModel entry)
         {
             var result = branchmanagersService.AddBranchManager(entry);
@@ -35,7 +35,29 @@ namespace Backend.Controllers
             });
 
         }
-         [HttpDelete("{id}")]
+        [HttpPut("UpdateBranchManager")]
+        public IActionResult UpdateBranchManager([FromBody] BranchManagerModel entry)
+        {
+            // Call the service to update the Branch
+            var result = branchmanagersService.UpdateBranchManager(entry);
+            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+        [HttpDelete("{id}")]
         public IActionResult DeleteBranchManager(int id)
         {
             if (id <= 0)
@@ -63,7 +85,7 @@ namespace Backend.Controllers
         [HttpGet]
         public IActionResult GetBranchManagers()
         {
-            var branchmanagerList =branchmanagersService.GetBranchManager();
+            var branchmanagerList = branchmanagersService.GetBranchManager();
             return Ok(branchmanagerList);
         }
 
@@ -88,12 +110,34 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+        [HttpPut("UpdateBranchManagerContract")]
+        public IActionResult UpdateBranchManagerContract([FromBody] updatingContract entry)
+        {
+            if (entry.id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Coach ID provided." });
+            }
+            var result = branchmanagersService.UpdateBranchManagerContract(entry.id,entry.Contract);         // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
 
-    }
+                });
+            }
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
 
-    public class ChangingManagerModel
-    {
-        public int branchid { get; set; }
-        public int branchmanagerid { get; set; }
+        public class ChangingManagerModel
+        {
+            public int branchid { get; set; }
+            public int branchmanagerid { get; set; }
+        }
     }
 }

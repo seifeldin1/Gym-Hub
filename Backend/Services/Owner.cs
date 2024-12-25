@@ -11,198 +11,148 @@ namespace Backend.Services
         {
             this.database = gymDatabase;
         }
-
-        public (bool success, string message) UpdateManagerUserData(OwnerModel entry)
+         public (bool success, string message) AddOwner(OwnerModel entry)
         {
-            //? Check if An Entry is Given
-            if (entry == null)
-                return (false, "Owner data is null.");
-
-            try
-            {
-                string updateQuery = "UPDATE Owner SET ";                        //! Query String
-                List<string> setClauses = new List<string>();                   //! List of clauses added to query 
-                List<MySqlParameter> parameters = new List<MySqlParameter>();   //! Query params
-
-                //! Check In Entry for Params To Be edited By query
-
-                if (entry.Username != null)
-                {
-                    setClauses.Add("Username = @Username");
-                    parameters.Add(new MySqlParameter("@Username", entry.Username));
-                }
-
-                if (entry.PasswordHashed != null)
-                {
-                    setClauses.Add("PasswordHashed = @PasswordHashed");
-                    parameters.Add(new MySqlParameter("@PasswordHashed", entry.PasswordHashed));
-                }
-
-                if (entry.First_Name != null)
-                {
-                    setClauses.Add("First_Name = @First_Name");
-                    parameters.Add(new MySqlParameter("@First_Name", entry.First_Name));
-                }
-
-                if (entry.Last_Name != null)
-                {
-                    setClauses.Add("Last_Name = @Last_Name");
-                    parameters.Add(new MySqlParameter("@Last_Name", entry.Last_Name));
-                }
-
-                if (entry.Email != null)
-                {
-                    setClauses.Add("Email = @Email");
-                    parameters.Add(new MySqlParameter("@Email", entry.Email));
-                }
-
-
-                if (entry.Phone_Number != null)
-                {
-                    setClauses.Add("Phone_Number = @Phone_Number");
-                    parameters.Add(new MySqlParameter("@Phone_Number", entry.Phone_Number));
-                }
-
-                if (entry.Gender != null)
-                {
-                    setClauses.Add("Gender = @Gender");
-                    parameters.Add(new MySqlParameter("@Gender", entry.Gender));
-                }
-
-                if (entry.Age != null)
-                {
-                    setClauses.Add("Age = @Age");
-                    parameters.Add(new MySqlParameter("@Age", entry.Age));
-                }
-
-                if (entry.National_Number != null)
-                {
-                    setClauses.Add("National_Number = @National_Number");
-                    parameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
-                }
-
-                if (setClauses.Count == 0)
-                    return (false, "No fields to update.");
-
-                //? Join Query
-                updateQuery += string.Join(", ", setClauses) + " WHERE User_ID = @User_ID";
-
-                parameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
-
-                using (var connection = database.ConnectToDatabase())
-                {
-                    connection.Open();
-                    using (var command = new MySqlCommand(updateQuery, connection))
-                    {
-                        //! Add parameters to the command (Replace @variable with acutal value)
-                        foreach (var parameter in parameters)
-                            command.Parameters.Add(parameter);
-
-                        int rowsAffected1 = command.ExecuteNonQuery();
-
-                        if (rowsAffected1 == 0)
-                            return (false, "No Coach data was updated.");
-
-                        return (true, "Coach Data Was updated");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return (false, $"Error: {ex.Message}");
-            }
-        }
-
-        public (bool success, string message) UpdateBranchManagerData(OwnerModel entry)
-        {
-            //? Check if An Entry is Given
-            if (entry == null)
-                return (false, "Coach data is null.");
-
-            try
-            {
-                string updateQuery = "UPDATE Branch_Manager SET ";                        //! Query String
-                List<string> setClauses = new List<string>();                   //! List of clauses added to query 
-                List<MySqlParameter> parameters = new List<MySqlParameter>();   //! Query params
-
-                //! Check In Entry for Params To Be edited By query
-
-                if (entry.Share_Percentage != null)
-                {
-                    setClauses.Add("Share_Percentage = @Share_Percentage");
-                    parameters.Add(new MySqlParameter("@Share_Percentage", entry.Share_Percentage));
-                }
-
-                if (entry.Established_branches != null)
-                {
-                    setClauses.Add("Established_branches = @Established_branches");
-                    parameters.Add(new MySqlParameter("@Established_branches", entry.Established_branches));
-                }
-
-                if (setClauses.Count == 0)
-                    return (false, "No fields to update.");
-
-                //? Join Query
-                updateQuery += string.Join(", ", setClauses) + " WHERE Owner_ID = @Owner_ID";
-
-                parameters.Add(new MySqlParameter("@Owner_ID", entry.Owner_ID));
-
-                using (var connection = database.ConnectToDatabase())
-                {
-                    connection.Open();
-                    using (var command = new MySqlCommand(updateQuery, connection))
-                    {
-                        //! Add parameters to the command (Replace @variable with acutal value)
-                        foreach (var parameter in parameters)
-                            command.Parameters.Add(parameter);
-
-                        int rowsAffected1 = command.ExecuteNonQuery();
-
-                        if (rowsAffected1 == 0)
-                            return (false, "No Coach data was updated.");
-
-                        return (true, "Coach Data Was updated");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return (false, $"Error: {ex.Message}");
-            }
-        }
-        public (bool success,string message) ChangeManager(BranchManagerModel entry)
-        {
-            if(entry==null){
-                 return (false, "Branch Manager data is null.");
-            }
-            try{
-                  using (var connection = database.ConnectToDatabase())
+            using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                    string query="UPDATE Branch_Manager SET Manages_Branch_ID=@Manages_Branch_ID WHERE Branch_Manager_ID=@ID;"; 
-                    using (var command = new MySqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@Manages_Branch_ID", entry.Manages_Branch_ID);
-                        command.Parameters.AddWithValue("@ID", entry.Branch_Manager_ID);
-                        int rowsAffected = command.ExecuteNonQuery();
-                        if (rowsAffected > 0)
-                        {
+                 var userQuery = @"
+                    INSERT INTO User 
+                    (Username,PasswordHashed,Type,First_Name,Last_Name,Email,Phone_Number,Gender,Age,National_Number)
+                    VALUES (@Username,@PasswordHashed,@Type, @First_Name,@Last_Name,@Email,@Phone_Number,@Gender,@Age,@National_Number);
+                    SELECT LAST_INSERT_ID();
+                ";
+                using (var usercommand = new MySqlCommand(userQuery, connection))
+                {
 
-                        return (true, "Branch Manager Changed  successfully");
-                    }
+                    var userCommand = new MySqlCommand(userQuery, connection);
+                    userCommand.Parameters.AddWithValue("@Username", entry.Username);
+                    userCommand.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
+                    userCommand.Parameters.AddWithValue("@Type", entry.Type);
+                    userCommand.Parameters.AddWithValue("@Email", entry.Email);
+                    userCommand.Parameters.AddWithValue("@First_Name", entry.First_Name);
+                    userCommand.Parameters.AddWithValue("@Last_Name", entry.Last_Name);
+                    userCommand.Parameters.AddWithValue("@Phone_Number", entry.Phone_Number);
+                    userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
+                    userCommand.Parameters.AddWithValue("@Age", entry.Age);
+                    userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
+                    int Owner_ID= (int)Convert.ToInt64(userCommand.ExecuteScalar());
+
+                string query = @"INSERT INTO Owner (Owner_ID,Share_Percentage,Established_branches)
+                    VALUES (@Owner_ID,@Share_Percentage,@Established_branches);";
+
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Owner_ID",Owner_ID);
+                    command.Parameters.AddWithValue("@Share_Percentage", entry.Share_Percentage);
+                    command.Parameters.AddWithValue("@Established_branches", entry.Established_branches);
+
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                        return (true, "Owner added successfully");
                     else
-                    {
-
-                        return (false, "Failed to Change Branch Manager ");
-                    }
+                        return (false, "Failed to add Owner");
                 }
-            }     
-            }
-              catch (Exception ex)
-            {
-                return (false, $"Error: {ex.Message}");
             }
         }
+        }
+        public (bool success, string message) DeleteOwner(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "DELETE FROM User WHERE User_ID=@Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                        return (true, "Owner Deleted successfully");
+                    else
+                        return (false, "Failed to Delete Owner");
+                }
+            }
+        }
+         public (bool success, string message) UpdateOwner(OwnerModel entry)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                var userQuery = @"
+                    UPDATE User SET Username=@Username,PasswordHashed=@PasswordHashed,Type=@Type,
+                    First_Name=@First_Name,Last_Name=@Last_Name,Email=@Email,
+                    Phone_Number=@Phone_Number,Gender=@Gender,Age=@Age,National_Number=@National_Number WHERE User_ID=@User_ID;";
+                using (var userCommand = new MySqlCommand(userQuery, connection))
+                {
+                    userCommand.Parameters.AddWithValue("@User_ID", entry.User_ID);
+                    userCommand.Parameters.AddWithValue("@Username", entry.Username);
+                    userCommand.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
+                    userCommand.Parameters.AddWithValue("@Type", entry.Type);
+                    userCommand.Parameters.AddWithValue("@Email", entry.Email);
+                    userCommand.Parameters.AddWithValue("@First_Name", entry.First_Name);
+                    userCommand.Parameters.AddWithValue("@Last_Name", entry.Last_Name);
+                    userCommand.Parameters.AddWithValue("@Phone_Number", entry.Phone_Number);
+                    userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
+                    userCommand.Parameters.AddWithValue("@Age", entry.Age);
+                    userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
 
+                string query = @"UPDATE Owner SET Share_Percentage=@Share_Percentage,Established_branches=@Established_branches WHERE Owner_ID =@Owner_ID;";
+                    
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Owner_ID",entry.Owner_ID );
+                    command.Parameters.AddWithValue("@Share_Percentage", entry.Share_Percentage);
+                    command.Parameters.AddWithValue("@Established_branches", entry.Established_branches);
+                    int rowsAffected1 = userCommand.ExecuteNonQuery();
+                    int rowsAffected2 = command.ExecuteNonQuery();
+                    if (rowsAffected2 > 0 && rowsAffected1>0)
+                        return (true, "Owner Updated successfully");
+                    else
+                        return (false, "Failed to Update Owner");
+                }
+            }
+        }
+        }
+        public List<OwnerModel> GetOwners()
+        {
+            var ownerList = new List<OwnerModel>();
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = @"
+            SELECT o.*, 
+            u.User_ID, u.Username, u.PasswordHashed,u.Type,u.First_Name, u.Last_Name, 
+            u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+            FROM Owner o
+            INNER JOIN User u ON o.Owner_ID = u.User_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {  
+                        while (reader.Read())
+                        {
+                            ownerList.Add(new OwnerModel
+                            {
+                                Owner_ID = reader.GetInt32("Owner_ID"),
+                                Share_Percentage = reader.GetInt32("Share_Percentage"),
+                                Established_branches = reader.GetInt32("Established_branches"),
+                                User_ID = reader.GetInt32("User_ID"),
+                                Username = reader.GetString("Username"),
+                                PasswordHashed = reader.GetString("PasswordHashed"),
+                                Type = reader.GetString("Type"),
+                                First_Name = reader.GetString("First_Name"),
+                                Last_Name = reader.GetString("Last_Name"),
+                                Email = reader.GetString("Email"),
+                                Phone_Number = reader.GetString("Phone_Number"),
+                                Gender = reader.GetString("Gender"),
+                                Age = reader.GetInt32("Age"),
+                                National_Number = reader.GetString("National_Number"),
+                            });
+                        }
+                        return ownerList;
+                    }
+                }
+            }
+        }
     }
 }
