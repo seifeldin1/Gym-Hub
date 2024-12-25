@@ -463,6 +463,8 @@ namespace Backend.Database{
                 " , connection);
                 createClientProgressTable.ExecuteNonQuery();
 
+                
+
             }
         }
 
