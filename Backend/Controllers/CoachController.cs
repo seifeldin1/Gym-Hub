@@ -68,7 +68,7 @@ namespace Backend.Controllers
             });
         }
         [HttpPut("UpdateCoach")]
-        public IActionResult UpdateCoachData([FromBody] CoachModel entry)
+        public IActionResult UpdateCoachData([FromBody] CoachUpdaterModel entry)
         {
             // Call the service to update the Branch
             var result = coachservice.UpdateCoach(entry);

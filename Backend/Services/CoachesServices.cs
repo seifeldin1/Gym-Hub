@@ -56,7 +56,7 @@ namespace Backend.Services
                             command.Parameters.AddWithValue("@Fire_Date", DBNull.Value);
                         }
                         command.Parameters.AddWithValue("@Experience_Years", entry.Experience_Years);
-                        command.Parameters.AddWithValue("@Works_For_Branch", entry.Works_For_Branch);
+                        command.Parameters.AddWithValue("@Works_For_Branch", entry.Works_For_Branch == null ? DBNull.Value : (int)entry.Works_For_Branch);
                         command.Parameters.AddWithValue("@Daily_Hours_Worked", entry.Daily_Hours_Worked);
                         command.Parameters.AddWithValue("@Shift_Start", entry.Shift_Start);
                         command.Parameters.AddWithValue("@Shift_Ends", entry.Shift_Ends);
@@ -100,11 +100,9 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = @"SELECT c.*, 
-u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, 
-u.Last_Name, u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
-FROM Coach AS c
-JOIN User AS u ON c.Coach_ID = u.User_ID;";
+                string query = @"SELECT c.*, u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, 
+                        u.Last_Name, u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+                        FROM Coach c LEFT JOIN User u ON c.Coach_ID = u.User_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -126,14 +124,14 @@ JOIN User AS u ON c.Coach_ID = u.User_ID;";
                                 Bonuses =  reader.GetInt32("Bonuses"),
                                 Hire_Date = DateOnly.FromDateTime(reader.GetDateTime("Hire_Date")),
                                 Fire_Date = Fire_Date.HasValue ? DateOnly.FromDateTime(Fire_Date.Value) : (DateOnly?)null,
-                                Experience_Years =  reader.GetInt32("Experience_Years"),
-                                Works_For_Branch =  reader.GetInt32("Works_For_Branch"),
+                                Experience_Years =  reader.IsDBNull(reader.GetOrdinal("Experience_Years")) ? 0 : reader.GetInt32("Experience_Years"),
+                                Works_For_Branch =  reader.IsDBNull(reader.GetOrdinal("Works_For_Branch")) ? 0 : reader.GetInt32("Works_For_Branch"),
                                 Daily_Hours_Worked = reader.GetInt32("Daily_Hours_Worked"),
                                 Shift_Start = reader.IsDBNull(reader.GetOrdinal("Shift_Start")) ? (TimeSpan?)null : reader.GetTimeSpan("Shift_Start"),
                                 Shift_Ends = reader.IsDBNull(reader.GetOrdinal("Shift_Ends")) ? (TimeSpan?)null : reader.GetTimeSpan("Shift_Ends"),
                                 Speciality = reader.GetString("Speciality"),
-                                Status = reader.GetString("Status"),
-                                Contract_Length =reader.GetInt32("Contract_Length"),
+                                Status = reader.IsDBNull(reader.GetOrdinal("Status")) ? null : reader.GetString("Status"),
+                                Contract_Length = reader.IsDBNull(reader.GetOrdinal("Contract_Length")) ? 0 : reader.GetInt32("Contract_Length"),
                                 User_ID = reader.GetInt32("User_ID"),
                                 Username = reader.GetString("Username"),
                                 PasswordHashed = reader.GetString("PasswordHashed"),
@@ -142,8 +140,8 @@ JOIN User AS u ON c.Coach_ID = u.User_ID;";
                                 Last_Name = reader.GetString("Last_Name"),
                                 Email = reader.GetString("Email"),
                                 Phone_Number = reader.GetString("Phone_Number"),
-                                Gender = reader.GetString("Gender"),
-                                Age = reader.GetInt32("Age"),
+                                Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? null : reader.GetString("Gender"),
+                                Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age"),
                                 National_Number = reader.GetString("National_Number"),
                             });
                         }
@@ -179,66 +177,185 @@ JOIN User AS u ON c.Coach_ID = u.User_ID;";
 
         }
 
-        //* UpdateCoach : Update Coach Data
-        public (bool success, string message) UpdateCoach(CoachModel entry)
+        //* UpdateCoach : Update Coach Datapublic (bool success, string message) UpdateCoach(CoachModel entry)
+        public (bool success, string message) UpdateCoach(CoachUpdaterModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                var userQuery = @"
-                    UPDATE User SET Username=@Username,PasswordHashed=@PasswordHashed,Type=@Type,First_Name=@First_Name,
-                    Last_Name=@Last_Name,Email=@Email,
-                    Phone_Number=@Phone_Number,Gender=@Gender,Age=@Age,National_Number=@National_Number WHERE User_ID=@User_ID;";
-                using (var userCommand = new MySqlCommand(userQuery, connection))
+
+                var userFields = new List<string>();
+                var userParameters = new List<MySqlParameter>();
+
+                if (!string.IsNullOrEmpty(entry.Username))
                 {
-                    userCommand.Parameters.AddWithValue("@User_ID", entry.User_ID);
-                    userCommand.Parameters.AddWithValue("@Username", entry.Username);
-                    userCommand.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
-                    userCommand.Parameters.AddWithValue("@Type", entry.Type);
-                    userCommand.Parameters.AddWithValue("@Email", entry.Email);
-                    userCommand.Parameters.AddWithValue("@First_Name", entry.First_Name);
-                    userCommand.Parameters.AddWithValue("@Last_Name", entry.Last_Name);
-                    userCommand.Parameters.AddWithValue("@Phone_Number", entry.Phone_Number);
-                    userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
-                    userCommand.Parameters.AddWithValue("@Age", entry.Age);
-                    userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
-                    string query = @"UPDATE Coach SET Salary=@Salary,Penalties=@Penalties,Bonuses=@Bonuses,Hire_Date=@Hire_Date,
-                    Fire_Date=@Fire_Date,Experience_Years=@Experience_Years,Works_For_Branch=@Works_For_Branch,Daily_Hours_Worked=@Daily_Hours_Worked,
-                    Shift_Start=@Shift_Start,Shift_Ends=@Shift_Ends,Speciality=@Speciality,
-                    Status=@Status,Contract_Length=@Contract_Length WHERE Coach_ID=@Coach_ID;";
-                    using (var command = new MySqlCommand(query, connection))
+                    userFields.Add("Username=@Username");
+                    userParameters.Add(new MySqlParameter("@Username", entry.Username));
+                }
+                if (!string.IsNullOrEmpty(entry.PasswordHashed))
+                {
+                    userFields.Add("PasswordHashed=@PasswordHashed");
+                    userParameters.Add(new MySqlParameter("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed)));
+                }
+                if (!string.IsNullOrEmpty(entry.Type))
+                {
+                    userFields.Add("Type=@Type");
+                    userParameters.Add(new MySqlParameter("@Type", entry.Type));
+                }
+                if (!string.IsNullOrEmpty(entry.First_Name))
+                {
+                    userFields.Add("First_Name=@First_Name");
+                    userParameters.Add(new MySqlParameter("@First_Name", entry.First_Name));
+                }
+                if (!string.IsNullOrEmpty(entry.Last_Name))
+                {
+                    userFields.Add("Last_Name=@Last_Name");
+                    userParameters.Add(new MySqlParameter("@Last_Name", entry.Last_Name));
+                }
+                if (!string.IsNullOrEmpty(entry.Email))
+                {
+                    userFields.Add("Email=@Email");
+                    userParameters.Add(new MySqlParameter("@Email", entry.Email));
+                }
+                if (!string.IsNullOrEmpty(entry.Phone_Number))
+                {
+                    userFields.Add("Phone_Number=@Phone_Number");
+                    userParameters.Add(new MySqlParameter("@Phone_Number", entry.Phone_Number));
+                }
+                if (!string.IsNullOrEmpty(entry.Gender))
+                {
+                    userFields.Add("Gender=@Gender");
+                    userParameters.Add(new MySqlParameter("@Gender", entry.Gender));
+                }
+                if (entry.Age > 0)
+                {
+                    userFields.Add("Age=@Age");
+                    userParameters.Add(new MySqlParameter("@Age", entry.Age));
+                }
+                if (!string.IsNullOrEmpty(entry.National_Number))
+                {
+                    userFields.Add("National_Number=@National_Number");
+                    userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
+                }
+
+                var userQuery = userFields.Count > 0
+                    ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;"
+                    : null;
+
+                userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
+
+                var coachFields = new List<string>();
+                var coachParameters = new List<MySqlParameter>();
+
+                if (entry.Salary > 0)
+                {
+                    coachFields.Add("Salary=@Salary");
+                    coachParameters.Add(new MySqlParameter("@Salary", entry.Salary));
+                }
+                if (entry.Penalties > 0)
+                {
+                    coachFields.Add("Penalties=@Penalties");
+                    coachParameters.Add(new MySqlParameter("@Penalties", entry.Penalties));
+                }
+                if (entry.Bonuses > 0)
+                {
+                    coachFields.Add("Bonuses=@Bonuses");
+                    coachParameters.Add(new MySqlParameter("@Bonuses", entry.Bonuses));
+                }
+                if (entry.Hire_Date != default)
+                {
+                    coachFields.Add("Hire_Date=@Hire_Date");
+                    coachParameters.Add(new MySqlParameter("@Hire_Date", entry.Hire_Date.HasValue ? (object)entry.Hire_Date.Value.ToString("yyyy-MM-dd") : DBNull.Value));
+                }
+                if (entry.Fire_Date.HasValue)
+                {
+                    coachFields.Add("Fire_Date=@Fire_Date");
+                    coachParameters.Add(new MySqlParameter("@Fire_Date", entry.Fire_Date.Value.ToString("yyyy-MM-dd")));
+                }
+                else
+                {
+                    coachFields.Add("Fire_Date=@Fire_Date");
+                    coachParameters.Add(new MySqlParameter("@Fire_Date", DBNull.Value));
+                }
+                if (entry.Experience_Years.HasValue)
+                {
+                    coachFields.Add("Experience_Years=@Experience_Years");
+                    coachParameters.Add(new MySqlParameter("@Experience_Years", entry.Experience_Years));
+                }
+                if (entry.Works_For_Branch.HasValue)
+                {
+                    coachFields.Add("Works_For_Branch=@Works_For_Branch");
+                    coachParameters.Add(new MySqlParameter("@Works_For_Branch", entry.Works_For_Branch));
+                }
+                if (entry.Daily_Hours_Worked > 0)
+                {
+                    coachFields.Add("Daily_Hours_Worked=@Daily_Hours_Worked");
+                    coachParameters.Add(new MySqlParameter("@Daily_Hours_Worked", entry.Daily_Hours_Worked));
+                }
+                if (entry.Shift_Start.HasValue)
+                {
+                    coachFields.Add("Shift_Start=@Shift_Start");
+                    coachParameters.Add(new MySqlParameter("@Shift_Start", entry.Shift_Start));
+                }
+                if (entry.Shift_Ends.HasValue)
+                {
+                    coachFields.Add("Shift_Ends=@Shift_Ends");
+                    coachParameters.Add(new MySqlParameter("@Shift_Ends", entry.Shift_Ends));
+                }
+                if (!string.IsNullOrEmpty(entry.Speciality))
+                {
+                    coachFields.Add("Speciality=@Speciality");
+                    coachParameters.Add(new MySqlParameter("@Speciality", entry.Speciality));
+                }
+                if (!string.IsNullOrEmpty(entry.Status))
+                {
+                    coachFields.Add("Status=@Status");
+                    coachParameters.Add(new MySqlParameter("@Status", entry.Status));
+                }
+                if (entry.Contract_Length.HasValue)
+                {
+                    coachFields.Add("Contract_Length=@Contract_Length");
+                    coachParameters.Add(new MySqlParameter("@Contract_Length", entry.Contract_Length));
+                }
+
+                var coachQuery = coachFields.Count > 0
+                    ? $"UPDATE Coach SET {string.Join(",", coachFields)} WHERE Coach_ID=@Coach_ID;"
+                    : null;
+
+                coachParameters.Add(new MySqlParameter("@Coach_ID", entry.User_ID));
+
+                int rowsAffected1 = 0;
+                int rowsAffected2 = 0;
+
+                if (userQuery != null)
+                {
+                    using (var userCommand = new MySqlCommand(userQuery, connection))
                     {
-                        command.Parameters.AddWithValue("@Coach_ID", entry.Coach_ID);
-                        command.Parameters.AddWithValue("@Salary", entry.Salary);
-                        command.Parameters.AddWithValue("@Penalties", entry.Penalties);
-                        command.Parameters.AddWithValue("@Bonuses", entry.Bonuses);
-                        command.Parameters.AddWithValue("@Hire_Date", entry.Hire_Date.ToString("yyyy-MM-dd"));
-                        if (entry.Fire_Date.HasValue)
-                        {
-                            command.Parameters.AddWithValue("@Fire_Date", entry.Fire_Date.Value.ToString("yyyy-MM-dd"));
-                        }
-                        else
-                        {
-                            command.Parameters.AddWithValue("@Fire_Date", DBNull.Value);
-                        }
-                        command.Parameters.AddWithValue("@Experience_Years", entry.Experience_Years);
-                        command.Parameters.AddWithValue("@Works_For_Branch", entry.Works_For_Branch);
-                        command.Parameters.AddWithValue("@Daily_Hours_Worked", entry.Daily_Hours_Worked);
-                        command.Parameters.AddWithValue("@Shift_Start", entry.Shift_Start);
-                        command.Parameters.AddWithValue("@Shift_Ends", entry.Shift_Ends);
-                        command.Parameters.AddWithValue("@Speciality", entry.Speciality);
-                        command.Parameters.AddWithValue("@Status", entry.Status);
-                        command.Parameters.AddWithValue("@Contract_Length", entry.Contract_Length);
-                        int rowsAffected1 = userCommand.ExecuteNonQuery();
-                        int rowsAffected2 = command.ExecuteNonQuery();
-                        if (rowsAffected1 > 0 &&rowsAffected2>0)
-                            return (true, "Coach Updated successfully");
-                        else
-                            return (false, "Failed to Update Coach");
+                        userCommand.Parameters.AddRange(userParameters.ToArray());
+                        rowsAffected1 = userCommand.ExecuteNonQuery();
                     }
+                }
+
+                if (coachQuery != null)
+                {
+                    using (var coachCommand = new MySqlCommand(coachQuery, connection))
+                    {
+                        coachCommand.Parameters.AddRange(coachParameters.ToArray());
+                        rowsAffected2 = coachCommand.ExecuteNonQuery();
+                    }
+                }
+
+                if (rowsAffected1 > 0 || rowsAffected2 > 0)
+                {
+                    return (true, "Coach updated successfully.");
+                }
+                else
+                {
+                    return (false, "No updates were made.");
                 }
             }
         }
+
         public (bool success, string message) UpdateCoachStatus(int id ,string Status)
         {
             using (var connection = database.ConnectToDatabase())
