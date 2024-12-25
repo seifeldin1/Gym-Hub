@@ -40,6 +40,29 @@ namespace Backend.Services
             }
 
         }
+
+        public string GetMeetingTitle(int id){
+            using (var connection = database.ConnectToDatabase()){
+                connection.Open();
+                string title;
+                string query = "SELECT Title FROM Meetings WHERE Meeting_ID = @ID";
+                using (var command = new MySqlCommand(query, connection)){
+                    command.Parameters.AddWithValue("@ID", id);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            title = reader.GetString(0); // Get the value from the first column (FullName)
+                        }
+                        else
+                        {
+                            title=null;
+                        }
+                    }
+                }
+                return title;
+            }
+        }
         public (bool success, string message) DeleteMeeting(int id)
         {
             using (var connection = database.ConnectToDatabase())

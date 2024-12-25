@@ -238,9 +238,7 @@ namespace Backend.Services
                     userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
                 }
 
-                var userQuery = userFields.Count > 0
-                    ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;"
-                    : null;
+                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;": null;
 
                 userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
 
@@ -318,9 +316,7 @@ namespace Backend.Services
                     coachParameters.Add(new MySqlParameter("@Contract_Length", entry.Contract_Length));
                 }
 
-                var coachQuery = coachFields.Count > 0
-                    ? $"UPDATE Coach SET {string.Join(",", coachFields)} WHERE Coach_ID=@Coach_ID;"
-                    : null;
+                var coachQuery = coachFields.Count > 0 ? $"UPDATE Coach SET {string.Join(",", coachFields)} WHERE Coach_ID=@Coach_ID;": null;
 
                 coachParameters.Add(new MySqlParameter("@Coach_ID", entry.User_ID));
 
@@ -405,6 +401,66 @@ namespace Backend.Services
                 }
             }
 
+        }
+
+
+        public string GetCoachName(int id){
+            using (var connection = database.ConnectToDatabase()){
+                connection.Open();
+                string coachQuery= "Select CONCAT(FirstName, ' ', LastName) AS FullName FROM User WHERE User_ID = @coachID";
+                string CoachName;
+                using(var coachCommand = new MySqlCommand(coachQuery , connection)){
+                    coachCommand.Parameters.AddWithValue("@coachID", id);
+                    using (var reader = coachCommand.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            CoachName = reader.GetString(0); // Get the value from the first column (FullName)
+                        }
+                        else
+                        {
+                            CoachName=null;
+                        }
+                    }
+                }
+                return CoachName;
+            }
+        }
+
+        public List<ClientAssignedModel> ViewMyClients(int id)
+        {
+            var ClientsList = new List<ClientAssignedModel>();
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = @"SELECT u.User_ID, CONCAT(u.First_Name, ' ' , u.Last_Name) AS FullName, u.Email, u.Phone_Number
+                , u.Gender, u.Age, c.BMR , c.Weight_kg , c.Height_cm , c.Membership_Type FROM Client c, User u  WHERE c.Client_ID= u.User_ID AND Belong_To_Coach_ID = @Belong_To_Coach_ID ;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        //The while loop iterates through each row of the query result.
+                        //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
+                        while (reader.Read())
+                        {
+                            ClientsList.Add(new ClientAssignedModel
+                            {
+                                User_ID = reader.GetInt32("User_ID"),
+                                FullName = reader.GetString("FullName"),
+                                Email = reader.GetString("Email"),
+                                Phone_Number = reader.GetString("Phone_Number"),
+                                Gender = reader.GetString("Gender"),
+                                Age = reader.GetInt32("Age"),
+                                BMR = reader.GetInt32("BMR"),
+                                Weight_kg = reader.GetDouble("Weight_kg"),
+                                Height_cm = reader.GetDouble("Height_cm"),
+                                Membership_Type = reader.GetString("Membership_Type"),
+                            });
+                        }
+                        return ClientsList;
+                    }
+                }
+            }
         }
     }
 }

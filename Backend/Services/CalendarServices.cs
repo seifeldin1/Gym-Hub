@@ -49,7 +49,7 @@ namespace Backend.Services{
                     }
                 }
 
-
+                //Time is stored at meetings table as datetime so i just want to get all meetings in that period
                 string meetingQuery = @"SELECT Meeting_ID AS Id, Title, Time AS StartDate, Time AS EndDate,
                                      'Meeting' AS Type FROM Meetings WHERE Time BETWEEN @startDate AND @endDate";
                 using(var command = new MySqlCommand(meetingQuery , connection)){
