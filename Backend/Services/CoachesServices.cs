@@ -99,11 +99,9 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = @"SELECT c.*, 
-u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, 
-u.Last_Name, u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
-FROM Coach c
-LEFT JOIN User u ON c.Coach_ID = u.User_ID;";
+                string query = @"SELECT c.*, u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, 
+                        u.Last_Name, u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+                        FROM Coach c LEFT JOIN User u ON c.Coach_ID = u.User_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
