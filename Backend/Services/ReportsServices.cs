@@ -61,5 +61,102 @@ namespace Backend.Services{
             }
         }
 
+        public (bool success, string message) GenerateBranchManagerReport(ManagerialReportModel report, int managerReportedID)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                var query = @"
+                    INSERT INTO Reports 
+                        (Manager_Reported_ID, Title, Generated_Date, Type, Status, Content) 
+                    VALUES 
+                        (@ManagerReportedID, @Title, @GeneratedDate, @Type, @Status, @Content)";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ManagerReportedID", managerReportedID);
+                    command.Parameters.AddWithValue("@Title", report.Title);
+                    command.Parameters.AddWithValue("@GeneratedDate", report.GeneratedDate);
+                    command.Parameters.AddWithValue("@Type", report.Type);
+                    command.Parameters.AddWithValue("@Status", report.Status);
+                    command.Parameters.AddWithValue("@Content", report.Content);
+
+                    command.ExecuteNonQuery();
+                }
+                return (true, "Branch manager report generated successfully.");
+            }
+        }
+
+        public List<ManagerialReportModel> GetBranchManagerReports(int managerReportedID)
+        {
+            var reports = new List<ManagerialReportModel>();
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                var query = @"
+                    SELECT Report_ID, Title, Generated_Date, Type, Status, Content 
+                    FROM Reports 
+                    WHERE Manager_Reported_ID = @ManagerReportedID 
+                    ORDER BY Generated_Date DESC";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ManagerReportedID", managerReportedID);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var report = new ManagerialReportModel
+                            {
+                                ReportID = reader.GetInt32("Report_ID"),
+                                Title = reader.GetString("Title"),
+                                GeneratedDate = reader.GetDateTime("Generated_Date"),
+                                Type = reader.GetString("Type"),
+                                Status = reader.GetString("Status"),
+                                Content = reader.GetString("Content")
+                            };
+                            reports.Add(report);
+                        }
+                    }
+                    return reports;
+                }
+            }
+        }
+
+        public List<ManagerialReportModel> GetAllBranchManagerReports()
+        {
+            var reports = new List<ManagerialReportModel>();
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                var query = @"
+                    SELECT Report_ID, Manager_Reported_ID, Title, Generated_Date, Type, Status, Content 
+                    FROM Reports 
+                    ORDER BY Generated_Date DESC";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var report = new ManagerialReportModel
+                            {
+                                ReportID = reader.GetInt32("Report_ID"),
+                                ManagerReportedID = reader.IsDBNull(reader.GetOrdinal("Manager_Reported_ID")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("Manager_Reported_ID")),
+                                Title = reader.GetString("Title"),
+                                GeneratedDate = reader.GetDateTime("Generated_Date"),
+                                Type = reader.GetString("Type"),
+                                Status = reader.GetString("Status"),
+                                Content = reader.GetString("Content")
+                            };
+                            reports.Add(report);
+                        }
+                    }
+                    return reports;
+                }
+            }
+        }
+
+
+
     }
 }
