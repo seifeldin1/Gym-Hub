@@ -15,4 +15,5 @@ namespace Backend.Models
         public int Fees_Of_Membership { get; set; }
         public int Membership_Period_Months { get; set; }
     }
+    //test
 }

@@ -29,7 +29,7 @@ const OpenClass = () => {
 
         <section class="max-w-7xl mx-auto px-6 sm:px-12 py-16">
             <div className="bg-transparent grid grid-cols-3 pl-6 mx-auto text-center">
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8">
+                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
                     <h1 className="text-orange-400 font-extrabold text-xl mb-4">CARDIO FITNESS</h1>
                     <p className="text-gray-300">
                         Boost your endurance and burn calories with our cardio classes! Perfect for all fitness levels, 
@@ -38,7 +38,7 @@ const OpenClass = () => {
                     <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8">
+                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
                     <h1 className="text-orange-400 font-extrabold text-xl mb-4">CORPORATE FITNESS</h1>
                     <p className="text-gray-300">
                         Boost productivity and well-being with our Corporate Fitness programs! 
@@ -48,7 +48,7 @@ const OpenClass = () => {
                     <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8">
+                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
                     <h1 className="text-orange-400 font-extrabold text-xl mb-4">GROUP TRAINING</h1>
                     <p className="text-gray-300">
                         Achieve your goals together with Group Training! Fun, motivating, 
@@ -56,7 +56,7 @@ const OpenClass = () => {
                     <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8">
+                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
                     <h1 className="text-orange-400 font-extrabold text-xl mb-4">PERSONAL TRAINING</h1>
                     <p className="text-gray-300">
                         Get personalized guidance with Personal Training!
@@ -64,7 +64,7 @@ const OpenClass = () => {
                     <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8">
+                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
                     <h1 className="text-orange-400 font-extrabold text-xl mb-4">STRENGTH TRAINING</h1>
                     <p className="text-gray-300">
                         Build muscle and boost power with Strength Training! Perfect for all levels,
@@ -72,7 +72,7 @@ const OpenClass = () => {
                     <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8">
+                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
                     <h1 className="text-orange-400 font-extrabold text-xl mb-4">SPORTS CONDITIONING</h1>
                     <p className="text-gray-300">
                         Elevate your performance with Sports Conditioning! Tailored training to improve strength, speed,

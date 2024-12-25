@@ -25,7 +25,7 @@ namespace Backend.Database{
         }*/
 
        
-        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=$$eif@eldin_1020;";
+        private const string connectionString = "Server=127.0.0.1;DatabaseUser=root;Password=$$eif@eldin_1020;";
         //Create connection 
         public MySqlConnection ConnectToDatabase(){
             return new MySqlConnection(connectionString);
@@ -168,7 +168,7 @@ namespace Backend.Database{
                         Interview_ID INT AUTO_INCREMENT PRIMARY KEY,
                         Manager_ID INT, 
                         Free_Interview_Date DATETIME NOT NULL,
-                        Taken BOOLEAN,
+                        Taken BOOLEAN DEFAULT false,
                         FOREIGN KEY(Manager_ID) REFERENCES Branch_Manager(Branch_Manager_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
                 
@@ -350,12 +350,14 @@ namespace Backend.Database{
                 var createDietTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Diet(
                         Nutrition_Plan_ID INT NOT NULL,
+                        Supplement_ID INT NOT NULL
                         Coach_Created_ID INT , 
                         Client_Assigned_TO_ID INT NOT NULL,
                         Status VARCHAR(255) NOT NULL DEFAULT 'Not choosed', 
                         Start_Date DATE NOT NULL,
                         End_Date DATE NOT NULL,
                         FOREIGN KEY(Nutrition_Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY(Supplement_ID) REFERENCES Supplements(Supplement_ID) ON DELETE CASCADE ON UPDATE,
                         FOREIGN KEY(Coach_Created_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE,
                         FOREIGN KEY(Client_Assigned_TO_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE ,
                         PRIMARY KEY(Nutrition_Plan_ID, Client_Assigned_TO_ID)
@@ -444,6 +446,24 @@ namespace Backend.Database{
                     );
                 " , connection);
                 creatBlackListedTokenTable.ExecuteNonQuery();
+
+                var createClientProgressTable = new MySqlCommand(@"
+                    CREATE TABLE IF NOT EXISTS ClientProgress(
+                        Client_Progress_ID INT AUTO_INCREMENT PRIMARY KEY,
+                        Client_ID INT,
+                        Coach_ID INT,
+                        ReportDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        ProgressSummary VARCHAR(400) NOT NULL,
+                        GoalsAchieved VARCHAR(200) NOT NULL,
+                        ChallengesFaced VARCHAR(200) NOT NULL,
+                        NextSteps VARCHAR(300) NOT NULL,
+                        FOREIGN KEY (Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY (Coach_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE
+                    )
+                " , connection);
+                createClientProgressTable.ExecuteNonQuery();
+
+                
 
             }
         }
