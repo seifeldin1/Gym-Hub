@@ -92,11 +92,13 @@ namespace Backend.Services{
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                var query = @"
+                string query = @"
                     SELECT Report_ID, Title, Generated_Date, Type, Status, Content 
                     FROM Reports 
                     WHERE Manager_Reported_ID = @ManagerReportedID 
                     ORDER BY Generated_Date DESC";
+
+                string ManagerNameQuery = @"SELECT CONCAT(First_Name ,' ', Last_Name ) AS FullName From User WHERE User_ID = @managerID";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@ManagerReportedID", managerReportedID);

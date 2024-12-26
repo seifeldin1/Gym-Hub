@@ -155,7 +155,7 @@ namespace Backend.Database{
                         Manager_Reported_ID INT ,
                         Title VARCHAR(50) NOT NULL, 
                         Generated_Date DATE NOT NULL, 
-                        Type VARCHAR(50) NOT NULL DEFAULT 'Montly Report',
+                        Type VARCHAR(50) NOT NULL DEFAULT 'Monthly Report',
                         Status VARCHAR(50) NOT NULL DEFAULT 'To be sent',
                         Content VARCHAR(500) NOT NULL ,
                         FOREIGN KEY(Manager_Reported_ID) REFERENCES Branch_Manager(Branch_Manager_ID) ON DELETE SET NULL ON UPDATE CASCADE
