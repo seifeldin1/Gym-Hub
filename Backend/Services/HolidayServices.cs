@@ -14,10 +14,10 @@ namespace Backend.Services {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "INSERT INTO Holiday VALUES (@name , @startDate  , @endDate)";
+                string query = "INSERT INTO Holiday (Title,Start_Date,End_Date) VALUES (@Title,@startDate,@endDate)";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@name", holiday.Name);
+                    command.Parameters.AddWithValue("@Title", holiday.Title);
                     command.Parameters.AddWithValue("@startDate", holiday.Start_Date);
                     command.Parameters.AddWithValue("@endDate", holiday.End_Date);
                     command.ExecuteNonQuery();
@@ -37,19 +37,19 @@ namespace Backend.Services {
                 List<MySqlParameter> parameters = new List<MySqlParameter>();    // Query parameters
 
                 // Dynamically add fields to be updated
-                if (!string.IsNullOrEmpty(entry.Name)){
-                    setClauses.Add("Title = @Name");
-                    parameters.Add(new MySqlParameter("@Name", entry.Name));
+                if (!string.IsNullOrEmpty(entry.Title)){
+                    setClauses.Add("Title = @Title");
+                    parameters.Add(new MySqlParameter("@Title", entry.Title));
                 }
 
-                if (entry.Start_Date != default){
-                    setClauses.Add("Start_Date = @Date");
-                    parameters.Add(new MySqlParameter("@Date", entry.Start_Date));
+                if (entry.Start_Date != default&& entry.Start_Date > DateTime.MinValue){
+                    setClauses.Add("Start_Date = @Start_Date");
+                    parameters.Add(new MySqlParameter("@Start_Date", entry.Start_Date));
                 }
 
-                if (entry.End_Date != default){
-                    setClauses.Add("End_Date = @eDate");
-                    parameters.Add(new MySqlParameter("@eDate", entry.End_Date));
+                if (entry.End_Date != default && entry.End_Date > DateTime.MinValue){
+                    setClauses.Add("End_Date = @End_Date");
+                    parameters.Add(new MySqlParameter("@End_Date", entry.End_Date));
                 }
 
                 if (setClauses.Count == 0)
@@ -58,7 +58,7 @@ namespace Backend.Services {
                 // Complete query
                 updateQuery += string.Join(", ", setClauses) + " WHERE Holiday_ID = @Holiday_ID";
 
-                parameters.Add(new MySqlParameter("@Holiday_ID", entry.Id));
+                parameters.Add(new MySqlParameter("@Holiday_ID", entry.Holiday_ID));
 
                 using (var connection = database.ConnectToDatabase()){
                     connection.Open();
@@ -109,8 +109,8 @@ namespace Backend.Services {
                         {
                             holidays.Add(new Holiday
                             {
-                                Id = reader.GetInt32("Holiday_ID"),
-                                Name = reader.GetString("Title"),
+                                Holiday_ID= reader.GetInt32("Holiday_ID"),
+                                Title= reader.GetString("Title"),
                                 Start_Date = reader.GetDateTime("Start_Date"),
                                 End_Date = reader.GetDateTime("End_Date")
                             });

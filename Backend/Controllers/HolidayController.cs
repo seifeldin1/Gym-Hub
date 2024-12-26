@@ -5,40 +5,40 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/Events")]
-    public class EventsController : ControllerBase{
-        private readonly EventService eventService;
-        public EventsController(EventService eventService){
-            this.eventService = eventService;
+    [Route("api/Holiday")]
+    public class HolidayController : ControllerBase{
+        private readonly HolidayService HolidayService;
+        public HolidayController(HolidayService HolidayService){
+            this.HolidayService = HolidayService;
         }
 
         [HttpPost]
-        public IActionResult CreateEvent([FromBody] Events events){
-            var result = eventService.AddEvent(events);
+        public IActionResult AddHoliday([FromBody] Holiday holiday){
+            var result = HolidayService.AddHoliday(holiday);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
 
 
         [HttpPut]
-        public IActionResult UpdateEvent([FromBody] Events events){
-            var result = eventService.UpdateEvent(events);
+        public IActionResult UpdateHoliday([FromBody] Holiday holiday){
+            var result = HolidayService.UpdateHoliday(holiday);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
 
 
         [HttpDelete]
-        public IActionResult DeleteEvent(GetByIDModel getByIDModel)
+        public IActionResult DeleteHoliday(GetByIDModel getByIDModel)
         {
-            var result = eventService.DeleteEvent(getByIDModel.id);
+            var result = HolidayService.DeleteHoliday(getByIDModel.id);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
 
         [HttpGet]
-        public IActionResult GetEvents(){
-            var result = eventService.GetEvents();
+        public IActionResult GetHolidays(){
+            var result = HolidayService.GetHolidays();
             return Ok(result);
         }
 

@@ -72,61 +72,154 @@ namespace Backend.Services
             }
         }
         }
-        public (bool success, string message) UpdateBranchManager(BranchManagerModel entry)
+           public (bool success, string message) UpdateBranchManager(BranchManagerUpdaterModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                var userQuery = @"
-                    UPDATE User SET Username=@Username,PasswordHashed=@PasswordHashed,Type=@Type,
-                    First_Name=@First_Name,Last_Name=@Last_Name,Email=@Email,
-                    Phone_Number=@Phone_Number,Gender=@Gender,Age=@Age,National_Number=@National_Number WHERE User_ID=@User_ID;";
-                using (var userCommand = new MySqlCommand(userQuery, connection))
-                {
-                    userCommand.Parameters.AddWithValue("@User_ID", entry.User_ID);
-                    userCommand.Parameters.AddWithValue("@Username", entry.Username);
-                    userCommand.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
-                    userCommand.Parameters.AddWithValue("@Type", entry.Type);
-                    userCommand.Parameters.AddWithValue("@Email", entry.Email);
-                    userCommand.Parameters.AddWithValue("@First_Name", entry.First_Name);
-                    userCommand.Parameters.AddWithValue("@Last_Name", entry.Last_Name);
-                    userCommand.Parameters.AddWithValue("@Phone_Number", entry.Phone_Number);
-                    userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
-                    userCommand.Parameters.AddWithValue("@Age", entry.Age);
-                    userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
 
-                string query = @"UPDATE Branch_Manager SET Salary=@Salary,Penalties=@Penalties,
-                Bonuses=@Bonuses,Hire_Date=@Hire_Date,Employee_Under_Supervision=@Employee_Under_Supervision,
-                Fire_Date=@Fire_Date,Manages_Branch_ID=@Manages_Branch_ID,Contract_Length=@Contract_Length WHERE Branch_Manager_ID=@Branch_Manager_ID 
-                    ;";
-                    
-                using (var command = new MySqlCommand(query, connection))
+                var userFields = new List<string>();
+                var userParameters = new List<MySqlParameter>();
+
+                if (!string.IsNullOrEmpty(entry.Username))
                 {
-                    command.Parameters.AddWithValue("@Branch_Manager_ID",entry.Branch_Manager_ID);
-                    command.Parameters.AddWithValue("@Salary", entry.Salary);
-                    command.Parameters.AddWithValue("@Penalties", entry.Penalties);
-                    command.Parameters.AddWithValue("@Bonuses", entry.Bonuses);
-                    command.Parameters.AddWithValue("@Hire_Date", entry.Hire_Date.ToString("yyyy-MM-dd"));
-                    command.Parameters.AddWithValue("@Employee_Under_Supervision", entry.Employee_Under_Supervision);
-                    if (entry.Fire_Date.HasValue)
-                        {
-                            command.Parameters.AddWithValue("@Fire_Date", entry.Fire_Date.Value.ToString("yyyy-MM-dd"));
-                        }
-                        else
-                        {
-                            command.Parameters.AddWithValue("@Fire_Date", DBNull.Value);
-                        }
-                    command.Parameters.AddWithValue("@Manages_Branch_ID", entry.Manages_Branch_ID);
-                    command.Parameters.AddWithValue("@Contract_Length", entry.Contract_Length);
-                    int rowsAffected1 = userCommand.ExecuteNonQuery();
-                    int rowsAffected2 = command.ExecuteNonQuery();
-                    if (rowsAffected2 > 0&&rowsAffected1>0)
-                        return (true, "Branch Manager Updated successfully");
-                    else
-                        return (false, "Failed to Update Branch Manager");
+                    userFields.Add("Username=@Username");
+                    userParameters.Add(new MySqlParameter("@Username", entry.Username));
+                }
+                if (!string.IsNullOrEmpty(entry.PasswordHashed))
+                {
+                    userFields.Add("PasswordHashed=@PasswordHashed");
+                    userParameters.Add(new MySqlParameter("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed)));
+                }
+                if (!string.IsNullOrEmpty(entry.Type))
+                {
+                    userFields.Add("Type=@Type");
+                    userParameters.Add(new MySqlParameter("@Type", entry.Type));
+                }
+                if (!string.IsNullOrEmpty(entry.First_Name))
+                {
+                    userFields.Add("First_Name=@First_Name");
+                    userParameters.Add(new MySqlParameter("@First_Name", entry.First_Name));
+                }
+                if (!string.IsNullOrEmpty(entry.Last_Name))
+                {
+                    userFields.Add("Last_Name=@Last_Name");
+                    userParameters.Add(new MySqlParameter("@Last_Name", entry.Last_Name));
+                }
+                if (!string.IsNullOrEmpty(entry.Email))
+                {
+                    userFields.Add("Email=@Email");
+                    userParameters.Add(new MySqlParameter("@Email", entry.Email));
+                }
+                if (!string.IsNullOrEmpty(entry.Phone_Number))
+                {
+                    userFields.Add("Phone_Number=@Phone_Number");
+                    userParameters.Add(new MySqlParameter("@Phone_Number", entry.Phone_Number));
+                }
+                if (!string.IsNullOrEmpty(entry.Gender))
+                {
+                    userFields.Add("Gender=@Gender");
+                    userParameters.Add(new MySqlParameter("@Gender", entry.Gender));
+                }
+                if (entry.Age > 0)
+                {
+                    userFields.Add("Age=@Age");
+                    userParameters.Add(new MySqlParameter("@Age", entry.Age));
+                }
+                if (!string.IsNullOrEmpty(entry.National_Number))
+                {
+                    userFields.Add("National_Number=@National_Number");
+                    userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
+                }
+
+                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;": null;
+
+                userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
+
+                var branchmanagerFields = new List<string>();
+                var branchmanagerParameters = new List<MySqlParameter>();
+
+                if (entry.Salary > 0)
+                {
+                    branchmanagerFields.Add("Salary=@Salary");
+                    branchmanagerParameters.Add(new MySqlParameter("@Salary", entry.Salary));
+                }
+                if (entry.Penalties > 0)
+                {
+                    branchmanagerFields.Add("Penalties=@Penalties");
+                    branchmanagerParameters.Add(new MySqlParameter("@Penalties", entry.Penalties));
+                }
+                if (entry.Bonuses > 0)
+                {
+                    branchmanagerFields.Add("Bonuses=@Bonuses");
+                    branchmanagerParameters.Add(new MySqlParameter("@Bonuses", entry.Bonuses));
+                }
+                if (entry.Hire_Date != default)
+                {
+                    branchmanagerFields.Add("Hire_Date=@Hire_Date");
+                    branchmanagerParameters.Add(new MySqlParameter("@Hire_Date", entry.Hire_Date.HasValue ? (object)entry.Hire_Date.Value.ToString("yyyy-MM-dd") : DBNull.Value));
+                }
+                 if (entry.Employee_Under_Supervision.HasValue)
+                {
+                    branchmanagerFields.Add("Employee_Under_Supervision=@Employee_Under_Supervision");
+                    branchmanagerParameters.Add(new MySqlParameter("@Employee_Under_Supervision", entry.Employee_Under_Supervision));
+                }
+                if (entry.Fire_Date.HasValue)
+                {
+                    branchmanagerFields.Add("Fire_Date=@Fire_Date");
+                    branchmanagerParameters.Add(new MySqlParameter("@Fire_Date", entry.Fire_Date.Value.ToString("yyyy-MM-dd")));
+                }
+                else
+                {
+                    branchmanagerFields.Add("Fire_Date=@Fire_Date");
+                    branchmanagerParameters.Add(new MySqlParameter("@Fire_Date", DBNull.Value));
+                }
+               
+                if (entry.Manages_Branch_ID.HasValue)
+                {
+                    branchmanagerFields.Add("Manages_Branch_ID=@Manages_Branch_ID");
+                    branchmanagerParameters.Add(new MySqlParameter("@Manages_Branch_ID", entry.Manages_Branch_ID));
+                }
+                if (entry.Contract_Length.HasValue)
+                {
+                    branchmanagerFields.Add("Contract_Length=@Contract_Length");
+                    branchmanagerParameters.Add(new MySqlParameter("@Contract_Length", entry.Contract_Length));
+                }
+
+                var branchmanagerQuery = branchmanagerFields.Count > 0 ? $"UPDATE Branch_Manager SET {string.Join(",", branchmanagerFields)} WHERE Branch_Manager_ID=@Branch_Manager_ID;": null;
+
+                branchmanagerParameters.Add(new MySqlParameter("@Branch_Manager_ID", entry.User_ID));
+
+                int rowsAffected1 = 0;
+                int rowsAffected2 = 0;
+
+                if (userQuery != null)
+                {
+                    using (var userCommand = new MySqlCommand(userQuery, connection))
+                    {
+                        userCommand.Parameters.AddRange(userParameters.ToArray());
+                        rowsAffected1 = userCommand.ExecuteNonQuery();
+                    }
+                }
+
+                if (branchmanagerQuery != null)
+                {
+                    using (var coachCommand = new MySqlCommand(branchmanagerQuery, connection))
+                    {
+                        coachCommand.Parameters.AddRange(branchmanagerParameters.ToArray());
+                        rowsAffected2 = coachCommand.ExecuteNonQuery();
+                    }
+                }
+
+                if (rowsAffected1 > 0 || rowsAffected2 > 0)
+                {
+                    return (true, "Branch Manager updated successfully.");
+                }
+                else
+                {
+                    return (false, "No updates were made.");
                 }
             }
-        }
         }
 
         //* DeleteBranchManager : Deletes a Branch Manager from Branch Manager Relation and user Relation

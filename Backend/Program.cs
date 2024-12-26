@@ -50,6 +50,13 @@ builder.Services.AddScoped<MeetingsServices>();
 builder.Services.AddScoped<ProgressServices>();
 builder.Services.AddScoped<Owner>();
 builder.Services.AddScoped<TalentPoolServices>();
+builder.Services.AddScoped<ReportsServices>();
+builder.Services.AddScoped<EventService>();
+builder.Services.AddScoped<HolidayService>();
+
+
+
+
 
 
 

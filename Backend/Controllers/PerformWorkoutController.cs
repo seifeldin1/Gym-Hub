@@ -25,13 +25,39 @@ namespace Backend.Controllers
             var result = performWorkoutService.GetPerformWorkoutsByClientId(Sessionshistory.id);
             if (result == null || result.Count == 0)
             {
-                return NotFound(new { message = "No sessions found for the given client ID."});
+                return NotFound(new { message = "No sessions found for the given client ID." });
             }
             return Ok(result);
         }
+        [HttpPut("SetPerformed")]
+        public IActionResult SetPerformed([FromBody] PerformedModel entry)
+        {
+            var result = performWorkoutService.SetPerformed(entry.Client_ID, entry.Workout_ID);
+            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
     }
-public class Sessionshistory
-{
- public int id { get; set; }
-}
+    public class Sessionshistory
+    {
+        public int id { get; set; }
+    }
+    public class PerformedModel
+    {
+        public int Client_ID { get; set; }
+        public int Workout_ID { get; set; }
+    }
 }

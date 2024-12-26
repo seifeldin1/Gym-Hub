@@ -145,27 +145,51 @@ namespace Backend.Services
                 }
             }
         }
-        public (bool success, string message) AccountActivity(bool activ, int id)
+        public (bool success, string message) ActiveAccount(int id)
         {
             using (var connection = database.ConnectToDatabase())
             {
 
                 connection.Open();
-                string query = "UPDATE Client SET AccountActivated = @AccountActivated WHERE Client_ID = @Client_ID;";
+                string query = "UPDATE Client SET AccountActivated =TRUE WHERE Client_ID = @Client_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@AccountActivated", activ);
                     command.Parameters.AddWithValue("@Client_ID", id);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
 
-                        return (true, "Account Activated/deactivated successfully");
+                        return (true, "Account Activated successfully");
                     }
                     else
                     {
 
-                        return (false, "Failed to Activated/deactivated Account ");
+                        return (false, "Failed to Activated Account ");
+                    }
+                }
+            }
+
+        }
+        public (bool success, string message) DeactiveAccount(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+
+                connection.Open();
+                string query = "UPDATE Client SET AccountActivated =False WHERE Client_ID = @Client_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Client_ID", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Account Deactivated successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Deactivated Account ");
                     }
                 }
             }
@@ -218,56 +242,161 @@ namespace Backend.Services
                 }
             }
         }
-        public (bool success, string message) UpdateClient(ClientsModel entry)
+        public (bool success, string message) UpdateClient(ClientUpdaterModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                var userQuery = @"
-                    UPDATE User SET Username=@Username,PasswordHashed=@PasswordHashed,Type=@Type,First_Name=@First_Name,
-                    Last_Name=@Last_Name,Email=@Email,
-                    Phone_Number=@Phone_Number,Gender=@Gender,Age=@Age,National_Number=@National_Number WHERE User_ID=@User_ID;";
-                using (var userCommand = new MySqlCommand(userQuery, connection))
+
+                var userFields = new List<string>();
+                var userParameters = new List<MySqlParameter>();
+
+                if (!string.IsNullOrEmpty(entry.Username))
                 {
-                    userCommand.Parameters.AddWithValue("@User_ID", entry.User_ID);
-                    userCommand.Parameters.AddWithValue("@Username", entry.Username);
-                    userCommand.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
-                    userCommand.Parameters.AddWithValue("@Type", entry.Type);
-                    userCommand.Parameters.AddWithValue("@Email", entry.Email);
-                    userCommand.Parameters.AddWithValue("@First_Name", entry.First_Name);
-                    userCommand.Parameters.AddWithValue("@Last_Name", entry.Last_Name);
-                    userCommand.Parameters.AddWithValue("@Phone_Number", entry.Phone_Number);
-                    userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
-                    userCommand.Parameters.AddWithValue("@Age", entry.Age);
-                    userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
-                    string query = @"UPDATE Client SET Join_Date=@Join_Date,BMR=@BMR,Weight_kg=@Weight_kg,Height_cm=Height_cm,
-                    Belong_To_Coach_ID=@Belong_To_Coach_ID,AccountActivated=@AccountActivated,Start_Date_Membership=@Start_Date_Membership,
-                    End_Date_Membership=@End_Date_Membership,Membership_Type=@Membership_Type,Fees_Of_Membership=@Fees_Of_Membership,
-                    Membership_Period_Months=@Membership_Period_Months WHERE Client_ID=@Client_ID;";
-                    using (var command = new MySqlCommand(query, connection))
+                    userFields.Add("Username=@Username");
+                    userParameters.Add(new MySqlParameter("@Username", entry.Username));
+                }
+                if (!string.IsNullOrEmpty(entry.PasswordHashed))
+                {
+                    userFields.Add("PasswordHashed=@PasswordHashed");
+                    userParameters.Add(new MySqlParameter("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed)));
+                }
+                if (!string.IsNullOrEmpty(entry.Type))
+                {
+                    userFields.Add("Type=@Type");
+                    userParameters.Add(new MySqlParameter("@Type", entry.Type));
+                }
+                if (!string.IsNullOrEmpty(entry.First_Name))
+                {
+                    userFields.Add("First_Name=@First_Name");
+                    userParameters.Add(new MySqlParameter("@First_Name", entry.First_Name));
+                }
+                if (!string.IsNullOrEmpty(entry.Last_Name))
+                {
+                    userFields.Add("Last_Name=@Last_Name");
+                    userParameters.Add(new MySqlParameter("@Last_Name", entry.Last_Name));
+                }
+                if (!string.IsNullOrEmpty(entry.Email))
+                {
+                    userFields.Add("Email=@Email");
+                    userParameters.Add(new MySqlParameter("@Email", entry.Email));
+                }
+                if (!string.IsNullOrEmpty(entry.Phone_Number))
+                {
+                    userFields.Add("Phone_Number=@Phone_Number");
+                    userParameters.Add(new MySqlParameter("@Phone_Number", entry.Phone_Number));
+                }
+                if (!string.IsNullOrEmpty(entry.Gender))
+                {
+                    userFields.Add("Gender=@Gender");
+                    userParameters.Add(new MySqlParameter("@Gender", entry.Gender));
+                }
+                if (entry.Age > 0)
+                {
+                    userFields.Add("Age=@Age");
+                    userParameters.Add(new MySqlParameter("@Age", entry.Age));
+                }
+                if (!string.IsNullOrEmpty(entry.National_Number))
+                {
+                    userFields.Add("National_Number=@National_Number");
+                    userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
+                }
+
+                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;": null;
+
+                userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
+
+                var clientFields = new List<string>();
+                var clientParameters = new List<MySqlParameter>();
+
+                if (entry.Join_Date != default)
+                {
+                    clientFields.Add("Join_Date=@Join_Date");
+                    clientParameters.Add(new MySqlParameter("@Join_Date", entry.Join_Date.HasValue ? (object)entry.Join_Date.Value.ToString("yyyy-MM-dd") : DBNull.Value));
+                }
+
+                if (entry.BMR > 0)
+                {
+                    clientFields.Add("BMR=@BMR");
+                    clientParameters.Add(new MySqlParameter("@BMR", entry.BMR));
+                }
+                if (entry.Weight_kg > 0)
+                {
+                    clientFields.Add("Weight_kg=@Weight_kg");
+                    clientParameters.Add(new MySqlParameter("@Weight_kg", entry.Weight_kg));
+                }
+                if (entry.Height_cm > 0)
+                {
+                    clientFields.Add("Height_cm=@Height_cm");
+                    clientParameters.Add(new MySqlParameter("@Height_cm", entry.Height_cm));
+                }
+                
+                if (entry.Belong_To_Coach_ID.HasValue)
+                {
+                    clientFields.Add("Belong_To_Coach_ID=@Belong_To_Coach_ID");
+                    clientParameters.Add(new MySqlParameter("@Belong_To_Coach_ID", entry.Belong_To_Coach_ID));
+                }
+                if (entry.Start_Date_Membership != default)
+                {
+                    clientFields.Add("Start_Date_Membership=@Start_Date_Membership");
+                    clientParameters.Add(new MySqlParameter("@Start_Date_Membership", entry.Start_Date_Membership.HasValue ? (object)entry.Start_Date_Membership.Value.ToString("yyyy-MM-dd") : DBNull.Value));
+                }
+                if (entry.End_Date_Membership != default)
+                {
+                    clientFields.Add("End_Date_Membership=@End_Date_Membership");
+                    clientParameters.Add(new MySqlParameter("@End_Date_Membership", entry.End_Date_Membership.HasValue ? (object)entry.End_Date_Membership.Value.ToString("yyyy-MM-dd") : DBNull.Value));
+                }
+                
+                if (!string.IsNullOrEmpty(entry.Membership_Type))
+                {
+                    clientFields.Add("Membership_Type=@Membership_Type");
+                    clientParameters.Add(new MySqlParameter("@Membership_Type", entry.Membership_Type));
+                }
+                if (entry.Fees_Of_Membership>0)
+                {
+                    clientFields.Add("Fees_Of_Membership=@Fees_Of_Membership");
+                    clientParameters.Add(new MySqlParameter("@Fees_Of_Membership", entry.Fees_Of_Membership));
+                }
+                if (entry.Membership_Period_Months.HasValue)
+                {
+                    clientFields.Add("Membership_Period_Months=@Membership_Period_Months");
+                    clientParameters.Add(new MySqlParameter("@Membership_Period_Months", entry.Membership_Period_Months));
+                }
+
+                var clientQuery = clientFields.Count > 0 ? $"UPDATE Client SET {string.Join(",", clientFields)} WHERE Client_ID=@Client_ID;": null;
+
+                clientParameters.Add(new MySqlParameter("@Client_ID", entry.User_ID));
+
+                int rowsAffected1 = 0;
+                int rowsAffected2 = 0;
+
+                if (userQuery != null)
+                {
+                    using (var userCommand = new MySqlCommand(userQuery, connection))
                     {
-                        command.Parameters.AddWithValue("@Client_ID", entry.Client_ID);
-                        command.Parameters.AddWithValue("@Join_Date",entry.Join_Date.ToString("yyyy-MM-dd"));
-                        command.Parameters.AddWithValue("@BMR", entry.BMR);
-                        command.Parameters.AddWithValue("@Weight_kg",entry.Weight_kg);
-                        command.Parameters.AddWithValue("@Height_cm",entry.Height_cm);
-                        command.Parameters.AddWithValue("@Belong_To_Coach_ID", entry.Belong_To_Coach_ID);
-                        command.Parameters.AddWithValue("@AccountActivated",entry.AccountActivated);
-                        command.Parameters.AddWithValue("@Start_Date_Membership",entry.Start_Date_Membership.ToString("yyyy-MM-dd"));
-                        command.Parameters.AddWithValue("@End_Date_Membership",entry.End_Date_Membership.ToString("yyyy-MM-dd"));
-                        command.Parameters.AddWithValue("@Membership_Type",entry.Membership_Type);
-                        command.Parameters.AddWithValue("@Fees_Of_Membership",entry.Fees_Of_Membership);
-                        command.Parameters.AddWithValue("@Membership_Period_Months",entry.Membership_Period_Months);
-                        int rowsAffected1 = userCommand.ExecuteNonQuery();
-                        int rowsAffected2 = command.ExecuteNonQuery();
-                        if (rowsAffected1 > 0 &&rowsAffected2>0)
-                            return (true, "Client Updated successfully");
-                        else
-                            return (false, "Failed to Update Client");
+                        userCommand.Parameters.AddRange(userParameters.ToArray());
+                        rowsAffected1 = userCommand.ExecuteNonQuery();
                     }
+                }
+
+                if (clientQuery != null)
+                {
+                    using (var clientCommand = new MySqlCommand(clientQuery, connection))
+                    {
+                        clientCommand.Parameters.AddRange(clientParameters.ToArray());
+                        rowsAffected2 = clientCommand.ExecuteNonQuery();
+                    }
+                }
+
+                if (rowsAffected1 > 0 || rowsAffected2 > 0)
+                {
+                    return (true, "Client updated successfully.");
+                }
+                else
+                {
+                    return (false, "No updates were made.");
                 }
             }
         }
-       
     }
 }
