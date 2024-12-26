@@ -45,6 +45,26 @@ namespace Backend.Controllers
             var announcementsList = ann_Service.GetAnnouncements();
             return Ok(announcementsList);
         }
+         [HttpPut]
+        public IActionResult EditAnnouncment([FromBody] AnnouncementUpdaterModel announcement)
+        {
+            // Call the service to update the Branch
+            var result = ann_Service.EditAnnouncment(announcement);
+            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+                });
+            }
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
 
         [HttpDelete]
         public IActionResult DeleteAnnouncement([FromBody] int id)

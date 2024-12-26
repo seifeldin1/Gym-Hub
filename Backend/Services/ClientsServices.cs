@@ -170,6 +170,31 @@ namespace Backend.Services
             }
 
         }
+        public (bool success, string message) DeactiveAccount(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+
+                connection.Open();
+                string query = "UPDATE Client SET AccountActivated =False WHERE Client_ID = @Client_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Client_ID", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Account Deactivated successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Deactivated Account ");
+                    }
+                }
+            }
+
+        }
         
         public (bool success, string message) AddRateCoach(RatingModel entry)
         {

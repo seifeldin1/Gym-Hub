@@ -34,14 +34,14 @@ namespace Backend.Controllers{
             });
             // Return the JSON result
         }
-        [HttpDelete("{id}")]
-        public IActionResult DeleteOwner(int id)
+        [HttpDelete]
+        public IActionResult DeleteOwner([FromBody] GetByIDModel entry)
         {
-            if (id <= 0)
+            if (entry.id <= 0)
             {
-                return BadRequest(new { message = "Invalid Workout ID provided." });
+                return BadRequest(new { message = "Invalid Owner ID provided." });
             }
-            var result = ownerServices.DeleteOwner(id);
+            var result = ownerServices.DeleteOwner(entry.id);
             // Return success response after deletion
             if (result.success)
             {
@@ -49,7 +49,6 @@ namespace Backend.Controllers{
                 {
                     success = true,
                     message = result.message
-
                 });
             }
 
@@ -66,7 +65,7 @@ namespace Backend.Controllers{
             return Ok(ownerlist);
         }
         [HttpPut]
-        public IActionResult UpdateOwner([FromBody] OwnerModel entry)
+        public IActionResult UpdateOwner([FromBody] OwnerUpdaterModel entry)
         {
             // Call the service to update the Branch
             var result =ownerServices.UpdateOwner(entry);

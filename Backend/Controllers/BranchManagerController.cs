@@ -57,14 +57,14 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-        [HttpDelete("{id}")]
-        public IActionResult DeleteBranchManager(int id)
+        [HttpDelete]
+        public IActionResult DeleteBranchManager([FromBody] GetByIDModel entry)
         {
-            if (id <= 0)
+            if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Branch Manager  ID provided." });
             }
-            var result = branchmanagersService.DeleteBranchManager(id);
+            var result = branchmanagersService.DeleteBranchManager(entry.id);
             // Return success response after deletion
             if (result.success)
             {

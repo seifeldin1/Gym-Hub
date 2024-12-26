@@ -73,46 +73,119 @@ namespace Backend.Services
                 }
             }
         }
-         public (bool success, string message) UpdateOwner(OwnerModel entry)
+            public (bool success, string message) UpdateOwner(OwnerUpdaterModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                var userQuery = @"
-                    UPDATE User SET Username=@Username,PasswordHashed=@PasswordHashed,Type=@Type,
-                    First_Name=@First_Name,Last_Name=@Last_Name,Email=@Email,
-                    Phone_Number=@Phone_Number,Gender=@Gender,Age=@Age,National_Number=@National_Number WHERE User_ID=@User_ID;";
-                using (var userCommand = new MySqlCommand(userQuery, connection))
-                {
-                    userCommand.Parameters.AddWithValue("@User_ID", entry.User_ID);
-                    userCommand.Parameters.AddWithValue("@Username", entry.Username);
-                    userCommand.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
-                    userCommand.Parameters.AddWithValue("@Type", entry.Type);
-                    userCommand.Parameters.AddWithValue("@Email", entry.Email);
-                    userCommand.Parameters.AddWithValue("@First_Name", entry.First_Name);
-                    userCommand.Parameters.AddWithValue("@Last_Name", entry.Last_Name);
-                    userCommand.Parameters.AddWithValue("@Phone_Number", entry.Phone_Number);
-                    userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
-                    userCommand.Parameters.AddWithValue("@Age", entry.Age);
-                    userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
 
-                string query = @"UPDATE Owner SET Share_Percentage=@Share_Percentage,Established_branches=@Established_branches WHERE Owner_ID =@Owner_ID;";
-                    
-                using (var command = new MySqlCommand(query, connection))
+                var userFields = new List<string>();
+                var userParameters = new List<MySqlParameter>();
+
+                if (!string.IsNullOrEmpty(entry.Username))
                 {
-                    command.Parameters.AddWithValue("@Owner_ID",entry.Owner_ID );
-                    command.Parameters.AddWithValue("@Share_Percentage", entry.Share_Percentage);
-                    command.Parameters.AddWithValue("@Established_branches", entry.Established_branches);
-                    int rowsAffected1 = userCommand.ExecuteNonQuery();
-                    int rowsAffected2 = command.ExecuteNonQuery();
-                    if (rowsAffected2 > 0 && rowsAffected1>0)
-                        return (true, "Owner Updated successfully");
-                    else
-                        return (false, "Failed to Update Owner");
+                    userFields.Add("Username=@Username");
+                    userParameters.Add(new MySqlParameter("@Username", entry.Username));
+                }
+                if (!string.IsNullOrEmpty(entry.PasswordHashed))
+                {
+                    userFields.Add("PasswordHashed=@PasswordHashed");
+                    userParameters.Add(new MySqlParameter("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed)));
+                }
+                if (!string.IsNullOrEmpty(entry.Type))
+                {
+                    userFields.Add("Type=@Type");
+                    userParameters.Add(new MySqlParameter("@Type", entry.Type));
+                }
+                if (!string.IsNullOrEmpty(entry.First_Name))
+                {
+                    userFields.Add("First_Name=@First_Name");
+                    userParameters.Add(new MySqlParameter("@First_Name", entry.First_Name));
+                }
+                if (!string.IsNullOrEmpty(entry.Last_Name))
+                {
+                    userFields.Add("Last_Name=@Last_Name");
+                    userParameters.Add(new MySqlParameter("@Last_Name", entry.Last_Name));
+                }
+                if (!string.IsNullOrEmpty(entry.Email))
+                {
+                    userFields.Add("Email=@Email");
+                    userParameters.Add(new MySqlParameter("@Email", entry.Email));
+                }
+                if (!string.IsNullOrEmpty(entry.Phone_Number))
+                {
+                    userFields.Add("Phone_Number=@Phone_Number");
+                    userParameters.Add(new MySqlParameter("@Phone_Number", entry.Phone_Number));
+                }
+                if (!string.IsNullOrEmpty(entry.Gender))
+                {
+                    userFields.Add("Gender=@Gender");
+                    userParameters.Add(new MySqlParameter("@Gender", entry.Gender));
+                }
+                if (entry.Age > 0)
+                {
+                    userFields.Add("Age=@Age");
+                    userParameters.Add(new MySqlParameter("@Age", entry.Age));
+                }
+                if (!string.IsNullOrEmpty(entry.National_Number))
+                {
+                    userFields.Add("National_Number=@National_Number");
+                    userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
+                }
+
+                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;": null;
+
+                userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
+
+                var ownerFields = new List<string>();
+                var ownerParameters = new List<MySqlParameter>();
+
+                if (entry.Share_Percentage > 0)
+                {
+                    ownerFields.Add("Share_Percentage=@Share_Percentage");
+                    ownerParameters.Add(new MySqlParameter("@Share_Percentage", entry.Share_Percentage));
+                }
+                if (entry.Established_branches > 0)
+                {
+                    ownerFields.Add("Established_branches=@Established_branches");
+                    ownerParameters.Add(new MySqlParameter("@Established_branches", entry.Established_branches));
+                }
+                var ownerQuery = ownerFields.Count > 0 ? $"UPDATE Owner SET {string.Join(",", ownerFields)} WHERE Owner_ID=@Owner_ID;": null;
+
+                ownerParameters.Add(new MySqlParameter("@Owner_ID", entry.User_ID));
+
+                int rowsAffected1 = 0;
+                int rowsAffected2 = 0;
+
+                if (userQuery != null)
+                {
+                    using (var userCommand = new MySqlCommand(userQuery, connection))
+                    {
+                        userCommand.Parameters.AddRange(userParameters.ToArray());
+                        rowsAffected1 = userCommand.ExecuteNonQuery();
+                    }
+                }
+
+                if (ownerQuery != null)
+                {
+                    using (var ownerCommand = new MySqlCommand(ownerQuery, connection))
+                    {
+                        ownerCommand.Parameters.AddRange(ownerParameters.ToArray());
+                        rowsAffected2 = ownerCommand.ExecuteNonQuery();
+                    }
+                }
+
+                if (rowsAffected1 > 0 || rowsAffected2 > 0)
+                {
+                    return (true, "owner updated successfully.");
+                }
+                else
+                {
+                    return (false, "No updates were made.");
                 }
             }
         }
-        }
+
         public List<OwnerModel> GetOwners()
         {
             var ownerList = new List<OwnerModel>();

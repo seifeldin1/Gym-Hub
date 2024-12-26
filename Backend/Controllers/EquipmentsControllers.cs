@@ -45,11 +45,15 @@ namespace Backend.Controllers
             return Ok(equipmentList);
         }
 
-       [HttpDelete("{id}")]
-        public IActionResult DeleteEquipment( int id)
+       [HttpDelete]
+        public IActionResult DeleteEquipment([FromBody] GetByIDModel entry)
         {
+            if (entry.id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Equipment ID provided." });
+            }
 
-            var result = equipmentsService.DeleteEquipment(id);
+            var result = equipmentsService.DeleteEquipment(entry.id);
             // Return success response after deletion
             if (result.success)
             {

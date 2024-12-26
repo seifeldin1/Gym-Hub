@@ -42,14 +42,14 @@ namespace Backend.Controllers
             var coachList =coachservice.GetCoach();
             return Ok(coachList);
         }
-        [HttpDelete("{id}")]
-        public IActionResult DeleteCoach(int id)
+        [HttpDelete]
+        public IActionResult DeleteCoach([FromBody] GetByIDModel entry)
         {
-            if (id <= 0)
+            if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Coach ID provided." });
             }
-            var result = coachservice.DeleteCoach(id);
+            var result = coachservice.DeleteCoach(entry.id);
             // Return success response after deletion
             if (result.success)
             {
@@ -89,7 +89,6 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-
 
 
         [HttpPut("MoveCoach")]
@@ -168,6 +167,12 @@ namespace Backend.Controllers
                 success = false,
                 message = result.message
             });
+        }
+        [HttpGet("ViewMyClients")]
+        public IActionResult  ViewMyClients([FromBody] GetByIDModel entry)
+        {
+            var clientList =coachservice.ViewMyClients(entry.id);
+            return Ok(clientList);
         }
 
 

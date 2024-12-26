@@ -70,14 +70,14 @@ namespace Backend.Controllers
             var supplementList = supplementsService.GetSupplements();
             return Ok(supplementList);
         }
-        [HttpDelete("{id}")]
-        public IActionResult DeleteSupplement(int id)
+        [HttpDelete]
+        public IActionResult DeleteSupplement([FromBody] GetByIDModel entry)
         {
-             if (id <= 0)
+             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Supplement ID provided." });
             }
-            var result = supplementsService.DeleteSupplement(id);
+            var result = supplementsService.DeleteSupplement(entry.id);
             // Return success response after deletion
             if (result.success)
             {
@@ -88,7 +88,6 @@ namespace Backend.Controllers
 
                 });
             }
-
             return BadRequest(new
             {
                 success = false,

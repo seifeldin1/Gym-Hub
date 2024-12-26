@@ -70,14 +70,14 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteWorkout(int id)
+        [HttpDelete]
+        public IActionResult DeleteWorkout([FromBody] GetByIDModel entry)
         {
-            if (id <= 0)
+            if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Workout ID provided." });
             }
-            var result = WorkoutService.DeleteWorkout(id);
+            var result = WorkoutService.DeleteWorkout(entry.id);
             // Return success response after deletion
             if (result.success)
             {

@@ -437,6 +437,7 @@ namespace Backend.Services
                 , u.Gender, u.Age, c.BMR , c.Weight_kg , c.Height_cm , c.Membership_Type FROM Client c, User u  WHERE c.Client_ID= u.User_ID AND Belong_To_Coach_ID = @Belong_To_Coach_ID ;";
                 using (var command = new MySqlCommand(query, connection))
                 {
+                    command.Parameters.AddWithValue("@Belong_To_Coach_ID",id);
                     using (var reader = command.ExecuteReader())
                     {
                         //The while loop iterates through each row of the query result.

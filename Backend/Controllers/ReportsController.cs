@@ -27,10 +27,8 @@ namespace Backend.Controllers
                 {
                     success = true,
                     message = result.message
-
                 });
             }
-
             return BadRequest(new
             {
                 success = false,
