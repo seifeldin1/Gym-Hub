@@ -106,6 +106,26 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+        [HttpPut("DeactiveAccount")]
+        public IActionResult DeactiveAccount([FromBody] activeModel activ)
+        {
+            var result = ClientsService.DeactiveAccount(activ.Client_ID);            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return Unauthorized(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
 
         [HttpPut("AssignClientToCoach")]
         public IActionResult AssignClientToCoach([FromBody] CTC ctc)

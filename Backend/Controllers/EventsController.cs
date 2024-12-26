@@ -13,8 +13,8 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateEvent([FromBody] EventModel events){
-            var result = eventService.AddEvent(events.events , events.EventID);
+        public IActionResult CreateEvent([FromBody] Events events){
+            var result = eventService.AddEvent(events);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
@@ -28,9 +28,10 @@ namespace Backend.Controllers
         }
 
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteEvent( int id){
-            var result = eventService.DeleteEvent(id);
+        [HttpDelete]
+        public IActionResult DeleteEvent(GetByIDModel getByIDModel)
+        {
+            var result = eventService.DeleteEvent(getByIDModel.id);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
@@ -43,10 +44,5 @@ namespace Backend.Controllers
 
 
 
-    }
-
-    public class EventModel{
-        public int EventID { get; set; }
-        public Events events { get; set; }
     }
 }

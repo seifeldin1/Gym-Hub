@@ -66,7 +66,7 @@ namespace Backend.Controllers{
             return Ok(ownerlist);
         }
         [HttpPut]
-        public IActionResult UpdateOwner([FromBody] OwnerModel entry)
+        public IActionResult UpdateOwner([FromBody] OwnerUpdaterModel entry)
         {
             // Call the service to update the Branch
             var result =ownerServices.UpdateOwner(entry);
