@@ -20,7 +20,7 @@ namespace Backend.Services{
 
                     try{
                         
-                        string query = "SELECT COUNT(*) FROM Candidate Where National_Number = @National_Number ";
+                        string query = "SELECT COUNT(*) FROM Candidate Where National_Number = @National_Number;";
 
                         using(var checkCommand = new MySqlCommand(query , connection , transaction)){
                     
@@ -30,7 +30,7 @@ namespace Backend.Services{
                             string message="";
                             int result = (int)checkCommand.ExecuteScalar();
                             if(result == 0){
-                                query = "INSERT INTO Candidate VALUES(@ID , @FirstName , @LastName , @Age , @NationalNumber  , @PhoneNumber , @Email , @Status , @ResumeLink , @LinkedinLink)";
+                                query = "INSERT INTO Candidate VALUES(@ID,@FirstName,@LastName,@Age,@NationalNumber,@PhoneNumber,@Email,@Status,@ResumeLink,@LinkedinLink)";
                                 using(command = new MySqlCommand(query, connection)){
                                     command.Parameters.AddWithValue("@ID" , candidate.Id);
                                     command.Parameters.AddWithValue("@FirstName" , candidate.FirstName);
@@ -89,8 +89,6 @@ namespace Backend.Services{
                                 updateQuery += string.Join(", ", setClauses) + " WHERE National_Number= @National_Number";
                                 parameters.Add(new MySqlParameter("@National_Number" , candidate.NationalNumber));
 
-
-                  
                                 using (var queryCommand = new MySqlCommand(updateQuery, connection)){
                                     //! Add parameters to the command (Replace @variable with acutal value)
                                     foreach (var parameter in parameters)

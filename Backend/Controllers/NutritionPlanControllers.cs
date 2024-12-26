@@ -35,16 +35,35 @@ namespace Backend.Controllers
                 success = false,
                 message = result.message
             });
-
-
-            // Return the JSON result
-
         }
         [HttpGet]
         public IActionResult GetNutritionPlans()
         {
             var nutritionplanList = NutritionPlanService.GetNutritionPlans();
             return Ok(nutritionplanList);
+        }
+         [HttpDelete]
+        public IActionResult DeleteNutritionPlan([FromBody] GetByIDModel entry)
+        {
+            if (entry.id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Nutrition Plan ID provided." });
+            }
+            var result = NutritionPlanService.DeleteNutritionPlan(entry.id);
+            // Return success response after deletion
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+                });
+            }
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
         }
 
     }

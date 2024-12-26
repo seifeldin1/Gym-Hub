@@ -126,6 +126,31 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+        [HttpDelete]
+        public IActionResult DeleteClient([FromBody] GetByIDModel entry)
+        {
+            if (entry.id <= 0)
+            {
+                return BadRequest(new { message = "Invalid Coach ID provided." });
+            }
+            var result = ClientsService.DeleteClient(entry.id);
+            // Return success response after deletion
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
 
         [HttpPut("AssignClientToCoach")]
         public IActionResult AssignClientToCoach([FromBody] CTC ctc)
