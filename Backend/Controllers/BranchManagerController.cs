@@ -36,7 +36,7 @@ namespace Backend.Controllers
 
         }
         [HttpPut("UpdateBranchManager")]
-        public IActionResult UpdateBranchManager([FromBody] BranchManagerModel entry)
+        public IActionResult UpdateBranchManager([FromBody] BranchManagerUpdaterModel entry)
         {
             // Call the service to update the Branch
             var result = branchmanagersService.UpdateBranchManager(entry);

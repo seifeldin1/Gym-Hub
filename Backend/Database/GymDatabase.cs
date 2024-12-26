@@ -25,7 +25,7 @@ namespace Backend.Database{
         }*/
 
        
-        private const string connectionString = "Server=127.0.0.1;DatabaseUser=root;Password=$$eif@eldin_1020;";
+        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=AmrAshraf@0135789@;";
         //Create connection 
         public MySqlConnection ConnectToDatabase(){
             return new MySqlConnection(connectionString);
@@ -350,14 +350,14 @@ namespace Backend.Database{
                 var createDietTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Diet(
                         Nutrition_Plan_ID INT NOT NULL,
-                        Supplement_ID INT NOT NULL
-                        Coach_Created_ID INT , 
+                        Supplement_ID INT NOT NULL,
+                        Coach_Created_ID INT, 
                         Client_Assigned_TO_ID INT NOT NULL,
                         Status VARCHAR(255) NOT NULL DEFAULT 'Not choosed', 
                         Start_Date DATE NOT NULL,
                         End_Date DATE NOT NULL,
                         FOREIGN KEY(Nutrition_Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE CASCADE ON UPDATE CASCADE,
-                        FOREIGN KEY(Supplement_ID) REFERENCES Supplements(Supplement_ID) ON DELETE CASCADE ON UPDATE,
+                        FOREIGN KEY(Supplement_ID) REFERENCES Supplements(Supplement_ID) ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY(Coach_Created_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE,
                         FOREIGN KEY(Client_Assigned_TO_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE ,
                         PRIMARY KEY(Nutrition_Plan_ID, Client_Assigned_TO_ID)

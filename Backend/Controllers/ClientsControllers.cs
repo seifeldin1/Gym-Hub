@@ -37,7 +37,7 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-               [HttpPost("addrating")]
+        [HttpPost("addrating")]
         public IActionResult AddRating([FromBody] RatingModel entry)
         {
             var result = ClientsService.AddRateCoach(entry);
@@ -63,8 +63,8 @@ namespace Backend.Controllers
             var clientList = ClientsService.GetClient();
             return Ok(clientList);
         }
-         [HttpPut("UpdateClient")]
-        public IActionResult UpdateClient([FromBody] ClientsModel entry)
+        [HttpPut("UpdateClient")]
+        public IActionResult UpdateClient([FromBody] ClientUpdaterModel entry)
         {
             // Call the service to Assign client To coach
             var result = ClientsService.UpdateClient(entry);            // Return success response after update
@@ -86,11 +86,10 @@ namespace Backend.Controllers
         }
 
 
-        [HttpPut("AccountActivity")]
-        public IActionResult AccountActivity([FromBody] activeModel activ)
+        [HttpPut("ActiveAccount")]
+        public IActionResult ActiveAccount([FromBody] activeModel activ)
         {
-            // Call the service to Assign client To coach
-            var result = ClientsService.AccountActivity(activ.activ, activ.id);            // Return success response after update
+            var result = ClientsService.ActiveAccount(activ.Client_ID);            // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -138,7 +137,6 @@ namespace Backend.Controllers
     }
     public class activeModel
     {
-        public bool activ { get; set; }
-        public int id { get; set; }
+        public int Client_ID  { get; set; }
     }
 }

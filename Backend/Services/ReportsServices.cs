@@ -11,7 +11,7 @@ namespace Backend.Services{
         public (bool success , string message) GenerateClientReport(Report report , int clientID , int coachId){
             using(var connection = database.ConnectToDatabase()){
                 connection.Open();
-                var query = @"INSERT INTO Client_Progress (Client_ID, Coach_ID, ProgressSummary, GoalsAchieved, ChallengesFaced, NextSteps) 
+                var query = @"INSERT INTO ClientProgress (Client_ID, Coach_ID, ProgressSummary, GoalsAchieved, ChallengesFaced, NextSteps) 
                             VALUES (@ClientID, @CoachID, @ProgressSummary, @GoalsAchieved, @ChallengesFaced, @NextSteps)";
                 using(var command = new MySqlCommand(query , connection)){
                     command.Parameters.AddWithValue("@ClientID" , clientID);
@@ -33,7 +33,7 @@ namespace Backend.Services{
                 connection.Open();
 
                 var query = @"SELECT ReportDate, ProgressSummary, GoalsAchieved, ChallengesFaced, NextSteps
-                            FROM Client_Progress WHERE Client_ID = @clientID ORDER BY ReportDate DESC"; // Order by latest report first
+                            FROM ClientProgress WHERE Client_ID = @clientID ORDER BY ReportDate DESC"; // Order by latest report first
 
                 using (var command = new MySqlCommand(query, connection))
                 {
@@ -61,7 +61,7 @@ namespace Backend.Services{
             }
         }
 
-        public (bool success, string message) GenerateBranchManagerReport(ManagerialReportModel report, int managerReportedID)
+        public (bool success, string message) GenerateBranchManagerReport(ManagerialReportModel report)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -73,7 +73,7 @@ namespace Backend.Services{
                         (@ManagerReportedID, @Title, @GeneratedDate, @Type, @Status, @Content)";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@ManagerReportedID", managerReportedID);
+                    command.Parameters.AddWithValue("@ManagerReportedID", report.ManagerReportedID);
                     command.Parameters.AddWithValue("@Title", report.Title);
                     command.Parameters.AddWithValue("@GeneratedDate", report.GeneratedDate);
                     command.Parameters.AddWithValue("@Type", report.Type);
