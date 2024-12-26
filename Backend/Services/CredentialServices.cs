@@ -53,7 +53,7 @@ namespace Backend.Services
             {
                 connection.Open();
 
-                string query = "SELECT Username , PasswordHashed , Type FROM User WHERE Username = @username;";
+                string query = "SELECT User_ID , Username , PasswordHashed , Type FROM User WHERE Username = @username;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@username", entry.Username);
@@ -64,20 +64,36 @@ namespace Backend.Services
                         {
                             string hashedPassword = reader["PasswordHashed"].ToString();
                             string roleType = reader["Type"].ToString();
-                          
+                            int id = (int)reader["User_ID"];
+                            query = "SELECT AccountActivated from Client where Client_ID = @id";
+                            using (var command2 = new MySqlCommand(query, connection)){
+                                command2.Parameters.AddWithValue("@id", id);
+                                using (var reader2 = command2.ExecuteReader()){
+                                    if(reader2.Read()){
+                                        if(reader2["AccountActivated"].ToString() == "1"){
+                                            if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
+                                            {
 
-                            if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
-                            {
+                                                string token = GenerateJwtToken(entry.Username, roleType);
+                                                // Password is correct
+                                                return(true , "Login Successful" , token , roleType);
+                                            }
+                                            else
+                                            {
+                                                // Password is incorrect
+                                                return (false, "Invalid password", null, null);
+                                            }
+                                        }else{
+                                            return (false, "Account not activated", null, null);
+                                        }
+                                    }
+                                    else{
+                                        return (false, "Client not found", null, null);
+                                    }
+                                }
+                            }
 
-                                string token = GenerateJwtToken(entry.Username, roleType);
-                                // Password is correct
-                                return(true , "Login Successful" , token , roleType);
-                            }
-                            else
-                            {
-                                // Password is incorrect
-                                return (false, "Invalid password", null, null);
-                            }
+                            
                         }
                         else
                         {
