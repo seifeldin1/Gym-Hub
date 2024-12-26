@@ -56,18 +56,18 @@ namespace Backend.Controllers
         }
 
         //[RoleAuthorize("Coach")]
-        [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeleteMeeting(int id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteMeeting([FromBody] GetByIDModel entry)
         {
-            if (id <= 0)
+            if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Meeting ID provided." });
             }
-            string title = meetingService.GetMeetingTitle(id);
+            string title = meetingService.GetMeetingTitle(entry.id);
             var meetingDeleted = $"Meeting {title} has been deleted.";
             await notificationServices.NotifyAllUsersAsync(meetingDeleted);
 
-            var result = meetingService.DeleteMeeting(id);
+            var result = meetingService.DeleteMeeting(entry.id);
             if (result.success)
             {
                 return Ok(new { message = "Meeting deleted and notification sent successfully" });

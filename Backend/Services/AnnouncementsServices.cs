@@ -67,11 +67,13 @@ namespace Backend.Services {
         }
 
         public (bool success , string message) EditAnnouncment(AnnouncementUpdaterModel announcement){
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                var announcementFields = new List<string>();
-                var announcmentParameters = new List<MySqlParameter>();
+                if (announcement == null)
+                return (false, "Announcement data is null.");
+            try{
+                string updateQuery = "UPDATE Announcements SET ";        // Base query string
+                List<string> announcementFields = new List<string>();          // List of clauses to include in query
+                List<MySqlParameter> announcmentParameters = new List<MySqlParameter>();  // Query parameters
+
                 if(!string.IsNullOrEmpty(announcement.Title)){
                     announcementFields.Add("Title = @Title");
                     announcmentParameters.Add(new MySqlParameter("@Title", announcement.Title));
@@ -84,28 +86,35 @@ namespace Backend.Services {
                     announcementFields.Add("Type = @Type");
                     announcmentParameters.Add(new MySqlParameter("@Type", announcement.Type));
                 }
-                var updateQuery = announcementFields.Count>0? $"UPDATE Announcements SET {string.Join(",",announcementFields)} WHERE Announcements_ID = @Announcements_ID":null;
+                if(announcement.Author_ID>0){
+                    announcementFields.Add("Author_ID = @Author_ID");
+                    announcmentParameters.Add(new MySqlParameter("@Author_ID", announcement.Author_ID));
+                }
+                updateQuery +=  string.Join(",",announcementFields)+" WHERE Announcements_ID = @Announcements_ID";
                 announcmentParameters.Add(new MySqlParameter("@Announcements_ID" , announcement.Announcements_ID));
-                int rowsAffected = 0;
-                if(updateQuery!=null){
+                using (var connection = database.ConnectToDatabase())
+                {
+                    connection.Open();
                     using (var command = new MySqlCommand(updateQuery, connection))
                     {
-                        foreach(var param in announcmentParameters)
-                            command.Parameters.Add(param);
-                        rowsAffected = command.ExecuteNonQuery();
+                        foreach (var announcmentParameter in announcmentParameters)
+                            command.Parameters.Add(announcmentParameter);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        if (rowsAffected == 0)
+                            return (false, "No Announcment data was updated.");
+
+                        return (true, "Announcment data was updated successfully.");
                     }
                 }
-
-                if(rowsAffected>0){
-                    return (true, "Announcement updated successfully");
-                }
-                else{
-                    return (false, "Failed to update announcement");
-                }
-                  
-                
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
             }
         }
+        
 
         //* DeleteAnnouncement : Deletes an Announcement from Announcement Relation
         public (bool success, string message) DeleteAnnouncement(int id)

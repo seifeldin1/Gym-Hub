@@ -53,6 +53,9 @@ builder.Services.AddScoped<TalentPoolServices>();
 builder.Services.AddScoped<ReportsServices>();
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<HolidayService>();
+builder.Services.AddScoped<ApplicationServices>();
+
+
 
 
 

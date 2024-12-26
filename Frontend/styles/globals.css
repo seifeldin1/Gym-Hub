@@ -6,3 +6,37 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* FullCalendar Button Styling */
+div.fc-toolbar button.fc-button {
+  background-color: #DBFF55; /* Change to your desired color */
+  color: white; /* Text color */
+}
+
+div.fc-toolbar button.fc-button:hover {
+  background-color: #ff6f47; /* Darker color on hover */
+}
+
+div.fc-toolbar button.fc-prev-button,
+div.fc-toolbar button.fc-next-button {
+  background-color: #DBFF55; /* Color for prev and next buttons */
+  color: black;
+  border-radius: 50%;
+}
+
+div.fc-toolbar button.fc-prev-button:hover,
+div.fc-toolbar button.fc-next-button:hover {
+  background-color: #45a049; /* Darker shade on hover */
+}
+
+div.fc-toolbar button.fc-today-button {
+  background-color: #3498db; /* Color for today button */
+  color: white;
+}
+
+div.fc-toolbar button.fc-today-button:hover {
+  background-color: #2980b9; /* Darker shade on hover */
+}
+
+.fc-toolbar-title {
+  color: #dbff55; /* Example color, change to whatever you need */
+}

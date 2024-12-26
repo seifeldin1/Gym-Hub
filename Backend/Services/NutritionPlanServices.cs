@@ -44,6 +44,30 @@ namespace Backend.Services
             }
 
         }
+        public (bool success, string message) DeleteNutritionPlan(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "DELETE FROM Nutrition WHERE Nutrition_ID=@Id;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Nutrition Deleted successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Delete Nutrition");
+                    }
+                }
+
+            }
+        }
         public List<NutritionPlanModel> GetNutritionPlans()
         {
             var nutritionplanList = new List<NutritionPlanModel>();
