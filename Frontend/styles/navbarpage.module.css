@@ -15,7 +15,6 @@
 .DivOFbuttons {
     @apply flex w-full py-2 mx-auto items-center mt-6 mb-14 rounded-full;    
 }
-
 .Icon{
     @apply text-[3rem] text-white transition-colors duration-500 hover:text-orange-400 hover:bg-clip-text hover:bg-gradient-to-r hover:from-orange-500 hover:to-pink-500;
 }
