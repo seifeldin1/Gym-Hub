@@ -46,12 +46,8 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-<<<<<<< HEAD
-        public IActionResult UpdateSupplement([FromBody] SupplementsModel entry)
-=======
         [Authorize(Roles = "Coach , BranchManager")]
-        public IActionResult UpdateSupplement([FromBody] SupplementsModel UpdatedWorkout)
->>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
+        public IActionResult UpdateSupplement([FromBody] SupplementsModel entry)
         {
             // Call the service to update the Branch
             var result = supplementsService.UpdateSupplement(entry);
