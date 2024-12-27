@@ -13,9 +13,9 @@ import { CashflowChart } from './Statistics';
 
 export const NextMeet = () => {
     return (
-        <div className={styles.MeetingDiv}>
-            <div className="w-[90%] my-4 mx-auto flex flex-col gap-3">
-                <h2 className="text-lg">
+        <div className="bg-[#131313] text-[#F7F7F7] w-[90%] h-[100%] rounded-2xl mx-auto py-1">
+            <div className="w-[90%] mt-2 mx-auto flex flex-col gap-3">
+                <h2 className="text-2xl mb-4">
                     Next Meeeting
                 </h2>
                 <div className="flex gap-2 items-center text-xs">
@@ -212,19 +212,26 @@ const clients = [
         nutritionPlan: 'Balanced',
         startDate: 'Mar 2024',
         endDate: 'Mar 2025'
+    },
+    {
+        name: 'Jane Smith',
+        workoutPlan: 'Cardio',
+        nutritionPlan: 'Balanced',
+        startDate: 'Mar 2024',
+        endDate: 'Mar 2025'
     }
 ];
 
 const ClientCard = ({ name, workoutPlan, nutritionPlan, startDate, endDate }) => {
     return (
         <>
-        <div className="p-5 bg-neutral-800 rounded-xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-2 border border-gray-200 my-4 w-fit">
-            <h2 className="text-2xl font-bold mb-2 text-green-500">{name}</h2>
-            <p className="text-white mb-1"><strong>Workout Plan:</strong> {workoutPlan}</p>
-            <p className="text-white mb-1"><strong>Nutrition Plan:</strong> {nutritionPlan}</p>
-            <p className="text-white mb-1"><strong>Start Date:</strong> {startDate}</p>
-            <p className="text-white mb-4"><strong>End Date:</strong> {endDate}</p>
-            <button className="mt-4 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">View Details</button>
+        <div className="p-3 bg-neutral-800 rounded-xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-2 border border-gray-200 my-4 w-fit flex flex-col">
+            <h2 className="text-2xl font-bold mb-2 text-green-500 text-center">{name}</h2>
+            <p className="text-white mb-1 text-sm"><strong>Workout Plan:</strong> {workoutPlan}</p>
+            <p className="text-white mb-1 text-sm"><strong>Nutrition Plan:</strong> {nutritionPlan}</p>
+            <p className="text-white mb-1 text-sm"><strong>Start Date:</strong> {startDate}</p>
+            <p className="text-white mb-1 text-sm"><strong>End Date:</strong> {endDate}</p>
+            <button className="mt-3 px-3 py-1 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">View Details</button>
         </div>
         </>
     );
@@ -239,34 +246,42 @@ const Home = () => {
         <>
             <DashHeader page_name="Home" />
             <div className='flex gap-3'>
-                <div className='w-[25%] h-[85vh] flex flex-col gap-3'>
-                    <NextMeet />
-                    <NumStat />
-                </div>
-                <div className='w-[50%] h-[85vh] flex gap-2 flex-col'>
 
-                    <div className='bg-[#131313] rounded-2xl px-5 py-3 mx-auto w-full'>
-                        <h1 className="text-2xl text-white mb-4">
-                            Clients
-                        </h1>
-                        <div className="inline-flex space-x-6 max-w-full overflow-x-auto whitespace-nowrap customScroll">
-                            {clients.map((client, index) => (
-                                <ClientCard
-                                    key={index}
-                                    name={client.name}
-                                    workoutPlan={client.workoutPlan}
-                                    nutritionPlan={client.nutritionPlan}
-                                    startDate={client.startDate}
-                                    endDate={client.endDate}
-                                />
-                            ))}
+
+                <div className="flex flex-col w-[75%]">
+
+                    <div className='w-[100%] h-[40%] flex gap-2 flex-row mb-4'>
+
+                        <div className='w-[25%] h-[100%] flex flex-col gap-3'>
+                            <NextMeet/>
+                        </div>
+                        <div className='bg-[#131313] rounded-2xl px-5 py-3 mx-auto w-[75%] h-[100%]'>
+                            <h1 className="text-2xl text-white">
+                                Clients
+                            </h1>
+                            <div className="inline-flex space-x-6 max-w-full overflow-x-auto whitespace-nowrap customScroll">
+                                {clients.map((client, index) => (
+                                    <ClientCard
+                                        key={index}
+                                        name={client.name}
+                                        workoutPlan={client.workoutPlan}
+                                        nutritionPlan={client.nutritionPlan}
+                                        startDate={client.startDate}
+                                        endDate={client.endDate}
+                                    />
+                                ))}
+                            </div>
                         </div>
 
                     </div>
-                    <div className="bg-[#131313] text-white px-2 py-2 rounded-xl flex-grow">
-                        <RecentReports />
+
+                    <div className="bg-[#131313] text-white px-2 py-2 rounded-xl flex-grow ml-4">
+                            <RecentReports/>
                     </div>
+
                 </div>
+
+
                 <div className='w-[25%] h-[85vh]'>
                     <Annoncements />
                 </div>
