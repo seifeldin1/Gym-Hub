@@ -87,95 +87,43 @@ namespace Backend.Services
         }
         public (bool success, string message) UpdateSupplement(SupplementsModel entry)
         {
-            //? Check if An Entry is Given
-            if (entry == null)
-                return (false, "Supplemeny data is null.");
-
-            try
+             using (var connection = database.ConnectToDatabase())
             {
-                string updateQuery = "UPDATE Supplements SET ";                        //! Query String
-                List<string> setClauses = new List<string>();                   //! List of clauses added to query 
-                List<MySqlParameter> parameters = new List<MySqlParameter>();   //! Query params
-
-                //! Check In Entry for Params To Be edited By query
-                if (entry.Name != null)
+                connection.Open();
+                string query = @"UPDATE Supplements SET Name=@Name,Brand=@Brand,Selling_Price=@Selling_Price,
+                Purchased_Price=@Purchased_Price,Purchased_Price=@Purchased_Price,Type=@Type,Flavor=@Flavor,
+                Manufactured_Date=@Manufactured_Date,Expiration_Date=@Expiration_Date,Purchase_Date=@Purchase_Date,
+                Scoop_Size_grams=@Scoop_Size_grams,Scoop_Number_package=@Scoop_Number_package,
+                Scoop_Detail=@Scoop_Detail WHERE Supplement_ID=@Supplement_ID;";
+                using (var command = new MySqlCommand(query, connection))
                 {
-                    setClauses.Add("Name = @Name");
-                    parameters.Add(new MySqlParameter("@Name", entry.Name));
-                }
-                if (entry.Brand != null)
-                {
-                    setClauses.Add("Brand= @Brand");
-                    parameters.Add(new MySqlParameter("@Brand", entry.Brand));
-                }
-                setClauses.Add("Selling_Price= @Selling_Price");
-                parameters.Add(new MySqlParameter("@Selling_Price", entry.Selling_Price));
-
-
-                setClauses.Add("Purchased_Price= @Purchased_Price");
-                parameters.Add(new MySqlParameter("@Purchased_Price", entry.Purchased_Price));
-
-                if (entry.Type != null)
-                {
-                    setClauses.Add("Type= @Type");
-                    parameters.Add(new MySqlParameter("@Type", entry.Type));
-                }
-                if (entry.Flavor != null)
-                {
-                    setClauses.Add("Flavor= @Flavor");
-                    parameters.Add(new MySqlParameter("@Flavor", entry.Flavor));
-                }
-                setClauses.Add("Manufactured_Date= @Manufactured_Date");
-                parameters.Add(new MySqlParameter("@Manufactured_Date", entry.Manufactured_Date.ToString("yyyy-MM-dd")));
-
-                setClauses.Add("Expiration_Date= @Expiration_Date");
-                parameters.Add(new MySqlParameter("@Expiration_Date", entry.Expiration_Date.ToString("yyyy-MM-dd")));
-
-                setClauses.Add("Purchase_Date= @Purchase_Date");
-                parameters.Add(new MySqlParameter("@Purchase_Date", entry.Purchase_Date.ToString("yyyy-MM-dd")));
-
-                setClauses.Add("Scoop_Size_grams= @Scoop_Size_grams");
-                parameters.Add(new MySqlParameter("@Scoop_Size_grams", entry.Scoop_Size_grams));
-
-                setClauses.Add("Scoop_Number_package= @Scoop_Number_package");
-                parameters.Add(new MySqlParameter("@Scoop_Number_package", entry.Scoop_Number_package));
-
-                setClauses.Add("Scoop_Detail= @Scoop_Detail");
-                parameters.Add(new MySqlParameter("@Scoop_Detail", entry.Scoop_Detail));
-
-
-
-
-                if (setClauses.Count == 0)
-                    return (false, "No fields to update.");
-
-                //? Join Query
-                updateQuery += string.Join(", ", setClauses) + " WHERE Supplement_ID = @Supplement_ID";
-
-                parameters.Add(new MySqlParameter("@Supplement_ID", entry.Supplement_ID));
-
-                using (var connection = database.ConnectToDatabase())
-                {
-                    connection.Open();
-                    using (var command = new MySqlCommand(updateQuery, connection))
+                    command.Parameters.AddWithValue("@Name",entry.Name);
+                    command.Parameters.AddWithValue("@Brand",entry.Brand );
+                    command.Parameters.AddWithValue("@Selling_Price",entry.Selling_Price);
+                    command.Parameters.AddWithValue("@Purchased_Price",entry.Purchased_Price);
+                    command.Parameters.AddWithValue("@Type",entry.Type);
+                    command.Parameters.AddWithValue("@Flavor",entry.Flavor);
+                    command.Parameters.AddWithValue("@Manufactured_Date",entry.Manufactured_Date.ToString("yyyy-MM-dd"));
+                    command.Parameters.AddWithValue("@Expiration_Date",entry.Expiration_Date.ToString("yyyy-MM-dd"));
+                    command.Parameters.AddWithValue("@Purchase_Date",entry.Purchase_Date.ToString("yyyy-MM-dd"));
+                    command.Parameters.AddWithValue("@Scoop_Size_grams",entry.Scoop_Size_grams);
+                    command.Parameters.AddWithValue("@Scoop_Number_package",entry.Scoop_Number_package);
+                    command.Parameters.AddWithValue("@Scoop_Detail",entry.Scoop_Detail);
+                    command.Parameters.AddWithValue("@Supplement_ID",entry.Supplement_ID );
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
                     {
-                        //! Add parameters to the command (Replace @variable with acutal value)
-                        foreach (var parameter in parameters)
-                            command.Parameters.Add(parameter);
 
-                        int rowsAffected1 = command.ExecuteNonQuery();
+                        return (true, "Supplement Updated successfully");
+                    }
+                    else
+                    {
 
-                        if (rowsAffected1 == 0)
-                            return (false, "No Supplement data was updated.");
-
-                        return (true, "Supplement Data Was updated");
+                        return (false, "Failed to Update Supplement");
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                return (false, $"Error: {ex.Message}");
-            }
+
         }
 
 

@@ -45,7 +45,7 @@ namespace Backend.Controllers
             return Ok(equipmentList);
         }
 
-       [HttpDelete]
+    [HttpDelete]
         public IActionResult DeleteEquipment([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -73,7 +73,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateWorkout([FromBody] EquipmentsModel entry)
+        public IActionResult UpdateEquipment([FromBody] EquipmentsModel entry)
         {
             // Call the service to update the Branch
             var result = equipmentsService.UpdateEquipment(entry);
@@ -94,5 +94,31 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+                [HttpPut("AssignEquipmentToBranch")]
+        public IActionResult AssignEquipmentToBranch([FromBody] AssigningModel entry)
+        {
+            // Call the service to Assign client To coach
+            var result = equipmentsService.AssignEquipmentToBranch(entry.Equipment_ID,entry.Branch_ID);            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
+    }
+    public class AssigningModel
+    {
+        public int Equipment_ID { get; set; }
+        public int Branch_ID { get; set; }
     }
 }

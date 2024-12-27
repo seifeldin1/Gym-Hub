@@ -55,6 +55,12 @@ builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<HolidayService>();
 builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<CalendarServices>();
+builder.Services.AddScoped<StatisticsServices>();
+builder.Services.AddScoped<RecommendationServices>();
+
+
+
+
 
 
 

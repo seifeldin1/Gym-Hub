@@ -25,7 +25,7 @@ namespace Backend.Database{
         }*/
 
        
-        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=$$eif@eldin_1020;";
+        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=AmrAshraf@0135789@;";
         //Create connection 
         public MySqlConnection ConnectToDatabase(){
             return new MySqlConnection(connectionString);
@@ -391,14 +391,14 @@ namespace Backend.Database{
                 createProgressTableCommand.ExecuteNonQuery();
 
                 var createRecommendationTableCommand = new MySqlCommand(@"
-                    CREATE TABLE IF NOT EXISTS Recommandation(
+                    CREATE TABLE IF NOT EXISTS Recommendation(
                         Recommendation_ID INT PRIMARY KEY AUTO_INCREMENT,
                         Client_ID INT NOT NULL,
                         Plan_ID INT,
                         Supplement_ID INT,
                         FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
-                         FOREIGN KEY(Plan_ID) REFERENCES Client(Plan_ID) ON DELETE CASCADE ON UPDATE CASCADE,
-                          FOREIGN KEY(Supplement_ID) REFERENCES Client(Supplement_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                        FOREIGN KEY(Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY(Supplement_ID) REFERENCES Supplements(Supplement_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
                 createProgressTableCommand.ExecuteNonQuery();

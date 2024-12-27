@@ -13,6 +13,12 @@ namespace Backend.Services {
         public (bool success , string message) ChooseDiet(Diet diet){
             using(var connection = database.ConnectToDatabase()){
                 connection.Open();
+                int checker;
+                string checkquery="SELECT COUNT(*) FROM DIET WHERE Client_Assigned_TO_ID=@Client_Assigned_TO_ID";
+                 using(var command = new MySqlCommand(checkquery , connection)){
+                    command.Parameters.AddWithValue("@Client_Assigned_TO_ID" , diet.Client_Assigned_TO_ID);
+                     checker = (int)command.ExecuteScalar();
+                }
                 string query = @"INSERT INTO DIET(Nutrition_Plan_ID , Supplement_ID , Coach_Created_ID , Client_Assigned_TO_ID, Status, Start_Date , End_Date)
                 VALUES (@planID , @suppID , @coachID , @clientID , @status , @startDate , @endDate)";
 
@@ -22,7 +28,9 @@ namespace Backend.Services {
                     command.Parameters.AddWithValue("@id" , diet.Coach_Created_ID);
                     coachID = (int)command.ExecuteScalar();
                 }
-
+                    if(checker>0){
+                        string deletequery="DELETE * FROM DIET WHERE Client_Assigned_TO_ID=@Client_Assigned_TO_ID";
+                    }
                 using(var addCommand = new MySqlCommand(query , connection)){
                     addCommand.Parameters.AddWithValue("@planID" , diet.Nutrition_Plan_ID);
                     addCommand.Parameters.AddWithValue("@suppID" , diet.Supplement_ID);
