@@ -8,14 +8,12 @@ const Report = () => {
     phoneNumber: "123-456-7890",
     password: "mypassword123",
     salary: "$5,000",
-    penalties: "5",
-    bonuses: "$1,000",
-    contractLength: "2 years",
-    endDate: "December 31, 2024",
     nationalNumber: "123456789",
     gender: "Male",
     age: 30,
-    email: "example@email.com", // Email field now editable
+    email: "example@email.com", // Email field is editable
+    sharePercentage: "25%",
+    establishedBranches: "4",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -40,7 +38,7 @@ const Report = () => {
         <h2 className="text-5xl font-extrabold text-green-500">
           Seif Al-tutu
         </h2>
-        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-5xl">
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-4xl">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Editable Section */}
             <div className="flex flex-col space-y-4">
@@ -112,13 +110,11 @@ const Report = () => {
               <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
                 Static Details
               </h3>
-              <div className="grid grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[
                   { label: "Salary", value: formData.salary },
-                  { label: "Penalties", value: formData.penalties },
-                  { label: "Bonuses", value: formData.bonuses },
-                  { label: "Contract Length", value: formData.contractLength },
-                  { label: "End Date", value: formData.endDate },
+                  { label: "Share Percentage", value: formData.sharePercentage },
+                  { label: "Established Branches", value: formData.establishedBranches },
                   { label: "National Number", value: formData.nationalNumber },
                   { label: "Gender", value: formData.gender },
                   { label: "Age", value: formData.age },
