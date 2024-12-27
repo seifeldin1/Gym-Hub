@@ -32,15 +32,15 @@ const About = () => {
 
         <div className="items-center mr-12 l-6 my-4 border-none w-1/3 h-full">
           <div className="relative flex flex-col">
-            <span className="absolute inset-0 text-[8rem] lg:text-[10rem] font-bold uppercase text-yellow-300 opacity-10 z-0">Trainers</span>
-            <h2 className="text-4xl sm:text-5xl font-extrabold mt-20 text-orange-400 z-10 relative ease-in duration-300 hover:scale-110">Change Your Body With Our Trainer</h2>
+            <span className="absolute inset-0 text-[8rem] lg:text-[10rem] font-bold uppercase text-green-300 opacity-10 z-0">Trainers</span>
+            <h2 className="text-4xl sm:text-5xl font-extrabold mt-20 text-[#b2d438] z-10 relative ease-in duration-300 hover:scale-110">Change Your Body With Our Trainer</h2>
           </div>
           <p className="my-9 text-lg sm:text-xl text-gray-300">
-            Welcome to <span className="text-orange-400 font-bold">PulseFit</span>, where fitness meets innovation! Our mission is to provide a dynamic and motivating environment for individuals of all fitness levels. With state-of-the-art equipment, professional trainers, and personalized workout plans,
+            Welcome to <span className="text-[#b2d438] font-bold">PulseFit</span>, where fitness meets innovation! Our mission is to provide a dynamic and motivating environment for individuals of all fitness levels. With state-of-the-art equipment, professional trainers, and personalized workout plans,
             we aim to empower you to achieve your health and wellness goals. Whether you're here to build strength, boost endurance, or simply improve your lifestyle, our gym is your ultimate fitness destination. 
-            Let’s embark on this journey together — because <span className="text-orange-400 font-bold">your progress</span> is our passion!
+            Let’s embark on this journey together — because <span className="text-[#b2d438] font-bold">your progress</span> is our passion!
           </p>
-          <button className="text-white text-lg border-2 border-solid my-4 ease-in duration-300 hover:border-orange-400 px-3 py-2 bg-transparent hover:scale-110 hover:bg-orange-400 hover:text-gray-100">Read More</button></div>
+          <button className="text-white text-lg border-2 font-bold border-solid my-4 ease-in duration-300 hover:border-[#b2d438] px-3 py-2 bg-transparent hover:scale-110 hover:bg-[#b2d438] hover:text-black">Read More</button></div>
         </div>
         </>
     );
@@ -51,7 +51,7 @@ const Gallery = () => {
   return (
     <>
       <div className="bg-transparent sm:flex-col mt-[25%]">
-        <h2 className="text-center my-5 text-4xl sm:text-5xl font-extrabold mt-24 text-orange-400 relative ease-in duration-300 hover:scale-110">Our Gallery</h2>
+        <h2 className="text-center my-5 text-4xl sm:text-5xl font-extrabold mt-24 text-[#b2d438] relative ease-in duration-300 hover:scale-110">Our Gallery</h2>
         <section className="max-w-7xl mx-auto px-6 sm:px-12 py-16">
             <div className="grid grid-cols-4 gap-8">
               <div className="flex justify-center items-center mb-4"><Image src={gall1.src}  alt="Gallery-1"  width={300} height={300} className="hover:opacity-50 items-center"/></div> 
@@ -76,7 +76,7 @@ const Gallery = () => {
               We are looking for passionate and driven individuals to inspire and lead as coaches or managers. Ready to take the next step in your career?
             </p>
             <a href=""
-              className="inline-block px-10 py-4 bg-white text-purple-600 font-bold rounded-full shadow-lg hover:bg-purple-500 hover:text-white transition duration-300">
+              className="inline-block px-10 py-4 bg-white text-lg text-purple-600 font-bold rounded-full shadow-lg hover:bg-purple-500 hover:text-white transition duration-300">
               Apply Now
             </a>
           </div>

@@ -8,7 +8,7 @@ const Newsletter = () => {
         <div className="bg-transparent text-white flex items-center w-full max-w-5xl h-60 p-16 border rounded-bl-[10rem] rounded-tr-[10rem] mx-auto">
           
           <div className="w-1/2">
-            <h2 className="text-3xl font-extrabold mb-2 text-orange-400">NEWSLETTER SUBSCRIBE</h2>
+            <h2 className="text-3xl font-extrabold mb-2 text-[#b2d438]">NEWSLETTER SUBSCRIBE</h2>
             <p className="text-gray-300">Keep up with our most recent news, advice, and deals. Enter your email address to subscribe now and never miss out!</p>
           </div>
 
@@ -17,7 +17,7 @@ const Newsletter = () => {
               <input
                 type="email"
                 placeholder="Your Email Address"
-                className="px-7 h-12 rounded-bl-[1.5rem] text-gray-300 font-bold focus:outline-none bg-transparent border-b-2 border-gray-500 hover:border-orange-400 transition"
+                className="px-7 h-12 rounded-bl-[1.5rem] text-gray-300 font-bold focus:outline-none bg-transparent border-b-2 border-gray-500 hover:border-[#b2d438] transition"
                 required
               />
 
