@@ -35,9 +35,9 @@ namespace Backend.Controllers{
         }
 
 
-        [HttpPut]
-        public IActionResult GetRecommendationsForClient([FromBody] int clientID){
-            var result = recommendationService.ViewRecommendations(clientID);
+        [HttpGet]
+        public IActionResult GetRecommendationsForClient([FromBody] GetByIDModel client){
+            var result = recommendationService.ViewRecommendations(client.id);
             return Ok(result);
         }
     }
