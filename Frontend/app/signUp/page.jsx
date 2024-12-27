@@ -14,8 +14,7 @@ import { Grid } from '@mui/material';
 import dayjs from 'dayjs';
 //import style from '@styles/signup.module.css'
 import HomeImage from '@public/images/signUp_photo1.png';
-import axios from 'axios';
-
+import axiosInstance from "@app/axios"
 
 
 const SignUpPage = ()=>{
@@ -66,83 +65,86 @@ const SignUpPage = ()=>{
         setErrors({...errors , [name]: ""})
     }
     
+    const handleMembershipChanges = (e) => {
+        const { name, value } = e.target;
+        setMembershipData({...membershipData , [name] : value})
+        setErrors({...errors , [name]: ""})
+    };
     const handleShowPassword = ()=>{setShowPassword(!showPassword)}
     const handleShowConfirmPassword = ()=>{setShowConfirmPassword(!showConfirmPassword)}
 
+     // Automatically calculate membership fees and end date when dependencies change
     useEffect(() => {
+        calculateMembershipFees();
         calculateEndDate();
-      }, [membershipData.preferredStart, membershipData.membershipPeriod, membershipData.membershipType]);
-    
-        const calculateEndDate = () => {
+    }, [membershipData.preferredStart, membershipData.membershipPeriod, membershipData.membershipType]);
+
+    const calculateMembershipFees = () => {
+        const { membershipType, membershipPeriod } = membershipData;
+
+        // Base fees for each membership type
+        const baseFees = {
+        basic: 250,
+        silver: 500,
+        gold: 1500,
+        platinum: 3000,
+        };
+
+        // Discount multipliers for each period
+        const periodMultiplier = {
+        "1": 1,   // No discount for 1 month
+        "3": 0.9, // 10% discount for 3 months
+        "6": 0.75, // 25% discount for 6 months
+        "12": 0.5, // 50% discount for 12 months
+        };
+
+        if (membershipType && membershipPeriod) {
+        const baseFee = baseFees[membershipType] || 0;
+        const discount = periodMultiplier[membershipPeriod] || 1;
+        const totalFees = baseFee * parseInt(membershipPeriod) * discount;
+        setMembershipData((prevData) => ({
+            ...prevData,
+            membershipFees: totalFees.toFixed(2),
+        }));
+        }
+    };
+
+    const calculateEndDate = () => {
         const { preferredStart, membershipPeriod } = membershipData;
         if (preferredStart && membershipPeriod) {
-          const startDate = new Date(preferredStart);
-          const endDate = dayjs(startDate).add(parseInt(membershipPeriod), 'month').toDate();
-          setMembershipData({ ...membershipData, endDate: endDate.toISOString().split('T')[0] }); 
+        const startDate = new Date(preferredStart);
+        const endDate = dayjs(startDate).add(parseInt(membershipPeriod), "month").toDate();
+        setMembershipData((prevData) => ({
+            ...prevData,
+            endDate: endDate.toISOString().split("T")[0],
+        }));
         } else {
-          setMembershipData({ ...membershipData, endDate: "" });
+        setMembershipData((prevData) => ({ ...prevData, endDate: "" }));
         }
     };
-    
-    const handleMembershipChanges = (e) => {
-        const { name, value } = e.target;
 
-        // Create a copy of the existing membership data
-        let updatedData = { ...membershipData, [name]: value };
 
-        // If membership period or type changes, calculate membership fees
-        if (name === "membershipPeriod" || name === "membershipType") {
-            const periodMultiplier = {
-                "1": 1,   // No discount for 1 month
-                "3": 0.9, // 10% discount for 3 months
-                "6": 0.75, // 25% discount for 6 months
-                "12": 0.5  // 50% discount for 12 months
-            };
-            const baseFees = {
-                basic: 250,    // Base fee for basic membership
-                silver: 500,   // Base fee for silver membership
-                gold: 1500,    // Base fee for gold membership
-                platinum: 3000 // Base fee for platinum membership
-            };
 
-            const period = updatedData.membershipPeriod; // Duration in months
-            const type = updatedData.membershipType;     // Type of membership
-
-            // Calculate fees if both period and type are provided
-            if (period && type) {
-                const fees = baseFees[type] * parseInt(period) * periodMultiplier[period];
-                updatedData.membershipFees = fees.toFixed(2); // Round to 2 decimal places
-            }
-        }
-
-        // If the period is selected, calculate the end date
-        if (name === "membershipPeriod" && updatedData.preferredStart) {
-            const startDate = new Date(updatedData.preferredStart);
-            const monthsToAdd = parseInt(updatedData.membershipPeriod);
-            startDate.setMonth(startDate.getMonth() + monthsToAdd); // Add selected months to start date
-            updatedData.endDate = startDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-        }
-
-        // Update the membership data state
-        setMembershipData(updatedData);
+    const checkEmail = async (email) => {
+        return axiosInstance.get('/SignUpChecker/CheckEmail', { params: { email } });
     };
-
-    const API_URL = 'http://localhost:5291/api';  // Base API URL
+    const checkUsername = async (username) => {
+        return axiosInstance.get('/SignUpChecker/CheckUsername', { params: { username } });
+    };
     const checkPhoneNumber = async (phoneNumber) => {
-        try {
-            const response = await axios.get(`${API_URL}//SignUpChecker/CheckEmail`, {
-                params: { phone: phoneNumber }
-            });
-            return response.data; // Assuming the API returns { isValid: boolean }
-        } catch (error) {
-            console.error("Error checking phone number:", error);
-            throw error;
-        }
+        return axiosInstance.get('/SignUpChecker/CheckPhoneNumber', { params: { phoneNumber } });
+    };
+    const checkNationalNumber = async (nationalNumber) => {
+        return axiosInstance.get('/SignUpChecker/CheckNationalNumber', { params: { nationalNumber } });
+    };
+    const submitSignUp = async (data) => {
+        return axiosInstance.post('/Clients/signUp', data);
     };
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = async (e)=>{
         e.preventDefault()
         const newErrors= {}
+        const newApiErrors = {}
         if(formData.password !== formData.confirmPassword)
             newErrors.confirmPassword = "Passwords do not match"
         if(formData.password.length < 8)
@@ -195,8 +197,95 @@ const SignUpPage = ()=>{
             setErrors(newErrors)
             return
         }
-        alert("Form submitted successfully!")
-
+        try {
+            // Define validation checks
+            const fieldCheckers = [
+                { field: "username", call: checkUsername(formData.username) },
+                { field: "email", call: checkEmail(formData.email) },
+                { field: "phoneNumber", call: checkPhoneNumber(formData.phoneNumber) },
+                { field: "nationalNumber", call: checkNationalNumber(formData.nationalNumber) },
+            ];
+    
+            // Execute all validation checks
+            const responses = await Promise.allSettled(fieldCheckers.map((checker) => checker.call));
+    
+            // Handle validation results
+            responses.forEach((response, index) => {
+                const { field } = fieldCheckers[index];
+                if (response.status === "rejected" || response.value.status === 409) {
+                    newApiErrors[field] = `The ${field} already exists. Please use another.`;
+                }
+            });
+    
+            if (Object.keys(newApiErrors).length > 0) {
+                setErrors(newApiErrors);
+                return;
+            }
+        } catch (error) {
+            console.error("Error during validation:", error);
+            setErrors({
+                api: "An unexpected error occurred during validation. Please try again.",
+            });
+            return;
+        }
+        try {
+            const startDate = membershipData.startDateMembership
+                ? new Date(membershipData.startDateMembership)
+                : null;
+        
+            const membershipPeriodMonths = parseInt(membershipData.membershipPeriodMonths, 10) || 0;
+        
+            // Compute end date
+            let endDate = null;
+            if (startDate && membershipPeriodMonths > 0) {
+                console.log("entered");
+                endDate = new Date(startDate);
+                endDate.setMonth(endDate.getMonth() + membershipPeriodMonths);
+                endDate = endDate.toISOString().split('T')[0]; // Format as yyyy-MM-dd
+            }
+        
+            // Submit the form data if all validations pass
+            const submissionData = {
+                Username: formData.username,
+                PasswordHashed: formData.password, // Assuming password is hashed on the frontend
+                First_Name: formData.firstName,
+                Last_Name: formData.lastName,
+                Email: formData.email,
+                Phone_Number: formData.phoneNumber,
+                Gender: formData.gender,
+                Age: parseInt(formData.age, 10) || 0, // Default to 0 if invalid
+                National_Number: formData.nationalNumber,
+                Join_Date: new Date().toISOString().split('T')[0], // Current date in yyyy-MM-dd format
+                Start_Date_Membership: membershipData.preferredStart || null, // Use null if undefined
+                Membership_Period_Months: membershipData.membershipPeriod,
+                Membership_Type: membershipData.membershipType || "unknown", // Default to "unknown" if empty
+                BMR: parseInt(membershipData.BMR, 10) || 0,
+                Weight_kg: parseFloat(membershipData.weight) || 0.0,
+                Height_cm: parseFloat(membershipData.height) || 0.0,
+                Fees_Of_Membership: parseInt(membershipData.membershipFees, 10) || 0,
+                End_Date_Membership: membershipData.endDate, // Correctly calculated end date
+                AccountActivated: false, // Default value if not provided
+                Type:"Client",
+            };
+        
+            console.log("Submission data:", submissionData);
+        
+            // Perform the actual API call
+            const response = await submitSignUp(submissionData); // Ensure you define this response here
+        
+            // Handle response
+            if (response.status === 200) {
+                alert("Form submitted successfully!");
+                // Optionally, reset the form here if needed
+            } else {
+                setErrors({ api: response.data.message || "Failed to submit the form." });
+            }
+        } catch (error) {
+            console.error("Error submitting the form:", error);
+            setErrors({
+                api: error.response?.data?.message || "An error occurred while submitting your form. Please try again.",
+            });
+        }
     };
             
         
@@ -661,6 +750,7 @@ const SignUpPage = ()=>{
                     <div className="grid grid-cols-2 gap-4">
                         {/* Preferred Start Date */}
                         <TextField
+                            
                             label="Preferred Start Date"
                             type="date"
                             name="preferredStart"
@@ -772,8 +862,7 @@ const SignUpPage = ()=>{
                         <TextField
                             label="Membership Fees"
                             name="membershipFees"
-                            error={!!errors.membershipFees}
-                            onChange={handleMembershipChanges} 
+                           value={membershipData.membershipFees}
                             fullWidth
                             type="number" 
                             disabled
@@ -925,7 +1014,7 @@ const SignUpPage = ()=>{
                             type="date"
                             name="endDate"
                             value={membershipData.endDate}
-                            onChange={handleMembershipChanges} 
+                            onChange={calculateEndDate} 
                             fullWidth
                             InputLabelProps={{
                             shrink: true,
