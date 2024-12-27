@@ -65,6 +65,25 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-
+        [HttpPut]
+        public IActionResult UpdateNutrition([FromBody] NutritionPlanModel entry)
+        {
+            // Call the service to update the Branch
+            var result = NutritionPlanService.UpdateNutritionPlan(entry);
+            // Return success response after update
+            if (result.success)
+            {
+                return Ok(new
+                {
+                    success = true,
+                    message = result.message
+                });
+            }
+            return BadRequest(new
+            {
+                success = false,
+                message = result.message
+            });
+        }
     }
 }

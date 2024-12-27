@@ -12,14 +12,14 @@ namespace Backend.Controllers{
             this.BonusServices = BonusServices;
         }
         [HttpPut("Coach")]
-        public IActionResult AddPenaltyToCoach([FromBody] BounsModel bouns){
+        public IActionResult AddBonusToCoach([FromBody] BounsModel bouns){
             var result = BonusServices.AddBonusToCoach(bouns.Bouns,bouns.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});
             return BadRequest(new{success = result.success , message = result.message });
         }
 
         [HttpPut("Branch-Manager")]
-        public IActionResult AddPenaltyToBranchManager([FromBody] BounsModel bouns){
+        public IActionResult AddBonusToBranchManager([FromBody] BounsModel bouns){
             var result = BonusServices.AddBonusToBranchManager(bouns.Bouns,bouns.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});
             return Unauthorized(new{success = result.success , message = result.message });

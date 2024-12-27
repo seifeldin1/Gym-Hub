@@ -68,6 +68,37 @@ namespace Backend.Services
 
             }
         }
+        public (bool success, string message) UpdateNutritionPlan(NutritionPlanModel entry)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Nutrition SET Goal=@Goal,Protein_grams=@Protein_grams,Carbohydrates_grams=@Carbohydrates_grams,Fat_grams=@Fat_grams,Calories=@Calories,Name=@Name,Description=@Description WHERE Nutrition_ID=@Nutrition_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Goal",entry.Goal);
+                    command.Parameters.AddWithValue("@Protein_grams",entry.Protein_grams);
+                    command.Parameters.AddWithValue("@Carbohydrates_grams",entry.Carbohydrates_grams);
+                    command.Parameters.AddWithValue("@Fat_grams",entry.Fat_grams);
+                    command.Parameters.AddWithValue("@Calories",entry.Calories);
+                    command.Parameters.AddWithValue("@Name",entry.Name);
+                    command.Parameters.AddWithValue("@Description",entry.Description);
+                    command.Parameters.AddWithValue("@Nutrition_ID",entry.Nutrition_ID);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+
+                        return (true, "Nutrition Updated successfully");
+                    }
+                    else
+                    {
+
+                        return (false, "Failed to Update Nutrition");
+                    }
+                }
+            }
+
+        }
         public List<NutritionPlanModel> GetNutritionPlans()
         {
             var nutritionplanList = new List<NutritionPlanModel>();
