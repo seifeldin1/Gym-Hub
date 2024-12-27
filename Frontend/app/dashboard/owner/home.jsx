@@ -9,6 +9,7 @@ import { IoMdAddCircle } from "react-icons/io";
 import { DashHeader } from '@components/NavBar';
 import { NumStat } from './Statistics';
 import { CashflowChart } from './Statistics';
+import { axiosInstance } from '../../axios'
 
 export const NextMeet = () => {
     return (
@@ -107,6 +108,10 @@ export const RecentReports = () => {
 
 
 export const Annoncements = () => {
+
+    const [annoncements, setAnnoncements] = useState();
+
+    
     const Annoncemnt = [
         {
             name: "Ahmed",
