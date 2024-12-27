@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 // Custom attribute to authorize based on role
 namespace Backend.Attributes{
     public class RoleAuthorize : Attribute, IAuthorizationFilter{
-        private readonly string role;
+        private readonly string[] role;
 
-        public RoleAuthorize(string incomingRole){
+        public RoleAuthorize(params string[] incomingRole){
             this.role = incomingRole;
         }
 
@@ -16,7 +16,7 @@ namespace Backend.Attributes{
             var userRole = context.HttpContext.Items["Type"]?.ToString();
 
             // If the user's role doesn't match the required role, deny access
-            if (userRole != role){
+            if (userRole==null && !role.Contains(userRole)){
                 context.Result = new UnauthorizedResult(); // Return 401 Unauthorized
             }
         }
