@@ -2,6 +2,7 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Backend.Attributes;
 
 namespace Backend.Controllers
 {
@@ -14,8 +15,11 @@ namespace Backend.Controllers
         public AnnouncementsController(AnnouncementsServices ann_Service)
         {
             this.ann_Service = ann_Service;
-        }
+        }   
+
+        
         [HttpPost("add")]
+        [RoleAuthorize("BranchManager", "Coach")]
         public IActionResult AddAnnouncement([FromBody] AnnouncementsModel entry)
         {
             // Call the service method to add the workout
@@ -40,6 +44,7 @@ namespace Backend.Controllers
         }
         
         [HttpGet]
+        [RoleAuthorize("BranchManager", "Coach" , "Owner" , "Client")]
         public IActionResult GetAnnouncements()
         {
             var announcementsList = ann_Service.GetAnnouncements();
@@ -48,6 +53,7 @@ namespace Backend.Controllers
          
 
         [HttpPut]
+        [RoleAuthorize("BranchManager", "Coach")]
         public IActionResult EditAnnouncment([FromBody] AnnouncementUpdaterModel announcement)
         {
             // Call the service to update the Branch
@@ -69,6 +75,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
+        [RoleAuthorize("BranchManager", "Coach")]
         public IActionResult DeleteAnnouncement([FromBody] int id)
         {
             var result = ann_Service.DeleteAnnouncement(id);

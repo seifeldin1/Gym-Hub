@@ -36,7 +36,7 @@ namespace Backend.Services{
             using (var connection = database.ConnectToDatabase()){
                 connection.Open();
 
-                string query = "SELECT PrClient_ID,Weight_kg,DateInserted FROM Progress WHERE Client_ID = @Client_ID ORDER BY DateInserted ASC;";
+                string query = "SELECT Client_ID,Weight_kg,DateInserted FROM Progress WHERE Client_ID = @Client_ID ORDER BY DateInserted ASC;";
 
                 using (var command = new MySqlCommand(query, connection)){
                     command.Parameters.AddWithValue("@Client_ID", clientId);
