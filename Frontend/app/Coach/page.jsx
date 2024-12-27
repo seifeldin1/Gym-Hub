@@ -6,11 +6,14 @@ import { BsGraphUpArrow } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
 import { LuCalendar } from "react-icons/lu";
 import { TbReport } from "react-icons/tb";
+import { BsFillPersonVcardFill } from "react-icons/bs";
+import { FaPeopleGroup } from "react-icons/fa6";
 import GymIcon from '@public/assets/images/image.png';
 import Home from './home';
 import Calendar from './Calendar';
+import Clients from './clients'
 import Report from './report';
-import Analytics from './analytics';
+import PersonnalDetails from './personnal_details'
 
 const Dashboard = () => {
     const [activePanel, setActivePanel] = useState("home");
@@ -23,13 +26,15 @@ const Dashboard = () => {
     const renderPanel = () => {
         switch (activePanel) {
             case "home":
-                return <Home />;
+                return <Home/>;
             case "calendar":
-                return <Calendar />;
+                return <Calendar/>;
+            case "clients":
+                return <Clients/>
             case "report":
-                return <Report />;
-            case "analytics":
-                return <Analytics />;
+                return <Report/>;
+            case "personnal_details":
+                return <PersonnalDetails/>;
             case "settings":
                 return <div>Settings Panel</div>;
             default:
@@ -64,6 +69,14 @@ const Dashboard = () => {
                         </div>
                         <div
                             className={styles.icon}
+                            onClick={() => setActivePanel("clients")}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <FaPeopleGroup size={26} />
+                        </div>
+                        <div
+                            className={styles.icon}
                             onClick={() => setActivePanel("report")}
                             role="button"
                             tabIndex={0}
@@ -72,11 +85,11 @@ const Dashboard = () => {
                         </div>
                         <div
                             className={styles.icon}
-                            onClick={() => setActivePanel("analytics")}
+                            onClick={() => setActivePanel("personnal_details")}
                             role="button"
                             tabIndex={0}
                         >
-                            <BsGraphUpArrow size={26} />
+                            <BsFillPersonVcardFill size={26} />
                         </div>
                         <div
                             className={styles.icon}
