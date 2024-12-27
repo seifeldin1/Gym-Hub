@@ -1,6 +1,7 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< HEAD
     "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj": {}
   },
   "projects": {
@@ -15,6 +16,23 @@
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/engseif/.nuget/NuGet/NuGet.Config"
+=======
+    "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj": {}
+  },
+  "projects": {
+    "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
+        "projectName": "Backend",
+        "projectPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
+        "packagesPath": "C:\\Users\\amras\\.nuget\\packages\\",
+        "outputPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\amras\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+>>>>>>> 55d0a65608db81e7f3a2e002d907b15e78511240
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -111,7 +129,11 @@
               "privateAssets": "all"
             }
           },
+<<<<<<< HEAD
           "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
+=======
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
+>>>>>>> 55d0a65608db81e7f3a2e002d907b15e78511240
         }
       }
     }

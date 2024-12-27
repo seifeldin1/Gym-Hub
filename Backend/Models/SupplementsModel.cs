@@ -1,10 +1,9 @@
 using Backend.Utils;
-
 namespace Backend.Models
 {
     public class SupplementsModel
     {
-        public int? Supplement_ID { get; set; }
+        public int Supplement_ID { get; set; }
         public string Name { get; set; }
         public string Brand { get; set; }
         public float Selling_Price { get; set; }

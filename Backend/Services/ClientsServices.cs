@@ -104,7 +104,7 @@ namespace Backend.Services
             u.User_ID, u.Username, u.PasswordHashed,u.Type,u.First_Name, u.Last_Name, 
             u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
             FROM Client c
-            INNER JOIN User u ON c.Client_ID= u.User_ID;";
+            LEFT JOIN User u ON c.Client_ID= u.User_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -115,6 +115,18 @@ namespace Backend.Services
                         {
                             ClientsList.Add(new ClientsModel
                             {
+                                Client_ID = reader.GetInt32("Client_ID"),
+                                Join_Date = DateOnly.FromDateTime(reader.GetDateTime("Join_Date")),
+                                BMR = reader.IsDBNull(reader.GetOrdinal("BMR")) ? null: reader.GetInt32("BMR"),
+                                Weight_kg = reader.IsDBNull(reader.GetOrdinal("Weight_kg")) ? null: reader.GetInt32("Weight_kg"),
+                                Height_cm = reader.IsDBNull(reader.GetOrdinal("Height_cm")) ? null: reader.GetInt32("Height_cm"),
+                                Belong_To_Coach_ID=  reader.IsDBNull(reader.GetOrdinal("Belong_To_Coach_ID")) ? null: reader.GetInt32("Belong_To_Coach_ID"),
+                                AccountActivated = reader.GetBoolean("AccountActivated"),
+                                Start_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("Start_Date_Membership")),
+                                End_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("End_Date_Membership")),
+                                Membership_Type = reader.GetString("Membership_Type"),
+                                Fees_Of_Membership = reader.GetInt32("Fees_Of_Membership"),
+                                Membership_Period_Months = reader.GetInt32("Membership_Period_Months"),
                                 User_ID = reader.GetInt32("User_ID"),
                                 Username = reader.GetString("Username"),
                                 PasswordHashed = reader.GetString("PasswordHashed"),
@@ -123,21 +135,10 @@ namespace Backend.Services
                                 Last_Name = reader.GetString("Last_Name"),
                                 Email = reader.GetString("Email"),
                                 Phone_Number = reader.GetString("Phone_Number"),
-                                Gender = reader.GetString("Gender"),
-                                Age = reader.GetInt32("Age"),
+                                Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? null : reader.GetString("Gender"),
+                                Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age"),
                                 National_Number = reader.GetString("National_Number"),
-                                Client_ID = reader.GetInt32("Client_ID"),
-                                Join_Date = DateOnly.FromDateTime(reader.GetDateTime("Join_Date")),
-                                BMR = reader.GetInt32("BMR"),
-                                Weight_kg = reader.GetDouble("Weight_kg"),
-                                Height_cm = reader.GetDouble("Height_cm"),
-                                Belong_To_Coach_ID = reader.GetInt32("Belong_To_Coach_ID"),
-                                AccountActivated = reader.GetBoolean("AccountActivated"),
-                                Start_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("Start_Date_Membership")),
-                                End_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("End_Date_Membership")),
-                                Membership_Type = reader.GetString("Membership_Type"),
-                                Fees_Of_Membership = reader.GetInt32("Fees_Of_Membership"),
-                                Membership_Period_Months = reader.GetInt32("Membership_Period_Months"),
+                                
                             });
                         }
                         return ClientsList;
@@ -324,6 +325,12 @@ namespace Backend.Services
                 {
                     clientFields.Add("Weight_kg=@Weight_kg");
                     clientParameters.Add(new MySqlParameter("@Weight_kg", entry.Weight_kg));
+                    string insertquery="INSERT INTO Progress (Client_ID, Weight_kg)VALUES (@Client_ID, @Weight_kg);";
+                    using (var command = new MySqlCommand(insertquery, connection)){
+                    command.Parameters.AddWithValue("@Client_ID", entry.User_ID);
+                    command.Parameters.AddWithValue("@Weight_kg", entry.Weight_kg);
+                    command.ExecuteNonQuery();
+                    }
                 }
                 if (entry.Height_cm > 0)
                 {

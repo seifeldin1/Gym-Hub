@@ -7442,19 +7442,20 @@
     ]
   },
   "packageFolders": {
-    "/home/engseif/.nuget/packages/": {}
+    "C:\\Users\\amras\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj",
+      "projectUniqueName": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj",
-      "packagesPath": "/home/engseif/.nuget/packages/",
-      "outputPath": "/home/engseif/Desktop/Work/Gym-Hub/Backend/obj/",
+      "projectPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
+      "packagesPath": "C:\\Users\\amras\\.nuget\\packages\\",
+      "outputPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/engseif/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\amras\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -7551,11 +7552,17 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
   "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    },
     {
       "code": "NU1603",
       "level": "Warning",
