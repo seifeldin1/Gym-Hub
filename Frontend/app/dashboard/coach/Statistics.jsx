@@ -142,10 +142,10 @@ export const NumStat = () => {
     return (
         <div className={styles.QuickStat}>
             <h2 className="mx-auto w-[90%] pt-3 text-xl">Quick Stats</h2>
-            <div className="w-full mx-auto h-[45%]">
+            <div className="w-full mx-auto h-[40%]">
                 <NumEmployee />
             </div>
-            <div className="w-full mx-auto h-[45%]">
+            <div className="w-full mx-auto h-[40%]">
                 <TotalMoney />
             </div>
         </div>
