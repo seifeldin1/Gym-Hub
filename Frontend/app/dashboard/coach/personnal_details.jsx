@@ -47,7 +47,7 @@ const Report = () => {
               <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
                 Editable Details
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-3 gap-6">
                 {/* Phone Number */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
