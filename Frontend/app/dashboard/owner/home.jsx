@@ -44,22 +44,11 @@ export const NextMeet = () => {
 }
 
 export const RecentReports = () => {
-    const reports = [
-        {
-            name: "report1",
-            date: "2024-12-25",
-            description: "lorem ipsum",
-            status: "Completed",
-            type: "Technical",
-        },
-        {
-            name: "report2",
-            date: "2024-12-26",
-            description: "dolor sit amet",
-            status: "Pending",
-            type: "Financial",
-        },
-    ];
+    const [reports, setReports] = useState([]);
+
+    useEffect(() => {
+        
+    })
 
     return (
         <div className=" text-white p-2 rounded-lg shadow-md mx-auto">
@@ -67,7 +56,7 @@ export const RecentReports = () => {
                 Recent Reports
             </h1>
             <div className="overflow-x-auto">
-                <table className="w-full table-auto border-collapse">
+                <table className="w-full table-auto border-collapse ">
                     <thead className="bg-[#DBFF55] text-[#4A4A4A]">
                         <tr>
                             <th className="px-4 py-3 text-left">Name</th>
@@ -117,10 +106,13 @@ export const Annoncements = () => {
 
     const FetchAnnoncements = async () => {
         try {
-            const response = await axiosInstance.get("/Announcements");
+            const response = await axiosInstance.get("/Announcements", {
+                headers: {
+                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI`,
+                },
+            });
             setAnnoncements(response.data);
-        }
-        catch (error) {
+        } catch (error) {
             if (error.response) {
                 console.log(error.response.data);
                 console.log(error.response.status);
@@ -129,7 +121,7 @@ export const Annoncements = () => {
                 console.log(`Error: ${error.message}`);
             }
         }
-    }
+    };
 
     useEffect(() => {
         FetchAnnoncements();
@@ -172,7 +164,7 @@ export const Annoncements = () => {
             const authorID = 1; // Example Author ID
             const authorRole = 'Admin'; // Example Author Role
             const datePosted = new Date().toISOString(); // Current date in ISO format
-            const type = 'Client'; // Example Type
+            const type = 'Coach'; // Example Type
 
             const response = await axiosInstance.post('/Announcements/add', {
                 Author_ID: authorID,
@@ -181,9 +173,16 @@ export const Annoncements = () => {
                 Content: content,
                 Date_Posted: datePosted,
                 Type: type
+            }, {
+                headers: {
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI'  // Replace `yourToken` with the actual token
+                }
             });
 
+
             if (response.status === 200) {
+                // Assuming the response contains the newly added announcement:
+                FetchAnnoncements();
                 setTitle('');
                 setContent('');
                 setIsPanelOpen(false);
@@ -196,6 +195,7 @@ export const Annoncements = () => {
         }
     };
 
+
     const handleEdit = async (e) => {
         e.preventDefault();
 
@@ -206,11 +206,22 @@ export const Annoncements = () => {
 
         try {
             // Send updated data to your API
-            const response = await axiosInstance.put("/Announcements", {
-                Author_ID: 1,
-                Title: title,
-                Content: content,
-            });
+            console.log(annoncementId)
+            const response = await axiosInstance.put(
+                "/Announcements",
+                {
+                    Author_ID: 1,
+                    Title: title,
+                    Content: content,
+                    Type: "Coach",
+                    announcements_ID: annoncementId
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI`
+                    }
+                }
+            );
 
             if (response.status === 200) {
                 setIsEditPanelOpen(false);
@@ -228,11 +239,17 @@ export const Annoncements = () => {
 
     const handleDelete = async (announcementId) => {
         try {
-            // Send the id as a query parameter
             const response = await axiosInstance.delete(`/Announcements`, {
-                data: { id: announcementId },
+                headers: {
+                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI`,
+                    "Content-Type": "application/json", // Ensures JSON content
+                },
+                data: {
+                    id: announcementId, // Include `id` in the request body
+                },
             });
             if (response.status === 200) {
+                FetchAnnoncements();
                 console.log("Deleted");
             } else {
                 console.log("Failed to delete the announcement. Please try again.");
