@@ -21,8 +21,8 @@ namespace Backend.Controllers
             this.coachesServices = coachesServices;
         }
 
-        //[RoleAuthorize("Coach")]
         [HttpPost("schedule")]
+        [Authorize(Roles = "Coach")]
         public async Task<IActionResult> ScheduleMeeting([FromBody] MeetingDetails meeting)
         {
             meeting.CoachName = coachesServices.GetCoachName(meeting.Coach_ID);
@@ -38,8 +38,8 @@ namespace Backend.Controllers
             return BadRequest(new { message = result.message });
         }
 
-        //[RoleAuthorize("Coach")]
         [HttpPut("update")]
+        [Authorize(Roles = "Coach")]
         public async Task<IActionResult> UpdateMeeting([FromBody] MeetingDetails meeting)
         {
             meeting.CoachName = coachesServices.GetCoachName(meeting.Coach_ID);
@@ -55,8 +55,8 @@ namespace Backend.Controllers
             return BadRequest(new { message = result.message });
         }
 
-        //[RoleAuthorize("Coach")]
         [HttpDelete]
+        [Authorize(Roles = "Coach")]
         public async Task<IActionResult> DeleteMeeting([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -77,7 +77,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("all")]
-        [Authorize(Roles = "Coach,BranchManager")]
+        [Authorize(Roles = "Coach , Client")]
         public IActionResult GetMeetings()
         {
             var meetingList = meetingService.GetMeetings();

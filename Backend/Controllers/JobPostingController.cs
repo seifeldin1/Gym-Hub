@@ -1,6 +1,8 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -16,6 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult AddJobPost([FromBody] JobPost entry)
         {
             // Call the service method to add the Branch
@@ -37,6 +40,7 @@ namespace Backend.Controllers
             });
             // Return the JSON result
         }
+
         [HttpGet]
         public IActionResult GetJobPosts()
         {
@@ -45,6 +49,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult DeleteJobPost([FromBody] GetByIDModel entry)
         {
              if (entry.id <= 0)
@@ -71,6 +76,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult UpdateJopPost([FromBody] JobPost entry)
         {
             // Call the service to update the JobPost

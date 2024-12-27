@@ -2,6 +2,7 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Backend.Attributes;
 
 namespace Backend.Controllers{
     [ApiController]
@@ -13,6 +14,7 @@ namespace Backend.Controllers{
         }
 
         [HttpPut("Coach")]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult AddPenaltyToCoach([FromBody] PenaltyModel penalty){
             var result = PenaltyServices.AddPenaltyToCoach(penalty.Penalties,penalty.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});
@@ -20,6 +22,7 @@ namespace Backend.Controllers{
         }
 
         [HttpPut("Branch-Manager")]
+        [Authorize(Roles = "Owner")]
         public IActionResult AddPenaltyToBranchManager([FromBody] PenaltyModel penalty){
             var result = PenaltyServices.AddPenaltyToBranchManager(penalty.Penalties,penalty.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});

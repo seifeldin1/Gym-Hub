@@ -86,6 +86,7 @@ namespace Backend.Middleware
 
                     var jwtToken = (JwtSecurityToken)validatedToken ; //cast validated token to jwt token if token was successfully validated 
                     var userRole = jwtToken.Claims.First(x=>x.Type == "role").Value; //retrieves the role claim, which identifies the user type throughout the whole request 
+                    Console.WriteLine($"User Role in middleware: {userRole}");
                     incomingContext.Items["Type"] = userRole; //the role is added to the HttpContext.Items collection, making it accessible to other parts of the application during the same request
                 }
                 catch{

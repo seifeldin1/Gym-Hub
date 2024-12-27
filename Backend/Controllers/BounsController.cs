@@ -2,6 +2,7 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Backend.Attributes;
 
 namespace Backend.Controllers{
     [ApiController]
@@ -12,6 +13,7 @@ namespace Backend.Controllers{
             this.BonusServices = BonusServices;
         }
         [HttpPut("Coach")]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult AddBonusToCoach([FromBody] BounsModel bouns){
             var result = BonusServices.AddBonusToCoach(bouns.Bouns,bouns.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});
@@ -19,6 +21,7 @@ namespace Backend.Controllers{
         }
 
         [HttpPut("Branch-Manager")]
+        [Authorize(Roles = "Owner")]
         public IActionResult AddBonusToBranchManager([FromBody] BounsModel bouns){
             var result = BonusServices.AddBonusToBranchManager(bouns.Bouns,bouns.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});

@@ -2,7 +2,8 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Utils;
-
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 namespace Backend.Controllers
 {
     [ApiController]
@@ -17,6 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Coach , BranchManager")]
         public IActionResult AddSupplement([FromBody] SupplementsModel entry)
         {
             if (!ModelState.IsValid)
@@ -42,7 +44,9 @@ namespace Backend.Controllers
             });
             // Return the JSON result
         }
+
         [HttpPut]
+        [Authorize(Roles = "Coach , BranchManager")]
         public IActionResult UpdateSupplement([FromBody] SupplementsModel UpdatedWorkout)
         {
             // Call the service to update the Branch
@@ -64,13 +68,17 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+
         [HttpGet]
+        [Authorize(Roles = "Coach , BranchManager , Client")]
         public IActionResult GetSupplements()
         {
             var supplementList = supplementsService.GetSupplements();
             return Ok(supplementList);
         }
+
         [HttpDelete]
+        [Authorize(Roles = "Coach , BranchManager")]
         public IActionResult DeleteSupplement([FromBody] GetByIDModel entry)
         {
              if (entry.id <= 0)
