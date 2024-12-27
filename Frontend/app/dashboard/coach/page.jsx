@@ -7,6 +7,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { LuCalendar } from "react-icons/lu";
 import { TbReport } from "react-icons/tb";
 import { BsFillPersonVcardFill } from "react-icons/bs";
+import { MdLogout } from "react-icons/md";
 import { FaPeopleGroup } from "react-icons/fa6";
 import GymIcon from '@public/assets/images/image.png';
 import Home from './home';
@@ -35,8 +36,8 @@ const Dashboard = () => {
                 return <Report/>;
             case "personnal_details":
                 return <PersonnalDetails/>;
-            case "settings":
-                return <div>Settings Panel</div>;
+            case "log_out":
+                return <div> </div>;
             default:
                 return <div>Select a Panel</div>;
         }
@@ -93,11 +94,11 @@ const Dashboard = () => {
                         </div>
                         <div
                             className={styles.icon}
-                            onClick={() => setActivePanel("settings")}
+                            onClick={() => setActivePanel("log_out")}
                             role="button"
                             tabIndex={0}
                         >
-                            <IoSettingsOutline size={26} />
+                            <MdLogout size={26} />
                         </div>
                     </div>
                 </div>
