@@ -86,6 +86,11 @@ builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<HolidayService>();
 builder.Services.AddScoped<CalendarServices>();
 builder.Services.AddScoped<RecommendationServices>();
+builder.Services.AddScoped<StatisticsServices>();
+builder.Services.AddScoped<InterviewService>();
+
+
+
 
 // Add SignalR for real-time communications
 builder.Services.AddSignalR();

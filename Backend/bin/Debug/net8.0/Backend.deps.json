@@ -10,10 +10,7 @@
         "dependencies": {
           "BCrypt.Net-Next": "4.0.3",
           "DotNetEnv": "3.1.1",
-<<<<<<< HEAD
-=======
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
->>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
           "Microsoft.AspNetCore.Authorization": "8.0.0",
           "Microsoft.AspNetCore.SignalR": "1.1.0",
           "Microsoft.AspNetCore.SignalR.Common": "9.0.0",
@@ -95,8 +92,6 @@
           "Microsoft.Extensions.Options": "9.0.0"
         }
       },
-<<<<<<< HEAD
-=======
       "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.0": {
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.0.3"
@@ -108,7 +103,6 @@
           }
         }
       },
->>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
       "Microsoft.AspNetCore.Authorization/8.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Metadata": "8.0.0",
@@ -369,8 +363,6 @@
           }
         }
       },
-<<<<<<< HEAD
-=======
       "Microsoft.IdentityModel.Protocols/7.0.3": {
         "dependencies": {
           "Microsoft.IdentityModel.Logging": "8.3.0",
@@ -395,7 +387,6 @@
           }
         }
       },
->>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
       "Microsoft.IdentityModel.Tokens/8.3.0": {
         "dependencies": {
           "Microsoft.IdentityModel.Logging": "8.3.0"
@@ -1389,8 +1380,6 @@
       "path": "microsoft.aspnetcore.authentication.abstractions/2.2.0",
       "hashPath": "microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512"
     },
-<<<<<<< HEAD
-=======
     "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.0": {
       "type": "package",
       "serviceable": true,
@@ -1398,7 +1387,6 @@
       "path": "microsoft.aspnetcore.authentication.jwtbearer/8.0.0",
       "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.8.0.0.nupkg.sha512"
     },
->>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
     "Microsoft.AspNetCore.Authorization/8.0.0": {
       "type": "package",
       "serviceable": true,
@@ -1644,8 +1632,6 @@
       "path": "microsoft.identitymodel.logging/8.3.0",
       "hashPath": "microsoft.identitymodel.logging.8.3.0.nupkg.sha512"
     },
-<<<<<<< HEAD
-=======
     "Microsoft.IdentityModel.Protocols/7.0.3": {
       "type": "package",
       "serviceable": true,
@@ -1660,7 +1646,6 @@
       "path": "microsoft.identitymodel.protocols.openidconnect/7.0.3",
       "hashPath": "microsoft.identitymodel.protocols.openidconnect.7.0.3.nupkg.sha512"
     },
->>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
     "Microsoft.IdentityModel.Tokens/8.3.0": {
       "type": "package",
       "serviceable": true,

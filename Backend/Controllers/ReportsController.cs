@@ -66,6 +66,14 @@ namespace Backend.Controllers
             var report =ReportsServices.GetClientReports(entry.id);
             return Ok(report);
         }
+            [HttpGet("GetAllBranchManagerReports")]
+        [Authorize(Roles = "Owner , BranchManager")]
+        public IActionResult GetAllBranchManagerReports()
+        {
+            var report =ReportsServices.GetAllBranchManagerReports();
+            return Ok(report);
+        }
+
         [HttpGet("GetBranchManagerReports")]
         [Authorize(Roles = "Owner , BranchManager")]
         public IActionResult GetBranchManagerReports([FromBody]GetByIDModel entry)
