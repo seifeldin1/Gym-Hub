@@ -7,44 +7,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title, CategoryScale, Li
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, BarElement);
 
-const NumEmployee = () => {
-    const data = {
-        labels: ['Clients', 'Coaches', 'Managers'],
-        datasets: [
-            {
-                label: 'Number',
-                data: [300, 50, 100], // Data values
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'], // Colors for the segments
-                hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-                cutout: '70%', // Creates the white center (70% of the chart's radius is cut out)
-                borderWidth: 2, // Optional: Add a border for each segment
-                borderColor: '#fff', // Optional: White border for a cleaner look
-            },
-        ],
-    };
-    const options = {
-        responsive: true, // Ensures the chart adjusts to the container
-        maintainAspectRatio: false, // Allows flexibility with the aspect ratio
-        plugins: {
-            legend: {
-                position: 'top', // Position the legend
-            },
-            tooltip: {
-                enabled: true, // Enables tooltips
-            },
-            title: {
-                display: true, // Enables the title
-                text: 'Total People Distribution', // Text of the title
-                font: {
-                    size: 15, // Font size of the title
-                },
-                color: '#333', // Color of the title text
-            },
-        },
-    };
-    return <Pie options={options} data={data} />;
-};
-
 export const CashflowChart = () => {
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -100,6 +62,44 @@ export const CashflowChart = () => {
     );
 };
 
+const NumEmployee = () => {
+    const data = {
+        labels: ['Clients', 'Coaches', 'Managers'],
+        datasets: [
+            {
+                label: 'Number',
+                data: [300, 50, 100], // Data values
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'], // Colors for the segments
+                hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                cutout: '70%', // Creates the white center (70% of the chart's radius is cut out)
+                borderWidth: 2, // Optional: Add a border for each segment
+                borderColor: '#fff', // Optional: White border for a cleaner look
+            },
+        ],
+    };
+    const options = {
+        responsive: true, // Ensures the chart adjusts to the container
+        maintainAspectRatio: false, // Allows flexibility with the aspect ratio
+        plugins: {
+            legend: {
+                position: 'top', // Position the legend
+            },
+            tooltip: {
+                enabled: true, // Enables tooltips
+            },
+            title: {
+                display: true, // Enables the title
+                text: 'Total People Distribution', // Text of the title
+                font: {
+                    size: 15, // Font size of the title
+                },
+                color: '#333', // Color of the title text
+            },
+        },
+    };
+    return <Pie options={options} data={data} />;
+};
+
 const TotalMoney = () => {
     const data = {
         labels: ['Income', 'Spent'],
@@ -142,12 +142,12 @@ export const NumStat = () => {
     return (
         <div className={styles.QuickStat}>
             <h2 className="mx-auto w-[90%] pt-3 text-xl">Quick Stats</h2>
-            <div className="w-full mx-auto h-[45%]">
+            <div className="w-full mx-auto h-[170px]">
                 <NumEmployee />
             </div>
-            <div className="w-full mx-auto h-[45%]">
+            <div className="w-full mx-auto h-[170px]">
                 <TotalMoney />
             </div>
         </div>
-    )
-}
+    );
+};

@@ -11,6 +11,7 @@ import Home from './home';
 import Calendar from './Calendar';
 import Report from './report';
 import Analytics from './analytics';
+import Settings from './Settings';
 
 const Dashboard = () => {
     const [activePanel, setActivePanel] = useState("home");
@@ -31,7 +32,7 @@ const Dashboard = () => {
             case "analytics":
                 return <Analytics />;
             case "settings":
-                return <div>Settings Panel</div>;
+                return <Settings />;
             default:
                 return <div>Select a Panel</div>;
         }
