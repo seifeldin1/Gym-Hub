@@ -30,15 +30,15 @@ const Header = () => {
 
                 <div className="items-center mr-12 l-6 my-4 border-none w-1/3 h-full">
                     <div className="relative flex flex-col">
-                        <span className="absolute inset-0 text-[8rem] lg:text-[10rem] font-bold uppercase text-yellow-300 opacity-10 z-0">service</span>
-                        <h2 class="text-4xl sm:text-5xl font-extrabold mt-20 text-orange-400 z-10 relative ease-in duration-300 hover:scale-110">Providing solution for Fitness</h2>
+                        <span className="absolute inset-0 text-[8rem] lg:text-[10rem] font-bold uppercase text-green-300 opacity-10 z-0">service</span>
+                        <h2 className="text-4xl sm:text-5xl font-extrabold mt-20 text-[#b2d438] z-10 relative ease-in duration-300 hover:scale-110">Providing solution for Fitness</h2>
                     </div>
-                    <p class="my-9 text-lg sm:text-xl text-gray-300">
-                        Welcome to <span class="text-orange-400 font-bold">PulseFit</span> where we are dedicated to providing comprehensive
+                    <p className="my-9 text-lg sm:text-xl text-gray-300">
+                        Welcome to <span className="text-[#b2d438] font-bold">PulseFit</span> where we are dedicated to providing comprehensive
                         fitness solutions tailored to your needs. From expert guidance and diverse workout plans to a supportive community, we’re
                         here to help you achieve your health and wellness goals with ease and confidence."
                     </p>
-                    <button className="text-white text-lg border-2 border-solid my-4 ease-in duration-300 hover:border-orange-400 px-3 py-2 bg-transparent hover:scale-110 hover:bg-orange-400 hover:text-gray-100">Read More</button>          </div>
+                    <button className="text-white text-lg border-2 font-bold border-solid my-4 ease-in duration-300 hover:border-green-300 px-3 py-2 bg-transparent hover:scale-110 hover:bg-green-300 hover:text-black">Read More</button>          </div>
             </div>
 
             <div className="bg-transparent py-10">
@@ -145,7 +145,7 @@ const Home = () => {
     return (
         <>
             <div className={`${styles.AnimBackground}`}>
-                <NavBarPage page_name="home" />
+                <NavBarPage page_name="home"/>
                 <Header/>
                 <Newsletter/>
                 <BottomBar page_name="home"/>

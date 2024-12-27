@@ -14,6 +14,10 @@ namespace Backend.Services{
                 return (false, "Invalid candidate or job post.");
             if(DateTime.Now > job.Deadline)
                 return (false , "Application deadline has passed");
+            // if (candidate.NationalNumber < long.MinValue || candidate.NationalNumber > long.MaxValue)
+            //     return (false, "NationalNumber exceeds database BIGINT range.");
+            // long nationalNumberAsLong = Convert.ToInt64(candidate.NationalNumber);
+
             using(var connection = database.ConnectToDatabase()){
                 connection.Open();
                 using(var transaction = connection.BeginTransaction()){
@@ -26,9 +30,10 @@ namespace Backend.Services{
                     
                             var command = new MySqlCommand(query, connection);
                             checkCommand.Parameters.AddWithValue("@National_Number", candidate.NationalNumber);
+                            //Console.WriteLine($"Request Body: {candidate.NationalNumber}");
 
                             string message="";
-                            int result = (int)checkCommand.ExecuteScalar();
+                            int result = Convert.ToInt32(checkCommand.ExecuteScalar());
                             if(result == 0){
                                 query = "INSERT INTO Candidate VALUES(@ID,@FirstName,@LastName,@Age,@NationalNumber,@PhoneNumber,@Email,@Status,@ResumeLink,@LinkedinLink)";
                                 using(command = new MySqlCommand(query, connection)){
@@ -42,6 +47,7 @@ namespace Backend.Services{
                                     if(candidate.Status!=null) command.Parameters.AddWithValue("@Status" , candidate.Status);
                                     command.Parameters.AddWithValue("@ResumeLink" , candidate.ResumeLink);
                                     if(candidate.LinkedinAccountLink!=null)command.Parameters.AddWithValue("@LinkedInLink" , candidate.LinkedinAccountLink);
+                                    command.ExecuteNonQuery();
                                 }
                                 message+="Candidate added successfully";
                             }
@@ -104,13 +110,19 @@ namespace Backend.Services{
                             }
                 
                         }
-
-                        query = "INSERT INTO Applications VALUES(@ApplicantId,@PostId , @Applied_Date , @Years_Of_Experience)";
+                        string checkQuery="SELECT Candidate_ID FROM Candidate WHERE Email = @email";
+                        int id;
+                        using (var queryCommand = new MySqlCommand(checkQuery, connection)){
+                            queryCommand.Parameters.Add(new MySqlParameter("@email", candidate.Email));
+                            id = (int)queryCommand.ExecuteScalar();
+                        }
+                        query = "INSERT INTO Applications VALUES(@id,@PostId , @Applied_Date , @Years_Of_Experience)";
                         using(var command = new MySqlCommand(query, connection)){
-                            command.Parameters.AddWithValue("@ApplicantId" , candidate.Id);
+                            command.Parameters.AddWithValue("@id", id);
                             command.Parameters.AddWithValue("@PostId" , job.Post_ID);
                             command.Parameters.AddWithValue("@Applied_Date" , DateTime.Now);
                             command.Parameters.AddWithValue("@Years_Of_Experience" , candidate.ExperienceYears);
+                            command.ExecuteNonQuery();
                         }
 
                         transaction.Commit();
@@ -129,33 +141,47 @@ namespace Backend.Services{
                 
     
 
-        public List<Application> GetAllApplicationsForPost(JobPost job){
+        public List<Application> GetAllApplicationsForPost(JobPost job)
+        {
             var applications = new List<Application>();
-            using(var connection = database.ConnectToDatabase()){
+
+            using (var connection = database.ConnectToDatabase())
+            {
                 connection.Open();
-                string query = "SELECT * FROM Applications WHERE Job_Post_ID = @JobPostID";
-                using(var command = new MySqlCommand(query, connection)){
-                    command.Parameters.AddWithValue("@JobPostID" , job.Post_ID);
-                    using(var reader = command.ExecuteReader()){
-                        while(reader.Read()){
+                // Query to join Applications and Candidate tables
+                string query = @"SELECT a.Applicant_ID , a.Post_ID , a.Applied_Date,a.Years_Of_Experience,
+                                c.First_Name, c.Last_Name, c.Resume_Link FROM Applications a
+                                INNER JOIN Candidate c ON a.Applicant_ID = c.Candidate_ID WHERE a.Post_ID = @JobPostID";
+
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@JobPostID", job.Post_ID);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
                             applications.Add(new Application
                             {
-                                Applicant_ID = reader.GetInt32(reader.GetOrdinal("Applicant_ID")), //Get ordinal: ensure that you're accessing the correct column in a data reader, even if the order of the columns in the query changes.
+                                Applicant_ID = reader.GetInt32(reader.GetOrdinal("Applicant_ID")),
                                 Post_ID = reader.GetInt32(reader.GetOrdinal("Post_ID")),
                                 applicationDate = reader.GetDateTime(reader.GetOrdinal("Applied_Date")),
-                                Years_Of_Experience = reader.GetInt32(reader.GetOrdinal("Years_Of_Experience"))
-                            }); 
+                                Years_Of_Experience = reader.GetInt32(reader.GetOrdinal("Years_Of_Experience")),
+                                Applicant_Name = $"{reader.GetString(reader.GetOrdinal("First_Name"))} {reader.GetString(reader.GetOrdinal("Last_Name"))}", //INSTEAD OF CONCAT
+                                Resume_Link = reader.GetString(reader.GetOrdinal("Resume_Link"))
+                            });
                         }
                     }
                 }
             }
+
             return applications;
         }
 
         public Candidate GetApplicantForPost(int candidateID){
             using(var connection = database.ConnectToDatabase()){
                 connection.Open();
-                string query = "SELECT * FROM Candidates WHERE Candidate_ID = @ID";
+                string query = "SELECT * FROM Candidate WHERE Candidate_ID = @ID";
                 using(var command = new MySqlCommand(query, connection)){
                     command.Parameters.AddWithValue("@ID" , candidateID );
                     using(var reader = command.ExecuteReader()){
@@ -165,7 +191,7 @@ namespace Backend.Services{
                                 FirstName = reader.GetString(reader.GetOrdinal("First_Name")),
                                 LastName = reader.GetString(reader.GetOrdinal("Last_Name")),
                                 Age = reader.GetInt32(reader.GetOrdinal("Age")),
-                                NationalNumber = reader.GetInt64(reader.GetOrdinal("National_Number")),
+                                NationalNumber = reader.GetString(reader.GetOrdinal("National_Number")),
                                 PhoneNumber = reader.GetString(reader.GetOrdinal("Phone_Number")),
                                 Email = reader.GetString(reader.GetOrdinal("Email")),
                                 ResumeLink = reader.GetString(reader.GetOrdinal("Resume_Link")),

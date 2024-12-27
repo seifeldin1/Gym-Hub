@@ -35,7 +35,8 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-            [HttpPost("GenerateBranchManagerReport")]
+        
+        [HttpPost("GenerateBranchManagerReport")]
         public IActionResult GenerateBranchManagerReport([FromBody] ManagerialReportModel entry)
         {
             // Call the service method to add the workout
