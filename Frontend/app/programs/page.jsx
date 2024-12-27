@@ -21,7 +21,7 @@ const Form = () => {
         <>
             <div className="relative flex flex-col text-center">
                 <span className="absolute inset-0 text-[8rem] lg:text-[5rem] font-bold uppercase text-green-300 opacity-10 z-0">PROGRAMS</span>
-                <h2 class="text-4xl sm:text-4xl font-extrabold mt-10 text-[#b2d438] z-10 relative ease-in duration-300 hover:scale-110">Training Workout</h2>
+                <h2 className="text-4xl sm:text-4xl font-extrabold mt-10 text-[#b2d438] z-10 relative ease-in duration-300 hover:scale-110">Training Workout</h2>
             </div>
             <div className="m-10 bg-transparent mt-14">
                 <div className="bg-transparent flex items-center justify-center">
