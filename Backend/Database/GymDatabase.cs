@@ -402,7 +402,7 @@ namespace Backend.Database
                         Plan_ID INT,
                         Supplement_ID INT,
                         FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
-                        FOREIGN KEY(Plan_ID) REFERENCES Nutrition(Plan_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+                        FOREIGN KEY(Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY(Supplement_ID) REFERENCES Supplements(Supplement_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);

@@ -1,6 +1,8 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -14,6 +16,7 @@ namespace Backend.Controllers
             this.equipmentsService = equipmentsService;
         }
         [HttpPost]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult AddEquipment([FromBody] EquipmentsModel entry)
         {
             // Call the service method to add the workout
@@ -39,6 +42,7 @@ namespace Backend.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Owner , BranchManager , Coach ")]
         public IActionResult GetEquipments()
         {
             var equipmentList = equipmentsService.GetEquipments();
@@ -46,6 +50,7 @@ namespace Backend.Controllers
         }
 
        [HttpDelete]
+       [Authorize(Roles = "Owner , BranchManager")]
         public IActionResult DeleteEquipment([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -73,7 +78,8 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateWorkout([FromBody] EquipmentsModel entry)
+        [Authorize(Roles = "Owner , BranchManager")]
+        public IActionResult UpdateEquipment([FromBody] EquipmentsModel entry)
         {
             // Call the service to update the Branch
             var result = equipmentsService.UpdateEquipment(entry);

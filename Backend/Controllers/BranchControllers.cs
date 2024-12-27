@@ -1,6 +1,8 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -16,6 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Owner")]
         public IActionResult AddBranch([FromBody] BranchModel entry)
         {
             // Call the service method to add the Branch
@@ -38,6 +41,7 @@ namespace Backend.Controllers
             // Return the JSON result
         }
         [HttpGet]
+        [Authorize(Roles = "Owner")]
         public IActionResult GetBranches()
         {
             var branchList = branchService.GetBranches();
@@ -45,6 +49,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Owner")]
         public IActionResult DeleteBranch([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -71,6 +76,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Owner")]
         public IActionResult UpdateBranch([FromBody] BranchModel UpdatedBranch)
         {
             // Call the service to update the Branch
@@ -92,7 +98,9 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+
         [HttpPut("woking-hours")]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult SetWorkingHours([FromBody] TimeModel time)
         {
             // Call the service to set new working Hours

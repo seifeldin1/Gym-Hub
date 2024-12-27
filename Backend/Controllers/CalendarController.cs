@@ -1,6 +1,8 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -13,12 +15,14 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Owner , BranchManager , Client , Coach")]
         public IActionResult GetCalendarBetween([FromBody] TimeFrameModel timeFrame){
             var result = calendarService.GetCalendarEventsBetween(timeFrame.Start, timeFrame.End);
             return Ok(result);
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = "Owner,Coach,Client,BranchManager")]
         public IActionResult GetAllCalendarEvents()
         {
             var result = calendarService.GetAllCalendarEvents();

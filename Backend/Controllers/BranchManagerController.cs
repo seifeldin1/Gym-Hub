@@ -1,6 +1,8 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -15,6 +17,7 @@ namespace Backend.Controllers
             this.branchmanagersService = branchmanagersService;
         }
         [HttpPost("add")]
+        [Authorize(Roles = "Owner")]
         public IActionResult AddBranchManager([FromBody] BranchManagerModel entry)
         {
             var result = branchmanagersService.AddBranchManager(entry);
@@ -36,6 +39,7 @@ namespace Backend.Controllers
 
         }
         [HttpPut("UpdateBranchManager")]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult UpdateBranchManager([FromBody] BranchManagerUpdaterModel entry)
         {
             // Call the service to update the Branch
@@ -58,6 +62,7 @@ namespace Backend.Controllers
             });
         }
         [HttpDelete]
+        [Authorize(Roles = "Owner")]
         public IActionResult DeleteBranchManager([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -83,6 +88,7 @@ namespace Backend.Controllers
             });
         }
         [HttpGet]
+        [Authorize(Roles = "Owner , BranchManager")]
         public IActionResult GetBranchManagers()
         {
             var branchmanagerList = branchmanagersService.GetBranchManager();
@@ -90,6 +96,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("ChangeBranchManager")]
+        [Authorize(Roles = "Owner")]
         public IActionResult ChangeBranchManager([FromBody] ChangingManagerModel entry)
         {
             // Call the service to update the Branch
@@ -111,6 +118,7 @@ namespace Backend.Controllers
             });
         }
         [HttpPut("UpdateBranchManagerContract")]
+        [Authorize(Roles = "Owner")]
         public IActionResult UpdateBranchManagerContract([FromBody] updatingContract entry)
         {
             if (entry.id <= 0)

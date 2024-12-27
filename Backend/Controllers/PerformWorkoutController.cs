@@ -1,6 +1,8 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -15,6 +17,7 @@ namespace Backend.Controllers
             this.performWorkoutService = performWorkoutService;
         }
         [HttpGet]
+        [Authorize(Roles = "Client , Coach")]
         public IActionResult GetSessionsHistory([FromBody] Sessionshistory Sessionshistory)
         {
             if (Sessionshistory.id <= 0)
@@ -30,6 +33,7 @@ namespace Backend.Controllers
             return Ok(result);
         }
         [HttpPut("SetPerformed")]
+        [Authorize(Roles = "Client , Coach")]
         public IActionResult SetPerformed([FromBody] PerformedModel entry)
         {
             var result = performWorkoutService.SetPerformed(entry.Client_ID, entry.Workout_ID);

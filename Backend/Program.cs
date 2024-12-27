@@ -1,44 +1,64 @@
 using Backend.Database;
 using Backend.Controllers;
 using Backend.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using MySql.Data.MySqlClient;
 using Backend.Middleware;
 using Backend.Utils;
 using Backend.Hubs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using MySql.Data.MySqlClient;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<GymDatabase>();      // Add Database service as Scoped (to be injected into controllers)
+// Add services to the container
 
-builder.Services.AddControllers()
-.AddJsonOptions(options =>
+// Add controllers with views support
+builder.Services.AddControllersWithViews();
+
+// Configure JWT Bearer Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("9c1b3f43-df57-4a9a-88d3-b6e9e58c6f2e")),
+            ValidateIssuer = false, // Optional: Set to true if you have a specific issuer
+            ValidateAudience = false, // Optional: Set to true if you have a specific audience
+        };
+    });
+
+// Add Authorization Policies
+builder.Services.AddAuthorization(options =>
 {
-    options.JsonSerializerOptions.Converters.Add(new Backend.Utils.DateOnlyJsonConverter());
+    options.AddPolicy("CoachPolicy", policy => policy.RequireRole("Coach"));
+    options.AddPolicy("OwnerPolicy", policy => policy.RequireRole("Owner"));
+    options.AddPolicy("BranchManagerPolicy", policy => policy.RequireRole("BranchManager"));
+    options.AddPolicy("ClientPolicy", policy => policy.RequireRole("Client"));
 });
+
+// Add custom JSON converters (if needed)
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    });
+
+// Register Database services
+builder.Services.AddScoped<GymDatabase>();
+
+// Register MySQL connection with connection string from configuration
 builder.Services.AddScoped<MySqlConnection>(provider =>
 {
-    // Get the connection string from the configuration
-    var connectionString = builder.Configuration.GetConnectionString("myConnectionString"); //change the value for the myConnectionString , you will find it in "appsettings.Development.json" ... also you need to change the connection in the ProductDatabase
-
-    return new MySqlConnection(connectionString);  // Return a new MySqlConnection using the connection string
+    var connectionString = builder.Configuration.GetConnectionString("myConnectionString");
+    return new MySqlConnection(connectionString);
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(
-        policy =>
-        {
-            policy.AllowAnyOrigin()  // Allow requests from any origin
-                .AllowAnyMethod()     // Allow any HTTP method (GET, POST, etc.)
-                .AllowAnyHeader();    // Allow any headers
-        });
-});
-
-// Register Services as Scoped, to be injected into controllers
+// Register application services (this should include your custom services for various features)
 builder.Services.AddScoped<CredentialServices>();
 builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<Workout>();
@@ -64,37 +84,55 @@ builder.Services.AddScoped<TalentPoolServices>();
 builder.Services.AddScoped<ReportsServices>();
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<HolidayService>();
-builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<CalendarServices>();
 builder.Services.AddScoped<RecommendationServices>();
 
+// Add SignalR for real-time communications
 builder.Services.AddSignalR();
 
+// Build the application
 var app = builder.Build();
+
+// Configure SignalR hubs
 app.MapHub<NotificationHub>("/notifications");
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
+// Initialize the database at startup
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var gymDatabase = scope.ServiceProvider.GetRequiredService<GymDatabase>();
+        gymDatabase.DatabaseSetUp();  // Assuming this method handles DB setup
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred while setting up the database: {ex.Message}");
+    }
+}
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
-// Enable CORS with the policy before routing
 app.UseCors();
-
 app.UseRouting();
+
+// Ensure Authentication and Authorization middleware is properly configured
 app.UseAuthentication();
-
-app.MapControllers();
-
 app.UseAuthorization();
 
+// Map controllers for routing
+app.MapControllers();
+
+// Default route for controllers (if needed)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Run the application
 app.Run();

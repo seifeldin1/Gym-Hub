@@ -1,6 +1,8 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -16,6 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("add")]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult AddCoach([FromBody] CoachModel entry)
         {
             var result = coachservice.AddCoach(entry);
@@ -36,13 +39,17 @@ namespace Backend.Controllers
             });
 
         }
+
         [HttpGet]
+        [Authorize(Roles = "Coach , BranchManager , Owner")]
         public IActionResult GetCoaches()
         {
             var coachList =coachservice.GetCoach();
             return Ok(coachList);
         }
+
         [HttpDelete]
+        [Authorize(Roles = "Owner , BranchManager")]
         public IActionResult DeleteCoach([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -67,7 +74,9 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+
         [HttpPut("UpdateCoach")]
+        [Authorize(Roles = "Coach")]
         public IActionResult UpdateCoachData([FromBody] CoachUpdaterModel entry)
         {
             // Call the service to update the Branch
@@ -92,6 +101,7 @@ namespace Backend.Controllers
 
 
         [HttpPut("MoveCoach")]
+        [Authorize(Roles = "Owner , BranchManager")]
         public IActionResult MoveCoach([FromBody] MovingModel entry)
         {
             if (entry.coachid <= 0)
@@ -121,6 +131,7 @@ namespace Backend.Controllers
         }
         
         [HttpPut("UpdateCoachStatus")]
+        [Authorize(Roles = "Coach")]
         public IActionResult UpdateStatus([FromBody] updatingStatus entry)
         {
             if (entry.id <= 0)
@@ -144,7 +155,9 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+
         [HttpPut("UpdateCoachContract")]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult UpdateCoachContract([FromBody] updatingContract entry)
         {
             if (entry.id <= 0)
@@ -168,7 +181,9 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+
         [HttpGet("ViewMyClients")]
+        [Authorize(Roles = "Coach")]
         public IActionResult  ViewMyClients([FromBody] GetByIDModel entry)
         {
             var clientList =coachservice.ViewMyClients(entry.id);
