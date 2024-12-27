@@ -3383,7 +3383,7 @@ VALUES
     (2, 2, 72.74, '2024-12-24 00:59:14'),
     (3, 4, 105.7, '2024-12-24 00:59:14');
 
-INSERT IGNORE INTO Recommandation
+INSERT IGNORE INTO Recommendation
 VALUES
     (1, 1, 1, 2),
     (2, 2, 2, 3),
@@ -3820,7 +3820,7 @@ VALUES
         '2024-02-10 23:59:59'
     );
 
-INSERT IGNORE INTO Clientprogress
+INSERT IGNORE INTO ClientProgress
 VALUES
     (
         1,

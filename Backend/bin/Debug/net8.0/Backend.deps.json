@@ -11,6 +11,7 @@
           "BCrypt.Net-Next": "4.0.3",
           "DotNetEnv": "3.1.1",
           "Microsoft.AspNetCore.Authorization": "8.0.0",
+          "Microsoft.AspNetCore.Cors": "2.2.0",
           "Microsoft.AspNetCore.SignalR": "1.1.0",
           "Microsoft.AspNetCore.SignalR.Common": "9.0.0",
           "Microsoft.Extensions.DependencyInjection": "8.0.0",
@@ -115,6 +116,15 @@
             "assemblyVersion": "9.0.0.0",
             "fileVersion": "9.0.24.52903"
           }
+        }
+      },
+      "Microsoft.AspNetCore.Cors/2.2.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.Http.Extensions": "2.2.0",
+          "Microsoft.Extensions.Configuration.Abstractions": "2.2.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.0",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
+          "Microsoft.Extensions.Options": "9.0.0"
         }
       },
       "Microsoft.AspNetCore.Hosting.Abstractions/2.2.0": {
@@ -422,27 +432,27 @@
           "runtimes/win-x64/native/comerr64.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "4.1.0.0"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x64/native/gssapi64.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "4.1.0.0"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x64/native/k5sprt64.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "4.1.0.0"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x64/native/krb5_64.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "4.1.0.0"
+            "fileVersion": "0.0.0.0"
           },
           "runtimes/win-x64/native/krbcc64.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "4.1.0.0"
+            "fileVersion": "0.0.0.0"
           }
         }
       },
@@ -1364,6 +1374,13 @@
       "sha512": "sha512-s2di/tl/ZvLMOEa3KA3VZXmZT1QEefvn7fMCIbHuA/e2xP8/NbLz+q+D6FXuyR/A6koyOB4r88i+99Ya00XJiw==",
       "path": "microsoft.aspnetcore.connections.abstractions/9.0.0",
       "hashPath": "microsoft.aspnetcore.connections.abstractions.9.0.0.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Cors/2.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LFlTM3ThS3ZCILuKnjy8HyK9/IlDh3opogdbCVx6tMGyDzTQBgMPXLjGDLtMk5QmLDCcP3l1TO3z/+1viA8GUg==",
+      "path": "microsoft.aspnetcore.cors/2.2.0",
+      "hashPath": "microsoft.aspnetcore.cors.2.2.0.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Hosting.Abstractions/2.2.0": {
       "type": "package",

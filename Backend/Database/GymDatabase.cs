@@ -27,7 +27,7 @@ namespace Backend.Database
         }*/
 
 
-        private const string connectionString = "Server=127.0.0.1;User=root;Password=Seif@2004;";
+        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=Seif@2004";
         //Create connection 
         public MySqlConnection ConnectToDatabase()
         {
@@ -464,7 +464,7 @@ namespace Backend.Database
                         NextSteps VARCHAR(300) NOT NULL,
                         FOREIGN KEY (Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY (Coach_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE
-                    )
+                    );
                 ", connection);
                 createClientProgressTable.ExecuteNonQuery();
 

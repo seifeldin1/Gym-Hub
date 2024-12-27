@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "95HEs7ytcFo=",
+  "dgSpecHash": "5VduiFcm8Jo=",
   "success": true,
   "projectFilePath": "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj",
   "expectedPackageFiles": [
@@ -14,6 +14,7 @@
     "/home/engseif/.nuget/packages/microsoft.aspnetcore.authorization/8.0.0/microsoft.aspnetcore.authorization.8.0.0.nupkg.sha512",
     "/home/engseif/.nuget/packages/microsoft.aspnetcore.authorization.policy/2.2.0/microsoft.aspnetcore.authorization.policy.2.2.0.nupkg.sha512",
     "/home/engseif/.nuget/packages/microsoft.aspnetcore.connections.abstractions/9.0.0/microsoft.aspnetcore.connections.abstractions.9.0.0.nupkg.sha512",
+    "/home/engseif/.nuget/packages/microsoft.aspnetcore.cors/2.2.0/microsoft.aspnetcore.cors.2.2.0.nupkg.sha512",
     "/home/engseif/.nuget/packages/microsoft.aspnetcore.hosting.abstractions/2.2.0/microsoft.aspnetcore.hosting.abstractions.2.2.0.nupkg.sha512",
     "/home/engseif/.nuget/packages/microsoft.aspnetcore.hosting.server.abstractions/2.2.0/microsoft.aspnetcore.hosting.server.abstractions.2.2.0.nupkg.sha512",
     "/home/engseif/.nuget/packages/microsoft.aspnetcore.http/2.2.0/microsoft.aspnetcore.http.2.2.0.nupkg.sha512",
