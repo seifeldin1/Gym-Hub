@@ -116,7 +116,6 @@ const Report = () => {
                                 <option value="6">Dakroury</option>
                             </select>
                         </div>
-                        <p className="text-gray-700"> </p>
                         <form action="">
                             <div>
                                 <label htmlFor="progress_summary" className="block text-lg font-semibold text-gray-600">Progress Summary <span className="text-red-500">*</span></label>
