@@ -43,7 +43,7 @@ namespace Backend.Controllers
         [HttpPost("addrating")]
         [Authorize(Roles = "Client")]
         public IActionResult AddRating([FromBody] RatingModel entry)
-        {
+        {   
             var result = ClientsService.AddRateCoach(entry);
             if (result.success)
             {

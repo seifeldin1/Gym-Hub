@@ -32,6 +32,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.AllowAnyOrigin()  // Allow requests from any origin
+                .AllowAnyMethod()     // Allow any HTTP method (GET, POST, etc.)
+                .AllowAnyHeader();    // Allow any headers
+        });
+});
 // Add Authorization Policies
 builder.Services.AddAuthorization(options =>
 {
@@ -86,6 +97,11 @@ builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<HolidayService>();
 builder.Services.AddScoped<CalendarServices>();
 builder.Services.AddScoped<RecommendationServices>();
+builder.Services.AddScoped<StatisticsServices>();
+builder.Services.AddScoped<InterviewService>();
+
+
+
 
 // Add SignalR for real-time communications
 builder.Services.AddSignalR();
@@ -117,9 +133,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseCors();
 app.UseRouting();
 
 // Ensure Authentication and Authorization middleware is properly configured

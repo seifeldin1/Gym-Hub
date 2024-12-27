@@ -4,6 +4,8 @@ import { useState } from "react";
 import { RiHome5Line } from "react-icons/ri";
 import { BsGraphUpArrow } from "react-icons/bs";
 import { IoSettingsOutline } from "react-icons/io5";
+import { BsFillPersonVcardFill } from "react-icons/bs";
+import { MdLogout } from "react-icons/md";
 import { LuCalendar } from "react-icons/lu";
 import { TbReport } from "react-icons/tb";
 import GymIcon from '@public/assets/images/image.png';
@@ -11,7 +13,8 @@ import Home from './home';
 import Calendar from './Calendar';
 import Report from './report';
 import Analytics from './analytics';
-import Settings from './Settings';
+import PersonnalDetails from './personnal_details'
+
 
 const Dashboard = () => {
     const [activePanel, setActivePanel] = useState("home");
@@ -31,8 +34,10 @@ const Dashboard = () => {
                 return <Report />;
             case "analytics":
                 return <Analytics />;
-            case "settings":
-                return <Settings />;
+            case "personnal_details":
+                return <PersonnalDetails/>;
+            case "log_out":
+                return <div> </div>;
             default:
                 return <div>Select a Panel</div>;
         }
@@ -81,11 +86,19 @@ const Dashboard = () => {
                         </div>
                         <div
                             className={styles.icon}
-                            onClick={() => setActivePanel("settings")}
+                            onClick={() => setActivePanel("personnal_details")}
                             role="button"
                             tabIndex={0}
                         >
-                            <IoSettingsOutline size={26} />
+                            <BsFillPersonVcardFill size={26} />
+                        </div>
+                        <div
+                            className={styles.icon}
+                            onClick={() => setActivePanel("log_out")}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <MdLogout size={26} />
                         </div>
                     </div>
                 </div>

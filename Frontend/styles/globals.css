@@ -40,3 +40,22 @@ div.fc-toolbar button.fc-today-button:hover {
 .fc-toolbar-title {
   color: #dbff55; /* Example color, change to whatever you need */
 }
+
+.customScroll::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.customScroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.customScroll::-webkit-scrollbar-thumb {
+  background: #4a90e2;
+  border-radius: 10px;
+}
+
+.customScroll::-webkit-scrollbar-thumb:hover {
+  background: #357ab7;
+}
