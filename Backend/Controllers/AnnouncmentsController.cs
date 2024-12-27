@@ -76,9 +76,9 @@ namespace Backend.Controllers
 
         [HttpDelete]
         [Authorize(Roles = "BranchManager,Coach")]
-        public IActionResult DeleteAnnouncement([FromBody] int id)
+        public IActionResult DeleteAnnouncement([FromBody] GetByIDModel announcment)
         {
-            var result = ann_Service.DeleteAnnouncement(id);
+            var result = ann_Service.DeleteAnnouncement(announcment.id);
             // Return success response after deletion
             if (result.success)
             {
