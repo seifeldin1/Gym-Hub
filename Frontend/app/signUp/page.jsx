@@ -1,14 +1,21 @@
 'use client'
-import React, { useState } from "react"
+import React, { useState  , useEffect} from "react"
 import { Button, IconButton, TextField, Tooltip } from "@node_modules/@mui/material"
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import styles from '@styles/signUp.module.css'
 import { Typography  , MenuItem , RadioGroup , FormControlLabel , Radio} from "@mui/material";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { Grid } from '@mui/material';
+import dayjs from 'dayjs';
 //import style from '@styles/signup.module.css'
 import HomeImage from '@public/images/signUp_photo1.png';
+import axios from 'axios';
+
 
 
 const SignUpPage = ()=>{
@@ -24,9 +31,34 @@ const SignUpPage = ()=>{
         age: "", 
         nationalNumber: ""
     })
+    const [membershipData, setMembershipData] = useState({
+        preferredStart: "",
+        membershipPeriod: "",
+        membershipType: "",
+        BMR: "",
+        weight: "",
+        height: "",
+        membershipFees: 0,
+        endDate: ""
+    });
+    const [joinDate, setJoinDate] = useState("");
     const [showPassword , setShowPassword] = useState(false)
     const [showConfirmPassword , setShowConfirmPassword] = useState(false)
     const [errors , setErrors] = useState({})
+
+    const formatDate = (date) => {
+        const d = new Date(date);
+        const day = String(d.getDate()).padStart(2, '0'); // Get the day with leading zero
+        const month = String(d.getMonth() + 1).padStart(2, '0'); // Get the month with leading zero
+        const year = d.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return the formatted date
+      };
+    
+      // Handler for the date change
+      const handleDateChange = (e) => {
+        const formattedDate = formatDate(e.target.value); // Format the selected date
+        setPreferredStart(formattedDate); // Update the state with the formatted date
+      };
 
     const handleInputChanges = (e)=>{
         const {name , value} = e.target
@@ -36,6 +68,77 @@ const SignUpPage = ()=>{
     
     const handleShowPassword = ()=>{setShowPassword(!showPassword)}
     const handleShowConfirmPassword = ()=>{setShowConfirmPassword(!showConfirmPassword)}
+
+    useEffect(() => {
+        calculateEndDate();
+      }, [membershipData.preferredStart, membershipData.membershipPeriod, membershipData.membershipType]);
+    
+        const calculateEndDate = () => {
+        const { preferredStart, membershipPeriod } = membershipData;
+        if (preferredStart && membershipPeriod) {
+          const startDate = new Date(preferredStart);
+          const endDate = dayjs(startDate).add(parseInt(membershipPeriod), 'month').toDate();
+          setMembershipData({ ...membershipData, endDate: endDate.toISOString().split('T')[0] }); 
+        } else {
+          setMembershipData({ ...membershipData, endDate: "" });
+        }
+    };
+    
+    const handleMembershipChanges = (e) => {
+        const { name, value } = e.target;
+
+        // Create a copy of the existing membership data
+        let updatedData = { ...membershipData, [name]: value };
+
+        // If membership period or type changes, calculate membership fees
+        if (name === "membershipPeriod" || name === "membershipType") {
+            const periodMultiplier = {
+                "1": 1,   // No discount for 1 month
+                "3": 0.9, // 10% discount for 3 months
+                "6": 0.75, // 25% discount for 6 months
+                "12": 0.5  // 50% discount for 12 months
+            };
+            const baseFees = {
+                basic: 250,    // Base fee for basic membership
+                silver: 500,   // Base fee for silver membership
+                gold: 1500,    // Base fee for gold membership
+                platinum: 3000 // Base fee for platinum membership
+            };
+
+            const period = updatedData.membershipPeriod; // Duration in months
+            const type = updatedData.membershipType;     // Type of membership
+
+            // Calculate fees if both period and type are provided
+            if (period && type) {
+                const fees = baseFees[type] * parseInt(period) * periodMultiplier[period];
+                updatedData.membershipFees = fees.toFixed(2); // Round to 2 decimal places
+            }
+        }
+
+        // If the period is selected, calculate the end date
+        if (name === "membershipPeriod" && updatedData.preferredStart) {
+            const startDate = new Date(updatedData.preferredStart);
+            const monthsToAdd = parseInt(updatedData.membershipPeriod);
+            startDate.setMonth(startDate.getMonth() + monthsToAdd); // Add selected months to start date
+            updatedData.endDate = startDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+        }
+
+        // Update the membership data state
+        setMembershipData(updatedData);
+    };
+
+    const API_URL = 'http://localhost:5291/api';  // Base API URL
+    const checkPhoneNumber = async (phoneNumber) => {
+        try {
+            const response = await axios.get(`${API_URL}//SignUpChecker/CheckEmail`, {
+                params: { phone: phoneNumber }
+            });
+            return response.data; // Assuming the API returns { isValid: boolean }
+        } catch (error) {
+            console.error("Error checking phone number:", error);
+            throw error;
+        }
+    };
 
     const handleSubmit = (e)=>{
         e.preventDefault()
@@ -74,6 +177,19 @@ const SignUpPage = ()=>{
             newErrors.age = "Age is required"
         if(!formData.gender)
             newErrors.gender = "Gender is required"
+        if(!membershipData.BMR)
+            newErrors.BMR = "BMR is required"
+        if(!membershipData.height)
+            newErrors.height = "Height is required"
+        if(!membershipData.weight)
+            newErrors.weight = "Weight is required"
+        if(!membershipData.membershipPeriod)
+            newErrors.membershipPeriod = "Membership period is required"
+        if(!membershipData.membershipType)
+            newErrors.membershipType = "Membership type is required"
+        if(!membershipData.preferredStart)
+            newErrors.preferredStart = "Preferred start date is required"
+
 
         if(Object.keys(newErrors).length>0){
             setErrors(newErrors)
@@ -478,21 +594,21 @@ const SignUpPage = ()=>{
                         },
                     }}
 
-                    SelectProps={{
-                        MenuProps: {
-                            PaperProps: {
-                                sx: {
-                                    bgcolor: '#002637', // Dropdown background color
-                                    '& .MuiMenuItem-root': {
-                                        color: 'yellow', // Dropdown text color
-                                        '&:hover': {
-                                            bgcolor: '#0026', // Background on hover
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    }}
+                    // SelectProps={{
+                    //     MenuProps: {
+                    //         PaperProps: {
+                    //             sx: {
+                    //                 bgcolor: '#002637', // Dropdown background color
+                    //                 '& .MuiMenuItem-root': {
+                    //                     color: 'yellow', // Dropdown text color
+                    //                     '&:hover': {
+                    //                         bgcolor: '#0026', // Background on hover
+                    //                     },
+                    //                 },
+                    //             },
+                    //         },
+                    //     },
+                    // }}
                     >
                     {Array.from({ length: 55 }, (_, i) => (
                         <MenuItem key={i + 16} value={i + 16}>
@@ -537,12 +653,335 @@ const SignUpPage = ()=>{
                             </Typography>
                         )}
                 </div>
+                
+                <h2 className="mt-20 text-3xl mb-8 text-yellow-300 flex items-center justify-center">Membership Details</h2>
+                <form  className="rounded shadow-md w-full max-w-2xl"
+                onSubmit={handleSubmit}
+                style={{border:'none' , boxShadow: 'none'}}>
+                    <div className="grid grid-cols-2 gap-4">
+                        {/* Preferred Start Date */}
+                        <TextField
+                            label="Preferred Start Date"
+                            type="date"
+                            name="preferredStart"
+                            error={!!errors.preferredStart}
+                            helperText={errors.preferredStart}
+                            value={membershipData.preferredStart}
+                            onChange={handleMembershipChanges}
+                            fullWidth
+                            InputLabelProps={{ 
+                                shrink: true,
+                                style: { color: 'yellow' },
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#FDE047' },
+                                    '&:hover fieldset': { borderColor: '#FFD700' },
+                                    '&.Mui-focused fieldset': { borderColor: '#FDE047' }
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'yellow', // Input text color
+                                    '-webkit-text-fill-color': 'yellow', // For Safari support
+                                },
+                                '& .Mui-disabled .MuiInputBase-input': {
+                                    color: 'yellow', // Disabled input color
+                                },
+                                // Change the color of the calendar icon for the date picker
+                                '& input[type="date"]::-webkit-calendar-picker-indicator': {
+                                    filter: 'invert(1) sepia(1) saturate(5) hue-rotate(90deg)', // This applies a yellow filter
+                                },
+                            }}
+                        />
+
+                        {/* Membership Period */}
+                        <TextField
+                            label="Membership Period (Months)"
+                            name="membershipPeriod"
+                            value={membershipData.membershipPeriod}
+                            error={!!errors.membershipPeriod}
+                            helperText={errors.membershipPeriod}
+                            onChange={handleMembershipChanges}
+                            select
+                            fullWidth
+                            InputLabelProps={{
+                               
+                                style: { color: 'yellow' },
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#FDE047' },
+                                    '&:hover fieldset': { borderColor: '#FFD700' },
+                                    '&.Mui-focused fieldset': { borderColor: '#FDE047' }
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'yellow'
+                                },
+                                '& .MuiSelect-icon': { // Style the dropdown icon
+                                    color: 'yellow',
+                                },
+                                
+                            }}
+                        >
+                            {["1", "3", "6", "12"].map((option) => (
+                                <MenuItem 
+                                key={option}
+                                value={option}
+                                >
+                                    {option} Month{option > 1 && "s"}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            label="Membership Type"
+                            name="membershipType"
+                            error={!!errors.membershipType}
+                            helperText={errors.membershipType}
+                            value={membershipData.membershipType}
+                            onChange={handleMembershipChanges}
+                            select
+                            fullWidth
+                            InputLabelProps={{
+                               
+                                style: { color: 'yellow' },
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#FDE047' },
+                                    '&:hover fieldset': { borderColor: '#FFD700' },
+                                    '&.Mui-focused fieldset': { borderColor: '#FDE047' }
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'yellow'
+                                },
+                                '& .MuiSelect-icon': { // Style the dropdown icon
+                                    color: 'yellow',
+                                },
+                                
+                            }}
+                        >
+                             {["basic", "silver", "gold", "platinum"].map((option) => (
+                                <MenuItem 
+                                key={option}
+                                value={option}
+                                >
+                                    {option} 
+                                </MenuItem>
+                            ))}
+                           
+                        </TextField>
+                        <TextField
+                            label="Membership Fees"
+                            name="membershipFees"
+                            error={!!errors.membershipFees}
+                            onChange={handleMembershipChanges} 
+                            fullWidth
+                            type="number" 
+                            disabled
+                            InputLabelProps={{
+                                shrink: true,
+                                style: { color: 'yellow' },
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': {
+                                        borderColor: '#FDE047', // Border color
+                                    },
+                                    '&:hover fieldset': {
+                                        borderColor: '#FFD700', // Border color on hover
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#FDE047', // Border color when focused
+                                    },
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'yellow', // Input text color is yellow
+                                    '-webkit-text-fill-color': 'yellow', // For Safari support
+                                },
+                                '& .MuiSvgIcon-root': { 
+                                    color: 'yellow', // Change the calendar icon color to yellow
+                                },
+                                // Override styles for the disabled state
+                                '& .Mui-disabled': {
+                                    color: 'yellow', // Ensure text color stays yellow when disabled
+                                    '-webkit-text-fill-color': 'yellow', // For Safari support
+                                },
+                                '& .Mui-disabled .MuiInputBase-input': {
+                                    color: 'yellow', // Text color when input is disabled
+                                    '-webkit-text-fill-color': 'yellow', // For Safari
+                                },
+                                '& .Mui-disabled .MuiOutlinedInput-root': {
+                                    backgroundColor: '#2c2c2c', // Optionally change background color for disabled field
+                                },
+                            }}
+                        /> 
+                        <TextField
+                            label="BMR"
+                            name="BMR"
+                            value={membershipData.BMR}
+                            error={!!errors.BMR}
+                            helperText={errors.BMR}
+                            onChange={handleMembershipChanges}
+                            fullWidth
+                            placeholder="BMR"
+                            type="number" 
+                            InputLabelProps={{
+                                
+                                style: { color: 'yellow' },
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#FDE047' },
+                                    '&:hover fieldset': { borderColor: '#FFD700' },
+                                    '&.Mui-focused fieldset': { borderColor: '#FDE047' }
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'yellow'
+                                },
+                                '& .MuiSelect-icon': { // Style the dropdown icon
+                                    color: 'yellow',
+                                },
+                                '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': {
+                                    display: 'none',
+                                },
+                                '& input[type=number]': {
+                                    '-moz-appearance': 'textfield', // For Firefox
+                                },
+                                
+                            }}
+                        /> 
+                        <TextField
+                            label="Weight (kg)"
+                            name="weight"
+                            value={membershipData.weight}
+                            error={!!errors.weight}
+                            helperText={errors.weight}
+                            onChange={handleMembershipChanges}
+                            fullWidth
+                            placeholder="Weight in kg"
+                            type="number" 
+                            InputLabelProps={{
+                              
+                                style: { color: 'yellow' },
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#FDE047' },
+                                    '&:hover fieldset': { borderColor: '#FFD700' },
+                                    '&.Mui-focused fieldset': { borderColor: '#FDE047' }
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'yellow'
+                                },
+                                '& .MuiSelect-icon': { // Style the dropdown icon
+                                    color: 'yellow',
+                                },
+                                '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': {
+                                    display: 'none',
+                                },
+                                '& input[type=number]': {
+                                    '-moz-appearance': 'textfield', // For Firefox
+                                },
+                                
+                            }}
+                        />
+                        <TextField
+                            label="Height (cm)"
+                            name="height"
+                            value={membershipData.height}
+                            error={!!errors.height}
+                            helperText={errors.height}
+                            onChange={handleMembershipChanges}
+                            fullWidth
+                            placeholder="Height in cm"
+                            type="number" 
+                            InputLabelProps={{
+                                
+                                style: { color: 'yellow' },
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': { borderColor: '#FDE047' },
+                                    '&:hover fieldset': { borderColor: '#FFD700' },
+                                    '&.Mui-focused fieldset': { borderColor: '#FDE047' }
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'yellow'
+                                },
+                                '& .MuiSelect-icon': { // Style the dropdown icon
+                                    color: 'yellow',
+                                },
+                                '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': {
+                                    display: 'none',
+                                },
+                                '& input[type=number]': {
+                                    '-moz-appearance': 'textfield', // For Firefox
+                                },
+
+                                
+                            }}
+                        />
+                        <TextField
+                            label="End Date"
+                            type="date"
+                            name="endDate"
+                            value={membershipData.endDate}
+                            onChange={handleMembershipChanges} 
+                            fullWidth
+                            InputLabelProps={{
+                            shrink: true,
+                            style: { color: 'yellow' },
+                            }}
+                            disabled
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    '& fieldset': {
+                                        borderColor: '#FDE047', // Border color
+                                    },
+                                    '&:hover fieldset': {
+                                        borderColor: '#FFD700', // Border color on hover
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                        borderColor: '#FDE047', // Border color when focused
+                                    },
+                                },
+                                '& .MuiInputBase-input': {
+                                    color: 'yellow', // Input text color is yellow
+                                    '-webkit-text-fill-color': 'yellow', // For Safari support
+                                },
+                                '& .MuiSvgIcon-root': { 
+                                    color: 'yellow', // Change the calendar icon color to yellow
+                                },
+                                // Override styles for the disabled state
+                                '& .Mui-disabled': {
+                                    color: 'yellow', // Ensure text color stays yellow when disabled
+                                    '-webkit-text-fill-color': 'yellow', // For Safari support
+                                },
+                                '& .Mui-disabled .MuiInputBase-input': {
+                                    color: 'yellow', // Text color when input is disabled
+                                    '-webkit-text-fill-color': 'yellow', // For Safari
+                                },
+                                '& .Mui-disabled .MuiOutlinedInput-root': {
+                                    backgroundColor: '#2c2c2c', // Optionally change background color for disabled field
+                                },
+                            }}
+                        />
+                    </div>
+                </form>
+            
                 <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                className="mt-6"
-                sx={{ backgroundColor: "blue", color: "white", "&:hover": { backgroundColor: "darkblue" }  }}
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    className="w-60 text-black mt-20"
+                            sx={{
+                                backgroundColor: "yellow", // Custom background color
+                                color:"black",
+                                '&:hover': {
+                                    backgroundColor: "black", // Custom hover color
+                                    color:"yellow"
+                                },
+                                marginTop: '25px',
+                            }}
                 >
                     Sign Up
                 </Button>
