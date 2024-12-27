@@ -38,7 +38,7 @@ const Header = () => {
                         fitness solutions tailored to your needs. From expert guidance and diverse workout plans to a supportive community, we’re
                         here to help you achieve your health and wellness goals with ease and confidence."
                     </p>
-                    <button className="text-white text-lg border-2 font-bold border-solid my-4 ease-in duration-300 hover:border-[#b2d438] px-3 py-2 bg-transparent hover:scale-110 hover:bg-[#b2d438] hover:text-black">Read More</button>          </div>
+                    <button className="text-white text-lg border-2 font-bold border-solid my-4 ease-in duration-300 hover:border-green-300 px-3 py-2 bg-transparent hover:scale-110 hover:bg-green-300 hover:text-black">Read More</button>          </div>
             </div>
 
             <div className="bg-transparent py-10">
@@ -145,7 +145,7 @@ const Home = () => {
     return (
         <>
             <div className={`${styles.AnimBackground}`}>
-                <NavBarPage page_name="home" />
+                <NavBarPage page_name="home"/>
                 <Header/>
                 <Newsletter/>
                 <BottomBar page_name="home"/>

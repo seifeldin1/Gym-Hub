@@ -23,61 +23,61 @@ const OpenClass = () => {
     return (
         <>
         <div className="relative flex flex-col text-center">
-            <span className="absolute inset-0 text-[8rem] lg:text-[5rem] font-bold uppercase text-yellow-300 opacity-10 z-0">BODY BUILDING</span>
-            <h2 class="text-4xl sm:text-4xl font-extrabold mt-10 text-orange-400 z-10 relative ease-in duration-300 hover:scale-110"> OPEN CLASS FITNESS</h2>
+            <span className="absolute inset-0 text-[8rem] lg:text-[5rem] font-bold uppercase text-green-300 opacity-10 z-0">BODY BUILDING</span>
+            <h2 className="text-4xl sm:text-4xl font-extrabold mt-10 text-[#b2d438] z-10 relative ease-in duration-300 hover:scale-110"> OPEN CLASS FITNESS</h2>
         </div>
 
-        <section class="max-w-7xl mx-auto px-6 sm:px-12 py-16">
-            <div className="bg-transparent grid grid-cols-3 pl-6 mx-auto text-center">
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
-                    <h1 className="text-orange-400 font-extrabold text-xl mb-4">CARDIO FITNESS</h1>
+        <section className="max-w-7xl mx-auto px-6 sm:px-12 py-16">
+            <div className="bg-transparent grid grid-cols-3 text-center">
+                <div className="mx-auto border-t-8 border-green-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
+                    <h1 className="text-[#b2d438] font-extrabold text-xl mb-4">CARDIO FITNESS</h1>
                     <p className="text-gray-300">
                         Boost your endurance and burn calories with our cardio classes! Perfect for all fitness levels, 
                         these sessions improve heart health, build stamina, 
                         and energize your day.</p>
-                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
+                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-green-300 border-green-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
-                    <h1 className="text-orange-400 font-extrabold text-xl mb-4">CORPORATE FITNESS</h1>
+                <div className="mx-auto border-t-8 border-green-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
+                    <h1 className="text-[#b2d438] font-extrabold text-xl mb-4">CORPORATE FITNESS</h1>
                     <p className="text-gray-300">
                         Boost productivity and well-being with our Corporate Fitness programs! 
                         Designed to energize teams, improve health, 
                         and foster a positive work culture
                         </p>
-                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
+                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-green-300 border-green-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
-                    <h1 className="text-orange-400 font-extrabold text-xl mb-4">GROUP TRAINING</h1>
+                <div className="mx-auto border-t-8 border-green-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
+                    <h1 className="text-[#b2d438] font-extrabold text-xl mb-4">GROUP TRAINING</h1>
                     <p className="text-gray-300">
                         Achieve your goals together with Group Training! Fun, motivating, 
                         and designed for all fitness levels to help you stay inspired and succeed.</p>
-                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
+                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-green-300 border-green-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
-                    <h1 className="text-orange-400 font-extrabold text-xl mb-4">PERSONAL TRAINING</h1>
+                <div className="mx-auto border-t-8 border-green-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
+                    <h1 className="text-[#b2d438] font-extrabold text-xl mb-4">PERSONAL TRAINING</h1>
                     <p className="text-gray-300">
                         Get personalized guidance with Personal Training!
                         Tailored workouts and expert coaching to help you reach your fitness goals faster.</p>
-                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
+                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-green-300 border-green-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
-                    <h1 className="text-orange-400 font-extrabold text-xl mb-4">STRENGTH TRAINING</h1>
+                <div className="mx-auto border-t-8 border-green-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
+                    <h1 className="text-[#b2d438] font-extrabold text-xl mb-4">STRENGTH TRAINING</h1>
                     <p className="text-gray-300">
                         Build muscle and boost power with Strength Training! Perfect for all levels,
                         designed to enhance strength, endurance, and confidence.</p>
-                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
+                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-green-300 border-green-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
 
-                <div className="border-t-8 border-yellow-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
-                    <h1 className="text-orange-400 font-extrabold text-xl mb-4">SPORTS CONDITIONING</h1>
+                <div className="mx-auto border-t-8 border-green-400 flex flex-col items-center mb-8 justify-center w-3/4 h-4/4 bg-gray-700/30 p-8 rounded-full">
+                    <h1 className="text-[#b2d438] font-extrabold text-xl mb-4">SPORTS CONDITIONING</h1>
                     <p className="text-gray-300">
                         Elevate your performance with Sports Conditioning! Tailored training to improve strength, speed,
                         and agility for athletes of all levels.</p>
-                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-yellow-300 border-yellow-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
+                    <button className="font-bold border-2 border-yellow mt-12 p-2 text-green-300 border-green-300 ease-in duration-150 hover:border-white hover:bg-white hover:text-black hover:scale-110">Open Class</button>
                 </div>
             </div>
         </section>
@@ -95,7 +95,7 @@ const Home = () => {
             <OpenClass/>
             <Schedule/>
             <Newsletter/>
-            <BottomBar page_name="programs"/>
+            <BottomBar page_name="services"/>
         </div>
         </>
     );

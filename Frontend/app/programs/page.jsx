@@ -20,8 +20,8 @@ const Form = () => {
     return (
         <>
             <div className="relative flex flex-col text-center">
-                <span className="absolute inset-0 text-[8rem] lg:text-[5rem] font-bold uppercase text-yellow-300 opacity-10 z-0">PROGRAMS</span>
-                <h2 class="text-4xl sm:text-4xl font-extrabold mt-10 text-orange-400 z-10 relative ease-in duration-300 hover:scale-110">Training Workout</h2>
+                <span className="absolute inset-0 text-[8rem] lg:text-[5rem] font-bold uppercase text-green-300 opacity-10 z-0">PROGRAMS</span>
+                <h2 class="text-4xl sm:text-4xl font-extrabold mt-10 text-[#b2d438] z-10 relative ease-in duration-300 hover:scale-110">Training Workout</h2>
             </div>
             <div className="m-10 bg-transparent mt-14">
                 <div className="bg-transparent flex items-center justify-center">
@@ -30,60 +30,60 @@ const Form = () => {
                         <div className="flex bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                             <img src={gall1.src} alt="Body Building" className="w-1/2 object-cover" />
                             <div className="w-1/2 p-6">
-                                <h2 className="text-xl font-bold text-orange-300 mb-4">Body Building</h2>
+                                <h2 className="text-xl font-bold text-[#b2d438] mb-4">Body Building</h2>
                                 <p className="text-gray-400 text-sm mb-2">Time: <span className="text-white">10:00 AM</span></p>
                                 <p className="text-gray-400 text-sm mb-6">Schedule: <span className="text-white">Jan 20, 2021</span></p>
-                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-orange-400 hover:border-orange-400 hover:text-white hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
+                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-green-400 hover:border-green-400 hover:text-black hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
                             </div>
                         </div>
 
                         <div className="flex bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                             <img src={gall3.src} alt="Kardio Work" className="w-1/2 object-cover" />
                             <div className="w-1/2 p-6">
-                                <h2 className="text-xl font-bold text-orange-300 mb-4">Cardio Work</h2>
+                                <h2 className="text-xl font-bold text-[#b2d438] mb-4">Cardio Work</h2>
                                 <p className="text-gray-400 text-sm mb-2">Time: <span className="text-white">10:00 AM</span></p>
                                 <p className="text-gray-400 text-sm mb-6">Schedule: <span className="text-white">Jan 20, 2021</span></p>
-                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-orange-400 hover:border-orange-400 hover:text-white hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
+                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-green-400 hover:border-green-400 hover:text-black hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
                             </div>
                         </div>
 
                         <div className="flex bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                             <img src={gall7.src} alt="Dynamo Fitness" className="w-1/2 object-cover" />
                             <div className="w-1/2 p-6">
-                                <h2 className="text-xl font-bold text-orange-300 mb-4">Dynamo Fitness</h2>
+                                <h2 className="text-xl font-bold text-[#b2d438] mb-4">Dynamo Fitness</h2>
                                 <p className="text-gray-400 text-sm mb-2">Time: <span className="text-white">10:00 AM</span></p>
                                 <p className="text-gray-400 text-sm mb-6">Schedule: <span className="text-white">Jan 20, 2021</span></p>
-                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-orange-400 hover:border-orange-400 hover:text-white hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
+                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-green-400 hover:border-green-400 hover:text-black hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
                             </div>
                         </div>
 
                         <div className="flex bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                             <img src={gall4.src} alt="Bent-over Row" className="w-1/2 object-cover" />
                             <div className="w-1/2 p-6">
-                                <h2 className="text-xl font-bold text-orange-300 mb-4">Bent-over Row</h2>
+                                <h2 className="text-xl font-bold text-[#b2d438] mb-4">Bent-over Row</h2>
                                 <p className="text-gray-400 text-sm mb-2">Time: <span className="text-white">10:00 AM</span></p>
                                 <p className="text-gray-400 text-sm mb-6">Schedule: <span className="text-white">Jan 20, 2021</span></p>
-                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-orange-400 hover:border-orange-400 hover:text-white hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
+                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-green-400 hover:border-green-400 hover:text-black hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
                             </div>
                         </div>
 
                         <div className="flex bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                             <img src={gall2.src} alt="Bent-over Row" className="w-1/2 object-cover" />
                             <div className="w-1/2 p-6">
-                                <h2 className="text-xl font-bold text-orange-300 mb-4">Bench Press</h2>
+                                <h2 className="text-xl font-bold text-[#b2d438] mb-4">Bench Press</h2>
                                 <p className="text-gray-400 text-sm mb-2">Time: <span className="text-white">10:00 AM</span></p>
                                 <p className="text-gray-400 text-sm mb-6">Schedule: <span className="text-white">Jan 20, 2021</span></p>
-                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-orange-400 hover:border-orange-400 hover:text-white hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
+                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-green-400 hover:border-green-400 hover:text-black hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
                             </div>
                         </div>
 
                         <div className="flex bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                             <img src={gall5.src} alt="Bent-over Row" className="w-1/2 object-cover" />
                             <div className="w-1/2 p-6">
-                                <h2 className="text-xl font-bold text-orange-300 mb-4">Machine Squat</h2>
+                                <h2 className="text-xl font-bold text-[#b2d438] mb-4">Machine Squat</h2>
                                 <p className="text-gray-400 text-sm mb-2">Time: <span className="text-white">10:00 AM</span></p>
                                 <p className="text-gray-400 text-sm mb-6">Schedule: <span className="text-white">Jan 20, 2021</span></p>
-                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-orange-400 hover:border-orange-400 hover:text-white hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
+                                <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-green-400 hover:border-green-400 hover:text-black hover:font-bold transition rounded-full w-[7rem]">Join Now</button>
                             </div>
                         </div>
                     </div>
@@ -112,7 +112,7 @@ const Form = () => {
                         Whether you're just starting or striving to reach new goals, our personalized classes 
                         provide the perfect environment for growth, motivation, and success. Join us and become the best version of yourself!
                         </p>
-                        <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-orange-400 hover:border-orange-400 hover:text-white hover:font-bold transition rounded-full">Read More</button>
+                        <button className="px-4 py-2 bg-transparent border font-bold border-white text-white hover:bg-green-400 hover:border-green-400 hover:text-black hover:font-bold transition rounded-full">Read More</button>
                     </div>
                 </div>
             </div>

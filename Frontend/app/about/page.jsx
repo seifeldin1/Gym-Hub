@@ -40,7 +40,7 @@ const About = () => {
             we aim to empower you to achieve your health and wellness goals. Whether you're here to build strength, boost endurance, or simply improve your lifestyle, our gym is your ultimate fitness destination. 
             Let’s embark on this journey together — because <span className="text-[#b2d438] font-bold">your progress</span> is our passion!
           </p>
-          <button className="text-white text-lg border-2 font-bold border-solid my-4 ease-in duration-300 hover:border-[#b2d438] px-3 py-2 bg-transparent hover:scale-110 hover:bg-[#b2d438] hover:text-black">Read More</button></div>
+          <button className="text-white text-lg border-2 font-bold border-solid my-4 ease-in duration-300 hover:border-green-300 px-3 py-2 bg-transparent hover:scale-110 hover:bg-green-300 hover:text-black">Read More</button></div>
         </div>
         </>
     );
