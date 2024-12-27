@@ -1,6 +1,6 @@
-const WHY =() =>{
-    return(
-      <>
+const WHY = () => {
+  return (
+    <>
       <div className="relative text-center h-80 bg-transparent">
         <h2 className="text-4xl sm:text-5xl font-extrabold mt-24 text-[#b2d438] z-10 relative ease-in duration-300 hover:scale-110">Why Choose Us?</h2>
 
@@ -17,7 +17,7 @@ const WHY =() =>{
               <h3 className="text-xl font-semibold mb-2 text-[#b2d438]">State of the Art Facilities</h3>
               <p className="text-gray-300">Enjoy clean, spacious, and fully equipped workout areas tailored to inspire and support your fitness journey.</p>
             </div>
-            
+
             <div className="flex flex-col items-center text-center p-6 bg-[#6d6d6d] rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
               <div className="text-4xl mb-4">📋</div>
               <h3 className="text-xl font-semibold mb-2 text-[#b2d438]">Tailored Fitness Programs</h3>
@@ -30,7 +30,7 @@ const WHY =() =>{
               <p className="text-gray-300">Work with certified trainers who provide guidance, motivation, and injury prevention strategies.</p>
             </div>
 
-            <div class="flex flex-col items-center text-center p-6 bg-[#6d6d6d] rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+            <div className="flex flex-col items-center text-center p-6 bg-[#6d6d6d] rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
               <div className="text-4xl mb-4">🤝</div>
               <h3 className="text-xl font-semibold mb-2 text-[#b2d438]">Supportive Community</h3>
               <p className="text-gray-300">Connect with like-minded individuals who inspire and encourage one another to reach their goals.</p>
@@ -42,7 +42,7 @@ const WHY =() =>{
               <p className="text-gray-300">Choose plans that fit your schedule and lifestyle, making fitness accessible to everyone.</p>
             </div>
 
-            <div class="flex flex-col items-center text-center p-6 bg-[#6d6d6d] rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+            <div className="flex flex-col items-center text-center p-6 bg-[#6d6d6d] rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
               <div className="text-4xl mb-4">🏆</div>
               <h3 className="text-xl font-semibold mb-2 text-[#b2d438]">Commitment to Results</h3>
               <p className="text-gray-300">Your success is our priority. We celebrate your achievements and motivate you to keep going.</p>
@@ -50,11 +50,7 @@ const WHY =() =>{
           </div>
         </section>
       </div>
-
-        
-          
-
-      </>
-    );
-  }
-  export default WHY
+    </>
+  );
+}
+export default WHY

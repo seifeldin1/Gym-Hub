@@ -24,7 +24,7 @@ namespace Backend.Services
 
                 // Query to get coaches and their skills
                 string coachQuery = @"
-                    SELECT CONCAT(u.First_Name, ' ', u.Last_Name) AS Name, GROUP_CONCAT(s.Skill_Name) AS Skills,   
+                    SELECT CONCAT(u.First_Name, ' ', u.Last_Name) AS Name, GROUP_CONCAT(s.Skill_Name) AS Skills
                     FROM Coach c
                     INNER JOIN User u ON c.Coach_ID = u.User_ID
                     LEFT JOIN Skills s ON c.Coach_ID = s.Coach_Skilled_ID

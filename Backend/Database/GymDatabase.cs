@@ -401,7 +401,7 @@ namespace Backend.Database{
                         FOREIGN KEY(Supplement_ID) REFERENCES Supplements(Supplement_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
                 ", connection);
-                createProgressTableCommand.ExecuteNonQuery();
+                createRecommendationTableCommand.ExecuteNonQuery();
 
                 var createMeetingsTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Meetings(

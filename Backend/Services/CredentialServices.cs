@@ -65,34 +65,52 @@ namespace Backend.Services
                             string hashedPassword = reader["PasswordHashed"].ToString();
                             string roleType = reader["Type"].ToString();
                             int id = (int)reader["User_ID"];
-                            reader.Close(); 
-                            query = "SELECT AccountActivated from Client where Client_ID = @id";
-                            using (var command2 = new MySqlCommand(query, connection)){
-                                command2.Parameters.AddWithValue("@id", id);
-                                using (var reader2 = command2.ExecuteReader()){
-                                    if(reader2.Read()){
-                                        if(Convert.ToInt32(reader2["AccountActivated"]) == 1){
-                                            if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
-                                            {
+                            if(roleType =="Client"){
+                                reader.Close(); 
+                                query = "SELECT AccountActivated from Client where Client_ID = @id";
+                                using (var command2 = new MySqlCommand(query, connection)){
+                                    command2.Parameters.AddWithValue("@id", id);
+                                    using (var reader2 = command2.ExecuteReader()){
+                                        if(reader2.Read()){
+                                            if(Convert.ToInt32(reader2["AccountActivated"]) == 1){
+                                                if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
+                                                {
 
-                                                string token = GenerateJwtToken(entry.Username, roleType);
-                                                // Password is correct
-                                                return(true , "Login Successful" , token , roleType);
+                                                    string token = GenerateJwtToken(entry.Username, roleType);
+                                                    // Password is correct
+                                                    return(true , "Login Successful" , token , roleType);
+                                                }
+                                                else
+                                                {
+                                                    // Password is incorrect
+                                                    return (false, "Invalid password", null, null);
+                                                }
+                                            }else{
+                                                return (false, "Account not activated", null, null);
                                             }
-                                            else
-                                            {
-                                                // Password is incorrect
-                                                return (false, "Invalid password", null, null);
-                                            }
-                                        }else{
-                                            return (false, "Account not activated", null, null);
+                                        }
+                                        else{
+                                            return (false, "Client not found", null, null);
                                         }
                                     }
-                                    else{
-                                        return (false, "Client not found", null, null);
-                                    }
+                                    
+                                }
+
+                            }else{
+                                if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
+                                {
+
+                                    string token = GenerateJwtToken(entry.Username, roleType);
+                                    // Password is correct
+                                    return(true , "Login Successful" , token , roleType);
+                                }
+                                else
+                                {
+                                    // Password is incorrect
+                                    return (false, "Invalid password", null, null);
                                 }
                             }
+                            
 
                             
                         }

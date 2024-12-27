@@ -10,6 +10,10 @@
         "dependencies": {
           "BCrypt.Net-Next": "4.0.3",
           "DotNetEnv": "3.1.1",
+<<<<<<< HEAD
+=======
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
+>>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
           "Microsoft.AspNetCore.Authorization": "8.0.0",
           "Microsoft.AspNetCore.SignalR": "1.1.0",
           "Microsoft.AspNetCore.SignalR.Common": "9.0.0",
@@ -91,6 +95,20 @@
           "Microsoft.Extensions.Options": "9.0.0"
         }
       },
+<<<<<<< HEAD
+=======
+      "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.0": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.0.3"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.53112"
+          }
+        }
+      },
+>>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
       "Microsoft.AspNetCore.Authorization/8.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Metadata": "8.0.0",
@@ -351,6 +369,33 @@
           }
         }
       },
+<<<<<<< HEAD
+=======
+      "Microsoft.IdentityModel.Protocols/7.0.3": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Logging": "8.3.0",
+          "Microsoft.IdentityModel.Tokens": "8.3.0"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.IdentityModel.Protocols.dll": {
+            "assemblyVersion": "7.0.3.0",
+            "fileVersion": "7.0.3.41017"
+          }
+        }
+      },
+      "Microsoft.IdentityModel.Protocols.OpenIdConnect/7.0.3": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols": "7.0.3",
+          "System.IdentityModel.Tokens.Jwt": "8.3.0"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {
+            "assemblyVersion": "7.0.3.0",
+            "fileVersion": "7.0.3.41017"
+          }
+        }
+      },
+>>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
       "Microsoft.IdentityModel.Tokens/8.3.0": {
         "dependencies": {
           "Microsoft.IdentityModel.Logging": "8.3.0"
@@ -1344,6 +1389,16 @@
       "path": "microsoft.aspnetcore.authentication.abstractions/2.2.0",
       "hashPath": "microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512"
     },
+<<<<<<< HEAD
+=======
+    "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-rwxaZYHips5M9vqxRkGfJthTx+Ws4O4yCuefn17J371jL3ouC5Ker43h2hXb5yd9BMnImE9rznT75KJHm6bMgg==",
+      "path": "microsoft.aspnetcore.authentication.jwtbearer/8.0.0",
+      "hashPath": "microsoft.aspnetcore.authentication.jwtbearer.8.0.0.nupkg.sha512"
+    },
+>>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
     "Microsoft.AspNetCore.Authorization/8.0.0": {
       "type": "package",
       "serviceable": true,
@@ -1589,6 +1644,23 @@
       "path": "microsoft.identitymodel.logging/8.3.0",
       "hashPath": "microsoft.identitymodel.logging.8.3.0.nupkg.sha512"
     },
+<<<<<<< HEAD
+=======
+    "Microsoft.IdentityModel.Protocols/7.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BtwR+tctBYhPNygyZmt1Rnw74GFrJteW+1zcdIgyvBCjkek6cNwPPqRfdhzCv61i+lwyNomRi8+iI4QKd4YCKA==",
+      "path": "microsoft.identitymodel.protocols/7.0.3",
+      "hashPath": "microsoft.identitymodel.protocols.7.0.3.nupkg.sha512"
+    },
+    "Microsoft.IdentityModel.Protocols.OpenIdConnect/7.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-W97TraHApDNArLwpPcXfD+FZH7njJsfEwZE9y9BoofeXMS8H0LBBobz0VOmYmMK4mLdOKxzN7SFT3Ekg0FWI3Q==",
+      "path": "microsoft.identitymodel.protocols.openidconnect/7.0.3",
+      "hashPath": "microsoft.identitymodel.protocols.openidconnect.7.0.3.nupkg.sha512"
+    },
+>>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
     "Microsoft.IdentityModel.Tokens/8.3.0": {
       "type": "package",
       "serviceable": true,

@@ -2,7 +2,7 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-
+using Backend.Attributes;
 namespace Backend.Controllers
 {
     [ApiController]
@@ -17,6 +17,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("GenerateClientReport")]
+        [Authorize(Roles = "Coach")]
         public IActionResult GenerateClientReport([FromBody] ClientReport entry)
         {
             // Call the service method to add the workout
@@ -37,6 +38,7 @@ namespace Backend.Controllers
         }
         
         [HttpPost("GenerateBranchManagerReport")]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult GenerateBranchManagerReport([FromBody] ManagerialReportModel entry)
         {
             // Call the service method to add the workout
@@ -58,12 +60,14 @@ namespace Backend.Controllers
             });
         }
         [HttpGet("GetClientReports")]
+        [Authorize(Roles = "Client , Coach")]
         public IActionResult GetClientReports([FromBody]GetByIDModel entry)
         {
             var report =ReportsServices.GetClientReports(entry.id);
             return Ok(report);
         }
         [HttpGet("GetBranchManagerReports")]
+        [Authorize(Roles = "Owner , BranchManager")]
         public IActionResult GetBranchManagerReports([FromBody]GetByIDModel entry)
         {
             var report =ReportsServices.GetBranchManagerReports(entry.id);

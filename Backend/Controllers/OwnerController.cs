@@ -2,6 +2,7 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Backend.Attributes;
 
 namespace Backend.Controllers{
     [ApiController]
@@ -13,6 +14,7 @@ namespace Backend.Controllers{
         }
         
         [HttpPost("add")]
+        [Authorize(Roles = "Owner")]
         public IActionResult AddOwner([FromBody] OwnerModel entry)
         {
             
@@ -35,6 +37,7 @@ namespace Backend.Controllers{
             // Return the JSON result
         }
         [HttpDelete]
+        [Authorize(Roles = "Owner")]
         public IActionResult DeleteOwner([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -59,12 +62,14 @@ namespace Backend.Controllers{
             });
         }
         [HttpGet]
+        [Authorize(Roles = "Owner")]
         public IActionResult GetOwners()
         {
             var ownerlist=ownerServices.GetOwners();
             return Ok(ownerlist);
         }
         [HttpPut]
+        [Authorize(Roles = "Owner")]
         public IActionResult UpdateOwner([FromBody] OwnerUpdaterModel entry)
         {
             // Call the service to update the Branch

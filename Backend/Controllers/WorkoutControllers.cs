@@ -2,7 +2,7 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-
+using Backend.Attributes;
 namespace Backend.Controllers
 {
     [ApiController]
@@ -17,6 +17,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("add")]
+        [Authorize(Roles = "Coach")]
         public IActionResult AddWorkout([FromBody] WorkoutModel entry)
         {
             // Call the service method to add the workout
@@ -42,12 +43,14 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Coach , Client")]
         public IActionResult GetWorkouts()
         {
             var workoutList = WorkoutService.GetWorkouts();
             return Ok(workoutList);
         }
         [HttpPut]
+        [Authorize(Roles = "Coach")]
         public IActionResult UpdateWorkout([FromBody] WorkoutModel entry)
         {
             // Call the service to update the Branch
@@ -71,6 +74,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Coach")]
         public IActionResult DeleteWorkout([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)

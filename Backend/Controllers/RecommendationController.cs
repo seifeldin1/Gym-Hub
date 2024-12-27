@@ -3,7 +3,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-
+using Backend.Attributes;
 namespace Backend.Controllers{
     [ApiController]
     [Route("api/Recommendation")]
@@ -14,6 +14,7 @@ namespace Backend.Controllers{
         }
 
         [HttpPost("Plan")]
+        [Authorize(Roles = "Coach")]
         public IActionResult RecommendNutritionPlan([FromBody] RecommendationModel recommendation){
             var result = recommendationService.RecommendNutritionPlan(recommendation.ClientID, recommendation.planID);
             if(result.success) return Ok(new{success = result.success , message = result.message});
@@ -21,6 +22,7 @@ namespace Backend.Controllers{
         }
 
         [HttpPost("Supplement")]
+        [Authorize(Roles = "Coach")]
         public IActionResult RecommendSupplement([FromBody] RecommendationModel recommendation){
             var result = recommendationService.RecommendSupplement(recommendation.ClientID, recommendation.suppID );
             if(result.success) return Ok(new{success = result.success , message = result.message});
@@ -28,6 +30,7 @@ namespace Backend.Controllers{
         }
 
         [HttpPost]
+        [Authorize(Roles = "Coach")]
         public IActionResult RecommendSupplementWithPlan([FromBody] RecommendationModel recommendation){
             var result = recommendationService.RecommendPlanWithSupplement(recommendation.ClientID, recommendation.planID, recommendation.suppID);
             if(result.success) return Ok(new{success = result.success , message = result.message});
@@ -36,8 +39,14 @@ namespace Backend.Controllers{
 
 
         [HttpGet]
+<<<<<<< HEAD
         public IActionResult GetRecommendationsForClient([FromBody] GetByIDModel entry){
             var result = recommendationService.ViewRecommendations(entry.id);
+=======
+        [Authorize(Roles = "Coach , Client")]
+        public IActionResult GetRecommendationsForClient([FromBody] GetByIDModel client){
+            var result = recommendationService.ViewRecommendations(client.id);
+>>>>>>> d9d5758b52374de967b7075b8c11fb0c757bd311
             return Ok(result);
         }
     }

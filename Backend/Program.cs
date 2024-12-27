@@ -1,33 +1,64 @@
 using Backend.Database;
 using Backend.Controllers;
 using Backend.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using MySql.Data.MySqlClient;
 using Backend.Middleware;
 using Backend.Utils;
 using Backend.Hubs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using MySql.Data.MySqlClient;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
+
+// Add controllers with views support
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<GymDatabase>();      // Add Database service as Scoped (to be injected into controllers)
 
-    builder.Services.AddControllers()
-    .AddJsonOptions(options =>
+// Configure JWT Bearer Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new Backend.Utils.DateOnlyJsonConverter());
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("9c1b3f43-df57-4a9a-88d3-b6e9e58c6f2e")),
+            ValidateIssuer = false, // Optional: Set to true if you have a specific issuer
+            ValidateAudience = false, // Optional: Set to true if you have a specific audience
+        };
     });
-builder.Services.AddScoped<MySqlConnection>(provider =>
-{
-    // Get the connection string from the configuration
-    var connectionString = builder.Configuration.GetConnectionString("myConnectionString"); //change the value for the myConnectionString , you will find it in "appsettings.Development.json" ... also you need to change the connection in the ProductDatabase
 
-    return new MySqlConnection(connectionString);  // Return a new MySqlConnection using the connection string
+// Add Authorization Policies
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CoachPolicy", policy => policy.RequireRole("Coach"));
+    options.AddPolicy("OwnerPolicy", policy => policy.RequireRole("Owner"));
+    options.AddPolicy("BranchManagerPolicy", policy => policy.RequireRole("BranchManager"));
+    options.AddPolicy("ClientPolicy", policy => policy.RequireRole("Client"));
 });
 
-// Register Services as Scoped, to be injected into controllers
+// Add custom JSON converters (if needed)
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    });
+
+// Register Database services
+builder.Services.AddScoped<GymDatabase>();
+
+// Register MySQL connection with connection string from configuration
+builder.Services.AddScoped<MySqlConnection>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("myConnectionString");
+    return new MySqlConnection(connectionString);
+});
+
+// Register application services (this should include your custom services for various features)
 builder.Services.AddScoped<CredentialServices>();
 builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<Workout>();
@@ -53,75 +84,55 @@ builder.Services.AddScoped<TalentPoolServices>();
 builder.Services.AddScoped<ReportsServices>();
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<HolidayService>();
-builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<CalendarServices>();
-builder.Services.AddScoped<StatisticsServices>();
 builder.Services.AddScoped<RecommendationServices>();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Add SignalR for real-time communications
 builder.Services.AddSignalR();
-//builder.Services.AddSingleton<NotificationServices>();
 
+// Build the application
 var app = builder.Build();
+
+// Configure SignalR hubs
 app.MapHub<NotificationHub>("/notifications");
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
+// Initialize the database at startup
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var gymDatabase = services.GetRequiredService<GymDatabase>();  // Get the ProductDatabase service
-
     try
     {
-        // Set up the database and tables if they don't exist
-        gymDatabase.DatabaseSetUp();  // Initialize the database
+        var gymDatabase = scope.ServiceProvider.GetRequiredService<GymDatabase>();
+        gymDatabase.DatabaseSetUp();  // Assuming this method handles DB setup
     }
     catch (Exception ex)
     {
-        // Log the exception (this is an example, implement proper logging)
         Console.WriteLine($"An error occurred while setting up the database: {ex.Message}");
     }
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+app.UseCors();
 app.UseRouting();
-app.UseAuthentication();
-//app.UseMiddleware<AuthorizationMiddleware>();
 
+// Ensure Authentication and Authorization middleware is properly configured
+app.UseAuthentication();
 app.UseAuthorization();
 
+// Map controllers for routing
+app.MapControllers();
+
+// Default route for controllers (if needed)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Run the application
 app.Run();

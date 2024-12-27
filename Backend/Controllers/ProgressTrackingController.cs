@@ -2,7 +2,7 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-
+using Backend.Attributes;
 namespace Backend.Controllers{
     [ApiController]
     [Route("api/Progress")]
@@ -13,6 +13,7 @@ namespace Backend.Controllers{
         }
 
         [HttpPost]
+        [Authorize(Roles = "Coach , Client")]
         public IActionResult CreateProgress([FromBody] ProgressModel entry){
             var result = progressService.AddProgress(entry);
             if(result.success) return Ok(new{success = result.success , message = result.message});
@@ -20,6 +21,7 @@ namespace Backend.Controllers{
         }
 
         [HttpGet]
+        [Authorize(Roles = "Coach , Client")]
         public IActionResult GetProgress([FromBody] GetByIDModel getByID){
             var result = progressService.GetProgressByClientId(getByID.id);
             return Ok(result);
