@@ -7435,6 +7435,7 @@
       "Microsoft.AspNetCore.SignalR >= 1.1.0",
       "Microsoft.AspNetCore.SignalR.Common >= 9.0.0",
       "Microsoft.Extensions.DependencyInjection >= 8.0.0",
+      "Microsoft.Extensions.Logging.Abstractions >= 8.0.0",
       "Microsoft.IdentityModel.Tokens >= 8.3.0",
       "MySql.Data >= 8.0.34",
       "Newtonsoft.Json >= 13.0.3",
@@ -7442,20 +7443,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\amras\\.nuget\\packages\\": {}
+    "/home/engseif/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
+      "projectUniqueName": "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
-      "packagesPath": "C:\\Users\\amras\\.nuget\\packages\\",
-      "outputPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\obj\\",
+      "projectPath": "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj",
+      "packagesPath": "/home/engseif/.nuget/packages/",
+      "outputPath": "/home/engseif/Desktop/Work/Gym-Hub/Backend/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\amras\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/engseif/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -7516,6 +7516,10 @@
             "target": "Package",
             "version": "[8.0.0, )"
           },
+          "Microsoft.Extensions.Logging.Abstractions": {
+            "target": "Package",
+            "version": "[8.0.0, )"
+          },
           "Microsoft.IdentityModel.Tokens": {
             "target": "Package",
             "version": "[8.3.0, )"
@@ -7552,17 +7556,11 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
   "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
-    },
     {
       "code": "NU1603",
       "level": "Warning",
