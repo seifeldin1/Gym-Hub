@@ -32,6 +32,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.AllowAnyOrigin()  // Allow requests from any origin
+                .AllowAnyMethod()     // Allow any HTTP method (GET, POST, etc.)
+                .AllowAnyHeader();    // Allow any headers
+        });
+});
 // Add Authorization Policies
 builder.Services.AddAuthorization(options =>
 {
@@ -122,9 +133,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseCors();
 app.UseRouting();
 
 // Ensure Authentication and Authorization middleware is properly configured

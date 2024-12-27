@@ -1,8 +1,10 @@
 using MySql.Data.MySqlClient;
 using DotNetEnv;
 
-namespace Backend.Database{
-    public class GymDatabase{
+namespace Backend.Database
+{
+    public class GymDatabase
+    {
         /*private static readonly string connectionStringTemplate = "Server=127.0.0.1;User=root;Password={0};";
         static GymDatabase(){
             // Load environment variables from .env file (optional, for development convenience)
@@ -27,15 +29,18 @@ namespace Backend.Database{
        
         private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=AmrAshraf@0135789@;";
         //Create connection 
-        public MySqlConnection ConnectToDatabase(){
+        public MySqlConnection ConnectToDatabase()
+        {
             return new MySqlConnection(connectionString);
         }
 
-    
-        public void DatabaseSetUp(){
-            using(var connection = ConnectToDatabase()){
+
+        public void DatabaseSetUp()
+        {
+            using (var connection = ConnectToDatabase())
+            {
                 connection.Open();
-                
+
                 var createDatabaseCommand = new MySqlCommand("CREATE DATABASE IF NOT EXISTS GymHub;", connection);
                 createDatabaseCommand.ExecuteNonQuery();
 
@@ -43,7 +48,7 @@ namespace Backend.Database{
                 var useDatabaseCommand = new MySqlCommand("USE GymHub;", connection);
                 useDatabaseCommand.ExecuteNonQuery();
 
-                var createUserTableCommand= new MySqlCommand(@"
+                var createUserTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS User(
                         User_ID INT AUTO_INCREMENT PRIMARY KEY, 
                         Username VARCHAR(255) NOT NULL UNIQUE,
@@ -57,17 +62,17 @@ namespace Backend.Database{
                         Age INT, 
                         National_Number BIGINT NOT NULL UNIQUE
                     );
-                " , connection);
+                ", connection);
                 createUserTableCommand.ExecuteNonQuery();
 
-                var createOwnerTableCommand= new MySqlCommand(@"
+                var createOwnerTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Owner(
                         Owner_ID INT NOT NULL PRIMARY KEY,
                         Share_Percentage INT NOT NULL, 
                         Established_branches INT NOT NULL,
                         FOREIGN KEY(Owner_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
-                " , connection);
+                ", connection);
                 createOwnerTableCommand.ExecuteNonQuery();
 
                 var createBranchTableCommand = new MySqlCommand(@"
@@ -148,7 +153,7 @@ namespace Backend.Database{
                     );
                 ", connection);
                 createClientTableCommand.ExecuteNonQuery();
-                
+
                 var createReportTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Reports(
                         Report_ID INT AUTO_INCREMENT PRIMARY KEY, 
@@ -175,7 +180,7 @@ namespace Backend.Database{
                 ", connection);
                 createFreeInterviewTimesCommand.ExecuteNonQuery();
 
-                var createCandidateTableCommand= new MySqlCommand(@"
+                var createCandidateTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Candidate(
                         Candidate_ID INT AUTO_INCREMENT PRIMARY KEY, 
                         First_Name VARCHAR(255) NOT NULL,
@@ -235,7 +240,7 @@ namespace Backend.Database{
                 createApplicationsTableCommand.ExecuteNonQuery();
 
 
-                var createEquipmentsTableCommand= new MySqlCommand(@"
+                var createEquipmentsTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Equipments(
                         Equipment_ID INT AUTO_INCREMENT PRIMARY KEY,
                         Status VARCHAR(50) NOT NULL DEFAULT 'Available',
@@ -275,7 +280,7 @@ namespace Backend.Database{
                         Duration_min INT,
                         FOREIGN KEY(Created_By_Coach_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE
                     );
-                " , connection);
+                ", connection);
                 createWorkoutTableCommand.ExecuteNonQuery();
 
                 var createPerformWorkoutTableCommad = new MySqlCommand(@"
@@ -289,7 +294,7 @@ namespace Backend.Database{
                         FOREIGN KEY(Workout_ID) REFERENCES Workout(Workout_ID) ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY(Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
-                " , connection);
+                ", connection);
                 createPerformWorkoutTableCommad.ExecuteNonQuery();
 
                 var createSupplementsTableCommand = new MySqlCommand(@"
@@ -313,7 +318,7 @@ namespace Backend.Database{
                         CHECK (Type IN ('Protein', 'Vitamins', 'Creatine')),
                         CHECK (Flavor IN ('Vanilla', 'Chocolate', 'No Flavor'))
                     );
-                " , connection);
+                ", connection);
                 createSupplementsTableCommand.ExecuteNonQuery();
 
                 var createNutritionTableCommand = new MySqlCommand(@"
@@ -327,7 +332,7 @@ namespace Backend.Database{
                         Name VARCHAR(50) NOT NULL, 
                         Description VARCHAR(500) NOT NULL
                         );
-                " , connection);
+                ", connection);
                 createNutritionTableCommand.ExecuteNonQuery();
 
                 var createSupplementsNeededTableCommand = new MySqlCommand(@"
@@ -343,9 +348,9 @@ namespace Backend.Database{
                         FOREIGN KEY(Supplement_ID) REFERENCES Supplements(Supplement_ID) ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY(Nutrition_Plan_ID) REFERENCES Nutrition(Nutrition_ID) ON DELETE CASCADE ON UPDATE CASCADE
                     );
-                " , connection);
+                ", connection);
                 createSupplementsNeededTableCommand.ExecuteNonQuery();
-                
+
 
                 var createDietTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Diet(
@@ -362,7 +367,7 @@ namespace Backend.Database{
                         FOREIGN KEY(Client_Assigned_TO_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE ,
                         PRIMARY KEY(Nutrition_Plan_ID, Client_Assigned_TO_ID)
                     );
-                " , connection);
+                ", connection);
                 createDietTableCommand.ExecuteNonQuery();
 
                 var createAnnouncementTableCommand = new MySqlCommand(@"
@@ -444,7 +449,7 @@ namespace Backend.Database{
                     CREATE TABLE IF NOT EXISTS BlacklistedTokens (
                         Token VARCHAR(500) NOT NULL
                     );
-                " , connection);
+                ", connection);
                 creatBlackListedTokenTable.ExecuteNonQuery();
 
                 var createClientProgressTable = new MySqlCommand(@"
@@ -459,11 +464,11 @@ namespace Backend.Database{
                         NextSteps VARCHAR(300) NOT NULL,
                         FOREIGN KEY (Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
                         FOREIGN KEY (Coach_ID) REFERENCES Coach(Coach_ID) ON DELETE SET NULL ON UPDATE CASCADE
-                    )
-                " , connection);
+                    );
+                ", connection);
                 createClientProgressTable.ExecuteNonQuery();
 
-                
+
 
             }
         }
