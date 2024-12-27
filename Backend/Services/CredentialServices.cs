@@ -65,12 +65,13 @@ namespace Backend.Services
                             string hashedPassword = reader["PasswordHashed"].ToString();
                             string roleType = reader["Type"].ToString();
                             int id = (int)reader["User_ID"];
+                            reader.Close(); 
                             query = "SELECT AccountActivated from Client where Client_ID = @id";
                             using (var command2 = new MySqlCommand(query, connection)){
                                 command2.Parameters.AddWithValue("@id", id);
                                 using (var reader2 = command2.ExecuteReader()){
                                     if(reader2.Read()){
-                                        if(reader2["AccountActivated"].ToString() == "1"){
+                                        if(Convert.ToInt32(reader2["AccountActivated"]) == 1){
                                             if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
                                             {
 
