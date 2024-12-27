@@ -2,7 +2,7 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-
+using Backend.Attributes;
 namespace Backend.Controllers{
     [ApiController]
     [Route("api/TalentPool")]
@@ -13,6 +13,7 @@ namespace Backend.Controllers{
         }
 
         [HttpGet]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult ViewTalentPool(){
             var result = talentPoolService.ViewTalentPool();
             return Ok(result);

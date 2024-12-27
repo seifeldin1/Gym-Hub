@@ -1,6 +1,8 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -16,6 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("add")]
+        [Authorize(Roles = "Coach")]
         public IActionResult AddNutritionPlan([FromBody] NutritionPlanModel entry)
         {
             // Call the service method to add the NutritionPlan
@@ -37,12 +40,14 @@ namespace Backend.Controllers
             });
         }
         [HttpGet]
+        [Authorize(Roles = "Coach,Client")]
         public IActionResult GetNutritionPlans()
         {
             var nutritionplanList = NutritionPlanService.GetNutritionPlans();
             return Ok(nutritionplanList);
         }
-         [HttpDelete]
+        [HttpDelete]
+        [Authorize(Roles = "Coach")]
         public IActionResult DeleteNutritionPlan([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -66,6 +71,7 @@ namespace Backend.Controllers
             });
         }
         [HttpPut]
+        [Authorize(Roles = "Coach")]
         public IActionResult UpdateNutrition([FromBody] NutritionPlanModel entry)
         {
             // Call the service to update the Branch

@@ -14,10 +14,9 @@ namespace Backend.Controllers {
             services = appService;
         }
 
-        //[AllowAnonymous]
+        
         [HttpPost]
         public IActionResult ApplyForJob([FromBody] JobApplicationRequest request){// ApplyForJob should have a single parameter object (wrap Candidate and JobPost)
-        Console.WriteLine($"Request Body: {request.candidate.NationalNumber}"); 
 
             var result = services.ApplyForJob(request.candidate , request.job);
             if(result.success){
@@ -32,15 +31,15 @@ namespace Backend.Controllers {
             });
         }
 
-        //[RoleAuthorize("Branch Manager")]
         [HttpGet]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult GetAllApplications([FromBody] JobPost post){
             var result = services.GetAllApplicationsForPost(post);
             return Ok(result);
         }
 
-        //[RoleAuthorize("Branch Manager")]
         [HttpGet("candidate")]
+        [Authorize(Roles = "BranchManager")]
         public IActionResult GetApplicantByID([FromBody] GetByIDModel candidate){
             var result = services.GetApplicantForPost(candidate.id);
             return Ok(result);

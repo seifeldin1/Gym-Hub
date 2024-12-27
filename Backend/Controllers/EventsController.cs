@@ -1,6 +1,8 @@
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
+using Backend.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers
 {
@@ -13,6 +15,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Coach , BranchManager")]
         public IActionResult CreateEvent([FromBody] Events events){
             var result = eventService.AddEvent(events);
             if(result.success) return Ok(new {success = result.success , message = result.message});
@@ -21,6 +24,7 @@ namespace Backend.Controllers
 
 
         [HttpPut]
+        [Authorize(Roles = "Coach , BranchManager")]
         public IActionResult UpdateEvent([FromBody] Events events){
             var result = eventService.UpdateEvent(events);
             if(result.success) return Ok(new {success = result.success , message = result.message});
@@ -29,6 +33,7 @@ namespace Backend.Controllers
 
 
         [HttpDelete]
+        [Authorize(Roles = "Coach , BranchManager")]
         public IActionResult DeleteEvent(GetByIDModel getByIDModel)
         {
             var result = eventService.DeleteEvent(getByIDModel.id);
@@ -37,6 +42,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Coach , BranchManager ,Client , Owner")]
         public IActionResult GetEvents(){
             var result = eventService.GetEvents();
             return Ok(result);

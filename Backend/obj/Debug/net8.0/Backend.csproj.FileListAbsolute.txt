@@ -152,3 +152,6 @@ D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\refint\Backend.dll
 D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.pdb
 D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.genruntimeconfig.cache
 D:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\ref\Backend.dll
+D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+D:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
