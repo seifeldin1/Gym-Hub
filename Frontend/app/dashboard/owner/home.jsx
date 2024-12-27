@@ -9,7 +9,7 @@ import { IoMdAddCircle } from "react-icons/io";
 import { DashHeader } from '@components/NavBar';
 import { NumStat } from './Statistics';
 import { CashflowChart } from './Statistics';
-import axiosInstance from '../../axios'; // Import the default export
+import axiosInstance from '../../axios';
 
 
 export const NextMeet = () => {
@@ -47,7 +47,7 @@ export const RecentReports = () => {
     const [reports, setReports] = useState([]);
 
     useEffect(() => {
-        
+
     })
 
     return (

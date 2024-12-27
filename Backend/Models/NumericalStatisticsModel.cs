@@ -1,5 +1,6 @@
 namespace Backend.Models{
     public class NumericalStatistics{
+        public int Branch_ID { get; set; }
         public long? Total_Number_Of_Clients{get; set;}
         public long?Total_Number_Of_Coaches{get; set;}
         public long? Total_Number_Of_Branch_Managers{get; set;}
