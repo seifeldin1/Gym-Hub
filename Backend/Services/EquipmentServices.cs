@@ -25,7 +25,7 @@ namespace Backend.Services
                     command.Parameters.AddWithValue("@Status", entry.Status);
                     command.Parameters.AddWithValue("@Purchase_Price", entry.Purchase_Price);
                     command.Parameters.AddWithValue("@Category", entry.Category);
-                    command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date.ToString("yyyy-MM-dd"));
+                    command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date);
                     command.Parameters.AddWithValue("@Name", entry.Name);
                     command.Parameters.AddWithValue("@Serial_Number", entry.Serial_Number);
                     command.Parameters.AddWithValue("@Belong_To_Branch_ID", entry.Belong_To_Branch_ID);
@@ -62,14 +62,14 @@ namespace Backend.Services
                         {
                             equipmentsList.Add(new EquipmentsModel
                             {
-                                Equipment_ID = reader.GetInt32("Equipment_ID"),
+                                Equipment_ID=  reader.GetInt32("Equipment_ID"),
                                 Status = reader.GetString("Status"),
                                 Purchase_Price = reader.GetInt32("Purchase_Price"),
-                                Category= reader.GetString("Category"),
-                                Purchase_Date = DateOnly.FromDateTime(reader.GetDateTime("Purchase_Date")),
+                                Category = reader.GetString("Category"),
+                                Purchase_Date =reader.IsDBNull(reader.GetOrdinal("Purchase_Date")) ? (DateTime?)null : reader.GetDateTime("Purchase_Date"),
                                 Name = reader.GetString("Name"),
                                 Serial_Number = reader.GetString("Serial_Number"),
-                                Belong_To_Branch_ID = reader.GetInt32("Belong_To_Branch_ID"),
+                                Belong_To_Branch_ID=  reader.IsDBNull(reader.GetOrdinal("Belong_To_Branch_ID")) ? null: reader.GetInt32("Belong_To_Branch_ID"),
                             });
                         }
 
@@ -79,7 +79,7 @@ namespace Backend.Services
                 }
             }
         }
-         public (bool success, string message) UpdateEquipment(EquipmentsModel entry)
+        public (bool success, string message) UpdateEquipment(EquipmentsModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -87,14 +87,14 @@ namespace Backend.Services
                 string query = "UPDATE Equipments SET Status=@Status,Purchase_Price=@Purchase_Price,Category=@Category,Purchase_Date=@Purchase_Date,Name=@Name,Serial_Number=@Serial_Number,Belong_To_Branch_ID=@Belong_To_Branch_ID WHERE Equipment_ID=@Equipment_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Status",entry.Status);
-                    command.Parameters.AddWithValue("@Purchase_Price",entry.Purchase_Price);
-                    command.Parameters.AddWithValue("@Category",entry.Category );
-                    command.Parameters.AddWithValue("@Purchase_Date",entry.Purchase_Date.ToString("yyyy-MM-dd"));
-                    command.Parameters.AddWithValue("@Name",entry.Name);
-                    command.Parameters.AddWithValue("@Serial_Number",entry.Serial_Number);
-                    command.Parameters.AddWithValue("@Belong_To_Branch_ID",entry.Belong_To_Branch_ID);
-                    command.Parameters.AddWithValue("@Equipment_ID",entry.Equipment_ID );
+                    command.Parameters.AddWithValue("@Status", entry.Status);
+                    command.Parameters.AddWithValue("@Purchase_Price", entry.Purchase_Price);
+                    command.Parameters.AddWithValue("@Category", entry.Category);
+                    command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date);
+                    command.Parameters.AddWithValue("@Name", entry.Name);
+                    command.Parameters.AddWithValue("@Serial_Number", entry.Serial_Number);
+                    command.Parameters.AddWithValue("@Belong_To_Branch_ID", entry.Belong_To_Branch_ID);
+                    command.Parameters.AddWithValue("@Equipment_ID", entry.Equipment_ID);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -108,7 +108,24 @@ namespace Backend.Services
                     }
                 }
             }
-
+        }
+        public (bool success, string message) AssignEquipmentToBranch(int Equipment_ID, int Branch_ID)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = "UPDATE Equipments SET Belong_To_Branch_ID= @Belong_To_Branch_ID WHERE Equipment_ID=@Equipment_ID;";
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Belong_To_Branch_ID", Branch_ID);
+                    command.Parameters.AddWithValue("@Equipment_ID", Equipment_ID);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                        return (true, $"Assign Equipment:{Equipment_ID} To Branch:{Branch_ID} successfully");
+                    else
+                        return (false, "Failed to Assign Equipment To Branch");
+                }
+            }
         }
         public (bool success, string message) DeleteEquipment(int id)
         {

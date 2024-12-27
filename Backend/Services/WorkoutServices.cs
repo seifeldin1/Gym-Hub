@@ -90,9 +90,9 @@ namespace Backend.Services
                                 Goal = reader.GetString("Goal"),
                                 Created_By_Coach_ID = reader.GetInt32("Created_By_Coach_ID"),
                                 Calories_Burnt = reader.GetInt32("Calories_Burnt"),
-                                Reps_Per_Set = reader.GetInt32("Reps_Per_Set"),
-                                Sets = reader.GetInt32("Sets"),
-                                Duration_min = reader.GetInt32("Duration_min"),
+                                Reps_Per_Set=  reader.IsDBNull(reader.GetOrdinal("Reps_Per_Set")) ? null: reader.GetInt32("Reps_Per_Set"),
+                                Sets=  reader.IsDBNull(reader.GetOrdinal("Sets")) ? null: reader.GetInt32("Sets"),
+                                Duration_min=  reader.IsDBNull(reader.GetOrdinal("Duration_min")) ? null: reader.GetInt32("Duration_min"),
                             });
                         }
 

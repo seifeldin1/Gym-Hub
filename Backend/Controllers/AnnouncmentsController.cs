@@ -19,7 +19,7 @@ namespace Backend.Controllers
 
         
         [HttpPost("add")]
-        [Authorize(Roles = "BranchManager,Coach")]
+        //[Authorize(Roles = "BranchManager,Coach")]
         public IActionResult AddAnnouncement([FromBody] AnnouncementsModel entry)
         {
             // Call the service method to add the workout
@@ -44,7 +44,7 @@ namespace Backend.Controllers
         }
         
         [HttpGet]
-        [Authorize(Roles = "BranchManager,Coach,Owner,Client")]
+        //[Authorize(Roles = "BranchManager,Coach,Owner,Client")]
         public IActionResult GetAnnouncements()
         {
             var announcementsList = ann_Service.GetAnnouncements();
@@ -53,7 +53,7 @@ namespace Backend.Controllers
          
 
         [HttpPut]
-        [Authorize(Roles = "BranchManager,Coach")]
+        //[Authorize(Roles = "BranchManager,Coach")]
         public IActionResult EditAnnouncment([FromBody] AnnouncementUpdaterModel announcement)
         {
             // Call the service to update the Branch
@@ -75,7 +75,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "BranchManager,Coach")]
+        //[Authorize(Roles = "BranchManager,Coach")]
         public IActionResult DeleteAnnouncement([FromBody] GetByIDModel announcment)
         {
             var result = ann_Service.DeleteAnnouncement(announcment.id);

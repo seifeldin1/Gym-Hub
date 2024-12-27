@@ -3,7 +3,7 @@ using Backend.Services;
 
 namespace Backend.Controllers {
     [ApiController]
-    [Route("api/SignUpChecker   ")]
+    [Route("api/SignUpChecker")]
     public class SignUpCheckerController : ControllerBase {
         private readonly SignUpCheckerServices signUpCheckerServices;
 
