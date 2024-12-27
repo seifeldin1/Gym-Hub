@@ -17,6 +17,8 @@ namespace Backend.Controllers {
         //[AllowAnonymous]
         [HttpPost]
         public IActionResult ApplyForJob([FromBody] JobApplicationRequest request){// ApplyForJob should have a single parameter object (wrap Candidate and JobPost)
+        Console.WriteLine($"Request Body: {request.candidate.NationalNumber}"); 
+
             var result = services.ApplyForJob(request.candidate , request.job);
             if(result.success){
                 return Ok(new{
@@ -39,8 +41,8 @@ namespace Backend.Controllers {
 
         //[RoleAuthorize("Branch Manager")]
         [HttpGet("candidate")]
-        public IActionResult GetApplicantByID([FromBody] int candidateID){
-            var result = services.GetApplicantForPost(candidateID);
+        public IActionResult GetApplicantByID([FromBody] GetByIDModel candidate){
+            var result = services.GetApplicantForPost(candidate.id);
             return Ok(result);
         }
 

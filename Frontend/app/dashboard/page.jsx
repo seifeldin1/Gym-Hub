@@ -1,58 +1,98 @@
 'use client'
-import NavBar from '@components/NavBar';
-import { DashHeader } from '@components/NavBar';
-import { NextMeet } from './home';
-import { NumStat } from './Statistics';
-import { CashflowChart } from './Statistics';
-import { RecentReports } from './home';
-
-const RecentActivity = () => {
-    const activities = [
-        { time: 'Today, 16:05', user: 'Jamie Smith', action: 'updated account settings' },
-        { time: 'Today, 13:05', user: 'Alex Johnson', action: 'logged in' },
-        { time: 'Today, 02:05', user: 'Morgan Lee', action: 'added a new savings goal for vacation' },
-        { time: 'Yesterday, 21:05', user: 'Taylor Green', action: 'reviewed recent transactions' },
-        { time: 'Yesterday, 09:05', user: 'Wilson Baptista', action: 'transferred funds to emergency fund' },
-    ];
-    return (
-        <div className="bg-gray-100 rounded-lg shadow-md p-4">
-            <h2 className="text-lg font-semibold mb-2">Recent Activity</h2>
-            <ul className="space-y-2">
-                {activities.map((activity, index) => (
-                    <li key={index} className="flex items-center">
-                        <span className="text-gray-500 mr-2">{activity.time}</span>
-                        <span className="text-sm">{activity.user} {activity.action}</span>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-};
-
+import styles from '@styles/navbar.module.css'
+import { useState } from "react";
+import { RiHome5Line } from "react-icons/ri";
+import { BsGraphUpArrow } from "react-icons/bs";
+import { IoSettingsOutline } from "react-icons/io5";
+import { LuCalendar } from "react-icons/lu";
+import { TbReport } from "react-icons/tb";
+import GymIcon from '@public/assets/images/image.png';
+import Home from './home';
+import Calendar from './Calendar';
+import Report from './report';
+import Analytics from './analytics';
 
 const Dashboard = () => {
+    const [activePanel, setActivePanel] = useState("home");
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
+
+    const handleButtonClick = () => {
+        setIsPanelOpen(!isPanelOpen);
+    };
+
+    const renderPanel = () => {
+        switch (activePanel) {
+            case "home":
+                return <Home />;
+            case "calendar":
+                return <Calendar />;
+            case "report":
+                return <Report />;
+            case "analytics":
+                return <Analytics />;
+            case "settings":
+                return <div>Settings Panel</div>;
+            default:
+                return <div>Select a Panel</div>;
+        }
+    };
     return (
-        <div className='flex bg-[#FEED02]/35'>
-            <NavBar />
-            <div className='flex-1 flex-row rounded-bl-2xl rounded-tl-2xl bg-white'>
-                <DashHeader />
-                <div className='flex'>
-                    <div className='w-[25%] h-screen flex flex-col gap-3'>
-                        <NextMeet />
-                        <NumStat />
-                    </div>
-                    <div className='w-[50%] h-fit flex gap-2 flex-col'>
-                        <div className='bg-[#FEED02]/40 rounded-2xl px-5 py-3 mx-auto w-full'>
-                            <CashflowChart />
+        <>
+            <div className='flex bg-[#131313]'>
+                <div className='h-[94.69vh] flex w-20 flex-col pt-5 bg-transparent justify-center m-6'>
+                    <img
+                        className="ease-in w-[50%] duration-300 hover:scale-110 mx-auto mb-5"
+                        src={GymIcon.src}
+                        alt="Description of the image"
+                    />
+                    <div className={`${styles.container} gap-10`}>
+                        <div
+                            className={styles.icon}
+                            onClick={() => setActivePanel("home")}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <RiHome5Line size={26} />
                         </div>
-                        <RecentReports />
-                    </div>
-                    <div className='w-[25%] h-fit'>
-                        <RecentActivity />
+                        <div
+                            className={styles.icon}
+                            onClick={() => setActivePanel("calendar")}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <LuCalendar size={26} />
+                        </div>
+                        <div
+                            className={styles.icon}
+                            onClick={() => setActivePanel("report")}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <TbReport size={26} />
+                        </div>
+                        <div
+                            className={styles.icon}
+                            onClick={() => setActivePanel("analytics")}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <BsGraphUpArrow size={26} />
+                        </div>
+                        <div
+                            className={styles.icon}
+                            onClick={() => setActivePanel("settings")}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <IoSettingsOutline size={26} />
+                        </div>
                     </div>
                 </div>
+                <div className='flex-1 flex-row rounded-2xl bg-[#1E1E1E] text-white h-[94.69vh] overflow-hidden my-auto mr-3'>
+                    {renderPanel()}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

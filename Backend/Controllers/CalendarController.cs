@@ -17,6 +17,13 @@ namespace Backend.Controllers
             var result = calendarService.GetCalendarEventsBetween(timeFrame.Start, timeFrame.End);
             return Ok(result);
         }
+
+        [HttpGet("all")]
+        public IActionResult GetAllCalendarEvents()
+        {
+            var result = calendarService.GetAllCalendarEvents();
+            return Ok(result);
+        }
     }
 
     public class TimeFrameModel{

@@ -70,5 +70,75 @@ namespace Backend.Services{
             }
             return calendar;
         }
+
+        public List<CalendarEvent> GetAllCalendarEvents()
+        {
+            var calendar = new List<CalendarEvent>();
+
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+
+                string eventQuery = @"SELECT Event_ID AS Id, Title, Start_Date AS StartDate, End_Date AS EndDate, 'Event' AS Type FROM Events";
+                using (var command = new MySqlCommand(eventQuery, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            calendar.Add(new CalendarEvent
+                            {
+                                Id = reader.GetInt32("Id"),
+                                Title = reader.GetString("Title"),
+                                StartDate = reader.GetDateTime("StartDate"),
+                                EndDate = reader.GetDateTime("EndDate"),
+                                Type = reader.GetString("Type")
+                            });
+                        }
+                    }
+                }
+
+                string holidayQuery = @"SELECT Holiday_ID AS Id, Title, Start_Date AS StartDate, End_Date AS EndDate, 'Holiday' AS Type FROM Holiday";
+                using (var command = new MySqlCommand(holidayQuery, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            calendar.Add(new CalendarEvent
+                            {
+                                Id = reader.GetInt32("Id"),
+                                Title = reader.GetString("Title"),
+                                StartDate = reader.GetDateTime("StartDate"),
+                                EndDate = reader.GetDateTime("EndDate"),
+                                Type = reader.GetString("Type")
+                            });
+                        }
+                    }
+                }
+
+                string meetingQuery = @"SELECT Meeting_ID AS Id, Title, Time AS StartDate, Time AS EndDate, 'Meeting' AS Type FROM Meetings";
+                using (var command = new MySqlCommand(meetingQuery, connection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            calendar.Add(new CalendarEvent
+                            {
+                                Id = reader.GetInt32("Id"),
+                                Title = reader.GetString("Title"),
+                                StartDate = reader.GetDateTime("StartDate"),
+                                EndDate = reader.GetDateTime("EndDate"),
+                                Type = reader.GetString("Type")
+                            });
+                        }
+                    }
+                }
+            }
+
+            return calendar;
+        }
+
     }
 }

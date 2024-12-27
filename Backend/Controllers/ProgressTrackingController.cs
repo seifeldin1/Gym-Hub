@@ -26,9 +26,6 @@ namespace Backend.Controllers{
         }
 
     }
-     public class GetByIDModel
-    {
-        public int id { get; set; }
-    }
+    
     
 }
