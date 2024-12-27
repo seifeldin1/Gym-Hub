@@ -21,7 +21,7 @@ namespace Backend.Controllers
         public IActionResult GenerateClientReport([FromBody] ClientReport entry)
         {
             // Call the service method to add the workout
-            var result = ReportsServices.GenerateClientReport(entry.report,entry.clientID,entry.coachId);
+            var result = ReportsServices.GenerateClientReport(entry.report, entry.clientID, entry.coachId);
             if (result.success)
             {
                 return Ok(new
@@ -36,7 +36,7 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-        
+
         [HttpPost("GenerateBranchManagerReport")]
         [Authorize(Roles = "BranchManager")]
         public IActionResult GenerateBranchManagerReport([FromBody] ManagerialReportModel entry)
@@ -61,16 +61,24 @@ namespace Backend.Controllers
         }
         [HttpGet("GetClientReports")]
         [Authorize(Roles = "Client , Coach")]
-        public IActionResult GetClientReports([FromBody]GetByIDModel entry)
+        public IActionResult GetClientReports([FromBody] GetByIDModel entry)
         {
-            var report =ReportsServices.GetClientReports(entry.id);
+            var report = ReportsServices.GetClientReports(entry.id);
             return Ok(report);
         }
         [HttpGet("GetBranchManagerReports")]
         [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult GetBranchManagerReports([FromBody]GetByIDModel entry)
+        public IActionResult GetBranchManagerReports([FromBody] GetByIDModel entry)
         {
-            var report =ReportsServices.GetBranchManagerReports(entry.id);
+            var report = ReportsServices.GetBranchManagerReports(entry.id);
+            return Ok(report);
+        }
+
+        [HttpGet("GetAllBranchManagerReports")]
+        [Authorize(Roles = "Owner , BranchManager")]
+        public IActionResult GetAllBranchManagerReports()
+        {
+            var report = ReportsServices.GetAllBranchManagerReports();
             return Ok(report);
         }
 
