@@ -4,7 +4,7 @@ namespace Backend.Models
 {
     public class UserModel
     {
-        public int ? User_ID {get; set;}
+        public int  User_ID {get; set;}
         public string Username { get; set; }
         public string PasswordHashed { get; set; }
         public string Type { get; set; }
