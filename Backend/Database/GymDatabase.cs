@@ -27,7 +27,7 @@ namespace Backend.Database
         }*/
 
        
-        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=Seif@2004;";
+        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=$$eif@eldin_1020;";
         //Create connection 
         public MySqlConnection ConnectToDatabase()
         {

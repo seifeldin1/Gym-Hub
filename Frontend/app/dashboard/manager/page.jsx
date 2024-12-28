@@ -8,6 +8,7 @@ import { LuCalendar } from "react-icons/lu";
 import { TbReport } from "react-icons/tb";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { AiOutlineUsergroupDelete } from "react-icons/ai";
+import { BsListColumnsReverse } from "react-icons/bs";
 import { FaRectangleList } from "react-icons/fa6";
 import { MdLogout } from "react-icons/md";
 import { FaPeopleGroup } from "react-icons/fa6";
@@ -18,6 +19,7 @@ import Clients from './clients'
 import Report from './report';
 import Coaches from './coaches';
 import JobListing from './jobListing';
+import Candidates from './candidates';
 import PersonnalDetails from './personnal_details'
 
 const Dashboard = () => {
@@ -42,6 +44,8 @@ const Dashboard = () => {
                 return <Report/>;
             case "JobListing":
                 return <JobListing/>;
+            case "Candidates":
+                return <Candidates/>
             case "personnal_details":
                 return <PersonnalDetails/>;
             case "log_out":
@@ -107,6 +111,14 @@ const Dashboard = () => {
                             tabIndex={0}
                         >
                             <FaRectangleList size={26} />
+                        </div>
+                        <div
+                            className={styles.icon}
+                            onClick={() => setActivePanel("Candidates")}
+                            role="button"
+                            tabIndex={0}
+                        >
+                            <BsListColumnsReverse size={26} />
                         </div>
                         <div
                             className={styles.icon}
