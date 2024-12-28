@@ -47,7 +47,7 @@ namespace Backend.Services
 
        
 
-        public (bool success, string message, string token, string userType) Login(Credentials entry)
+        public (bool success, string message, int id,  string token, string userType) Login(Credentials entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -78,19 +78,19 @@ namespace Backend.Services
 
                                                     string token = GenerateJwtToken(entry.Username, roleType);
                                                     // Password is correct
-                                                    return(true , "Login Successful" , token , roleType);
+                                                    return(true , "Login Successful" , id ,  token , roleType);
                                                 }
                                                 else
                                                 {
                                                     // Password is incorrect
-                                                    return (false, "Invalid password", null, null);
+                                                    return (false, "Invalid password", id,  null, null);
                                                 }
                                             }else{
-                                                return (false, "Account not activated", null, null);
+                                                return (false, "Account not activated", id ,  null, null);
                                             }
                                         }
                                         else{
-                                            return (false, "Client not found", null, null);
+                                            return (false, "Client not found",id ,  null, null);
                                         }
                                     }
                                     
@@ -102,12 +102,12 @@ namespace Backend.Services
 
                                     string token = GenerateJwtToken(entry.Username, roleType);
                                     // Password is correct
-                                    return(true , "Login Successful" , token , roleType);
+                                    return(true , "Login Successful" ,id ,  token , roleType);
                                 }
                                 else
                                 {
                                     // Password is incorrect
-                                    return (false, "Invalid password", null, null);
+                                    return (false, "Invalid password",id ,  null, null);
                                 }
                             }
                             
@@ -117,7 +117,7 @@ namespace Backend.Services
                         else
                         {
                             // Username not found
-                            return (false, "Username does not exist", null, null);
+                            return (false, "Username does not exist", -1, null, null);
                         }
                     }
                 }
