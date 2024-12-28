@@ -60,7 +60,7 @@ namespace Backend.Controllers
             });
         }
         [HttpGet("GetClientReports")]
-        [Authorize(Roles = "Client , Coach")]
+        [Authorize(Roles = "Client , Coach, Owner")]
         public IActionResult GetClientReports([FromBody] GetByIDModel entry)
         {
             var report = ReportsServices.GetClientReports(entry.id);

@@ -1,39 +1,70 @@
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import { DashHeader } from '@components/NavBar';
+import axiosInstance from '../../axios';
+import { useEffect, useState, useRef, useCallback } from "react";
 
-const Analytics = () => {
-    const financial = [
-        {
-            name: "client",
-            number: 15
-        },
-        {
-            name: "client",
-            number: 15
-        },
-    ];
+const Calendar = () => {
+    const [calEvents, setCalEvents] = useState([]);
+    const [eventsLoaded, setEventsLoaded] = useState(false);
+    const calendarRef = useRef(null);
+
+    
+
+    const fetchEvents = useCallback(async () => {
+        if (eventsLoaded) return;
+
+        try {
+            const [responseEvents, responseHolidays] = await Promise.all([
+                axiosInstance.get("/Events", {
+                    headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI` },
+                }),
+                axiosInstance.get("/Holiday", {
+                    headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI` },
+                }),
+            ]);
+
+            setCalEvents([...responseEvents.data, ...responseHolidays.data]);
+            setEventsLoaded(true);
+        } catch (error) {
+            console.error(error);
+        }
+    }, [eventsLoaded]);
+
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
+
+    const formattedEvents = calEvents.map(event => ({
+        title: event.title,
+        start: new Date(event.start_Date).toISOString(),
+        end: event.end_Date ? new Date(event.end_Date).toISOString() : null,
+        description: event.description,
+        location: event.location,
+        id: event.event_ID,
+    }));
+
     return (
         <>
-            <DashHeader page_name="Analytics" />
-            <div className='w-[95%] mx-auto'>
-                <h1 className='text-3xl py-2'>Financial</h1>
-                <div className="flex w-full">
-                    <div className="bg-white p-4 rounded-md shadow-md text-black">
-                        <div className="flex justify-center items-center mb-2">
-                            <div className="bg-yellow-200 rounded-full p-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852c.684.621 1.744 1.049 3.01 1.419s2.375.329 3.31.024.903-.614 1.237-1.101A2.251 2.251 0 0018 9.75v-1.5a2.25 2.25 0 00-2.25-2.25H5.25a2.25 2.25 0 00-2.25 2.25v1.5a2.25 2.25 0 002.25 2.25h11.25zm0 0l.041-.02a.75.75 0 00-1.063.852C10.566 11.87 9.426 12.3 8.1 12.681s-1.673.329-2.61-.024-.903-.614-1.237-1.101A2.251 2.251 0 013 9.75v-1.5a2.25 2.25 0 00-2.25-2.25H.75a2.25 2.25 0 00-2.25 2.25v1.5a2.25 2.25 0 002.25 2.25h11.25z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="text-center">
-                            <h2 className="text-2xl font-semibold">6k+</h2>
-                            <p>Meter Walked</p>
-                        </div>
-                    </div>
-                </div>
+            <DashHeader page_name="Calendar" />
+            <div className="mx-auto" style={{ width: '90%', height: '760px' }}>
+                <FullCalendar
+                    ref={calendarRef}
+                    plugins={[dayGridPlugin, timeGridPlugin]}
+                    initialView="dayGridMonth"
+                    height="100%"
+                    events={formattedEvents}
+                    windowResize={() => {
+                        if (calendarRef.current) {
+                            const calendarApi = calendarRef.current.getApi();
+                            calendarApi.updateSize();
+                        }
+                    }}
+                />
             </div>
         </>
     );
 };
 
-export default Analytics;
+export default Calendar;

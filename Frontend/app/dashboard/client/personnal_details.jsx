@@ -44,7 +44,6 @@ const Report = () => {
       <DashHeader page_name="Personal Details" />
       <div className="flex flex-col items-center mt-5 space-y-6">
         <h2 className="text-5xl font-extrabold text-green-500">
-          Seif Al-tutu
         </h2>
         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
           <form onSubmit={handleSubmit} className="space-y-8">

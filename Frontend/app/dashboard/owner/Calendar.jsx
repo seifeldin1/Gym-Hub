@@ -18,10 +18,10 @@ const Calendar = () => {
         try {
             const [responseEvents, responseHolidays] = await Promise.all([
                 axiosInstance.get("/Events", {
-                    headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI` },
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 }),
                 axiosInstance.get("/Holiday", {
-                    headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI` },
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 }),
             ]);
 

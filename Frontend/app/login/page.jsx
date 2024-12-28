@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from "react";
-import { Button, IconButton, TextField , Tooltip } from "@node_modules/@mui/material";
+import { Button, IconButton, TextField, Tooltip } from "@node_modules/@mui/material";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -23,9 +23,9 @@ const LoginPage = () => {
     const [darkMode, setDrkMode] = useState(false)
     const [loading, setLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
-    const [currentVideo  , setCurrentVideo] = useState(0)
-    const [fade , setFade] = useState(false)
-    const [error , setError] = useState("")
+    const [currentVideo, setCurrentVideo] = useState(0)
+    const [fade, setFade] = useState(false)
+    const [error, setError] = useState("")
 
     const ChangeDarkMode = () => { setDrkMode(!darkMode) }
     const ChangePasswordVisibility = () => { setShowPassword(!showPassword) }
@@ -52,16 +52,25 @@ const LoginPage = () => {
             });
             if (response.status === 200 && response.data.success) {
                 setSuccess(`Login Successful! Welcome ${response.data.userType}`);
-                // Save token and redirect
                 localStorage.setItem("token", response.data.token);
-                localStorage.setItem("userType", response.data.userType);
-                localStorage.setItem("id", response.data.id);
+                const userType = response.data.userType
+                if (userType) {
+                    if (userType === 'Owner') {
+                        window.location.href = '/dashboard/owner';  // Redirect to owner page
+                    } else if (userType === 'Client') {
+                        window.location.href = '/dashboard/client';   // Redirect to user page
+                    } else if (userType === 'Coach') {
+                        window.location.href = '/dashboard/coach';   // Redirect to user page
+                    } else {
+                        window.location.href = '/dashboard/manager';
+                    }
+                }
                 // Example: router.push('/dashboard');
             } else {
                 setUsernameError("Invalid Username");
                 setPasswordError("Invalid Password");
             }
-            
+
         } catch (error) {
             console.error("Error logging in:", error);
             const serverMessage = error.response.data.message;
@@ -73,10 +82,10 @@ const LoginPage = () => {
 
     const VideoSources = [
         '/videos/login_bg1.mp4',
-    '/videos/login_bg2.mp4',
-    '/videos/login_bg3.mp4',
-    '/videos/login_bg4.mp4',
-    '/videos/login_bg5.mp4',
+        '/videos/login_bg2.mp4',
+        '/videos/login_bg3.mp4',
+        '/videos/login_bg4.mp4',
+        '/videos/login_bg5.mp4',
     ]
 
     const handleVideoEnd = () => {
@@ -84,10 +93,10 @@ const LoginPage = () => {
         const nextVideo = document.createElement("video");
         nextVideo.src = VideoSources[nextVideoIndex];
         nextVideo.preload = "auto";
-    
+
         setTimeout(() => {
             setCurrentVideo(nextVideoIndex);
-        }, 20); 
+        }, 20);
     };
 
 
@@ -97,12 +106,12 @@ const LoginPage = () => {
         <div className={`relative min-h-screen flex justify-center p-8 items-center bg-cover transition-colors`} >
             <div className="absolute inset-0 w-full h-full z-0">
                 <video
-                    key = {currentVideo}
-                    className={`relative inset-0 w-full h-full object-cover video-fade`}                   
+                    key={currentVideo}
+                    className={`relative inset-0 w-full h-full object-cover video-fade`}
                     src={VideoSources[currentVideo]}
                     autoPlay={true}
                     loop={false}
-                    muted 
+                    muted
                     onEnded={handleVideoEnd}
                 >
 
@@ -111,13 +120,13 @@ const LoginPage = () => {
             {/*form of login*/}
 
             {/*${darkMode ? 'rgba(39, 42, 55, 0)' : 'rgba(255, 255, 255, 0)'} */}
-            <div className={`relative p-4 items-center rounded-lg shadow-lg w-80 max-w-lg transition-colors rgba(255, 255, 255, 0) border:none `} 
-            style={{ transform: 'translate(0%, 0%)' , border:'none' , boxShadow: 'none'}}>
+            <div className={`relative p-4 items-center rounded-lg shadow-lg w-80 max-w-lg transition-colors rgba(255, 255, 255, 0) border:none `}
+                style={{ transform: 'translate(0%, 0%)', border: 'none', boxShadow: 'none' }}>
                 <IconButton
                     onClick={ChangeDarkMode}
                     style={{
-                        maxWidth: '32px', 
-                        maxHeight: '32px', 
+                        maxWidth: '32px',
+                        maxHeight: '32px',
                         minWidth: '20px',
                         minHeight: '20px',
                         //color: darkMode ? 'white' : '#1E1E2A', // Yellow in dark mode
@@ -132,72 +141,72 @@ const LoginPage = () => {
                     </h2>
                     <form onSubmit={LoginHandler} className="m-4 mb-8">
                         <div className="mb-4">
-                        <Tooltip title="Enter your username" arrow>
-                            <TextField
-                                label="Username"
-                                variant="outlined"
-                                placeholder="Enter Username"
-                                value={username}
-                                fullWidth
-                                onChange={(e) => setUsername(e.target.value)}
-                                InputLabelProps={{
-                                    sx: {
-                                        // color: darkMode ? 'white' : '#FDE047', // Default label color
-                                        // '&.Mui-focused': {
-                                        //     color: darkMode ? 'white' : '#FDE047', // Color when focused
-                                        // },
-                                        color: '#FDE047', // Default label color
-                                        '&.Mui-focused': {
-                                            color: '#FDE047', // Color when focused
+                            <Tooltip title="Enter your username" arrow>
+                                <TextField
+                                    label="Username"
+                                    variant="outlined"
+                                    placeholder="Enter Username"
+                                    value={username}
+                                    fullWidth
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    InputLabelProps={{
+                                        sx: {
+                                            // color: darkMode ? 'white' : '#FDE047', // Default label color
+                                            // '&.Mui-focused': {
+                                            //     color: darkMode ? 'white' : '#FDE047', // Color when focused
+                                            // },
+                                            color: '#FDE047', // Default label color
+                                            '&.Mui-focused': {
+                                                color: '#FDE047', // Color when focused
+                                            },
                                         },
-                                    },
-                                }}
-                                InputProps={{
-                                    style: { color: 'yellow', backgroundColor: 'rgba(29, 27, 28, 0.7)', height: '100%' , borderRadius:'8px' },
-                                  //  style: { color: darkMode ? 'white' : 'yellow', backgroundColor: darkMode ? 'rgba(39, 42, 55, 0.7)' : 'rgba(29, 27, 28, 0.7)', height: '100%' , borderRadius:'8px' },
-                                }}
-                                className="rounded">
-                            </TextField>
+                                    }}
+                                    InputProps={{
+                                        style: { color: 'yellow', backgroundColor: 'rgba(29, 27, 28, 0.7)', height: '100%', borderRadius: '8px' },
+                                        //  style: { color: darkMode ? 'white' : 'yellow', backgroundColor: darkMode ? 'rgba(39, 42, 55, 0.7)' : 'rgba(29, 27, 28, 0.7)', height: '100%' , borderRadius:'8px' },
+                                    }}
+                                    className="rounded">
+                                </TextField>
                             </Tooltip>
                             {UsernameError && !username && <p className="text-red-700">{UsernameError}</p>}
                         </div>
                         {/*${darkMode ? `text-white` : `text-black`}*/}
                         <div className={`flex text-black}`}>
-                        <Tooltip title="Enter your password" arrow>
-                            <TextField
-                                label="Password"
-                                variant="outlined"
-                                placeholder="Enter Password"
-                                type={showPassword ? 'text' : 'password'}
-                                value={password}
-                                fullWidth
-                                onChange={(e) => setPassword(e.target.value)}
-                                InputLabelProps={{
-                                    sx: {
-                                        color: '#FDE047', // Default label color
-                                        '&.Mui-focused': {
-                                            color: '#FDE047', // Color when focused
+                            <Tooltip title="Enter your password" arrow>
+                                <TextField
+                                    label="Password"
+                                    variant="outlined"
+                                    placeholder="Enter Password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    fullWidth
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    InputLabelProps={{
+                                        sx: {
+                                            color: '#FDE047', // Default label color
+                                            '&.Mui-focused': {
+                                                color: '#FDE047', // Color when focused
+                                            },
                                         },
-                                    },
-                                }}
-                                InputProps={{
-                                    style: { color: 'yellow', backgroundColor: 'rgba(29, 27, 28, 0.7)', height: '100%' , borderRadius:'8px' },
+                                    }}
+                                    InputProps={{
+                                        style: { color: 'yellow', backgroundColor: 'rgba(29, 27, 28, 0.7)', height: '100%', borderRadius: '8px' },
 
-                                    //style: { color: darkMode ? 'white' : 'yellow', backgroundColor: darkMode ? 'rgba(39, 42, 55, 0.7)' : 'rgba(29, 27, 28, 0.7)', height: '100%' , borderRadius:'8px' },
-                                    endAdornment: (
-                                        <IconButton
-                                            onClick={ChangePasswordVisibility}
-                                            edge="end"
-                                            //style={{ color: darkMode ? 'white' : 'yellow' }}
-                                            style={{ color: 'yellow' }}
-                                        >
-                                            {showPassword ? <VisibilityOffIcon /> :  <VisibilityIcon />}
-                                        </IconButton>
-                                    ),
-                                }}
-                                className="rounded">
+                                        //style: { color: darkMode ? 'white' : 'yellow', backgroundColor: darkMode ? 'rgba(39, 42, 55, 0.7)' : 'rgba(29, 27, 28, 0.7)', height: '100%' , borderRadius:'8px' },
+                                        endAdornment: (
+                                            <IconButton
+                                                onClick={ChangePasswordVisibility}
+                                                edge="end"
+                                                //style={{ color: darkMode ? 'white' : 'yellow' }}
+                                                style={{ color: 'yellow' }}
+                                            >
+                                                {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                            </IconButton>
+                                        ),
+                                    }}
+                                    className="rounded">
 
-                            </TextField>
+                                </TextField>
                             </Tooltip>
 
 
@@ -228,37 +237,37 @@ const LoginPage = () => {
                             className="w-60 text-black"
                             sx={{
                                 backgroundColor: "yellow", // Custom background color
-                                color:"black",
+                                color: "black",
                                 '&:hover': {
                                     backgroundColor: "black", // Custom hover color
-                                    color:"yellow"
+                                    color: "yellow"
                                 },
                             }}
-                            >
+                        >
 
                             {loading ? "Logging in..." : "Login"}
                         </Button>
                     </div>
 
-                    {success && <p 
-                                    className="text-yellow-400 mt-4 font-bold"
-                                    style={{
-                                        fontSize: "1.1rem",
-                                        textAlign: "center",
-                                        backgroundColor: "rgba(26, 31, 2, 0.11)",
-                                        padding: "10px",
-                                        borderRadius: "5px",
-                                    }}>{success}</p>}
-                    {error && <p 
-                                className="text-red-600 mt-4 font-bold"
-                                style={{
-                                    fontSize: "1.1rem",
-                                    textAlign: "center",
-                                    backgroundColor: "rgba(255, 0, 0, 0.1)",
-                                    padding: "10px",
-                                    borderRadius: "5px",
-                                }}>
-                    {error}</p>}
+                    {success && <p
+                        className="text-yellow-400 mt-4 font-bold"
+                        style={{
+                            fontSize: "1.1rem",
+                            textAlign: "center",
+                            backgroundColor: "rgba(26, 31, 2, 0.11)",
+                            padding: "10px",
+                            borderRadius: "5px",
+                        }}>{success}</p>}
+                    {error && <p
+                        className="text-red-600 mt-4 font-bold"
+                        style={{
+                            fontSize: "1.1rem",
+                            textAlign: "center",
+                            backgroundColor: "rgba(255, 0, 0, 0.1)",
+                            padding: "10px",
+                            borderRadius: "5px",
+                        }}>
+                        {error}</p>}
 
 
                 </div>

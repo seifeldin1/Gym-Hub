@@ -51,7 +51,7 @@ export const RecentReports = () => {
         try {
             const response = await axiosInstance.get("/Reports/GetAllBranchManagerReports", {
                 headers: {
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjcmlzdGlhbm8ucm9uYWxkbyIsInJvbGUiOiJPd25lciIsImp0aSI6ImVlODY4ZGFiLTVkZDgtNDU5MC1hOTBhLTMyODNhZTEyNGFhYyIsIm5iZiI6MTczNTMyNzU1NSwiZXhwIjoxNzM1NDEzOTU1LCJpYXQiOjE3MzUzMjc1NTV9.V4NMHF7mWvlpC5U-EnyZ-wKDCC_C40XZbOPZ-fHcC9A'
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
                 },
             });
 
@@ -137,7 +137,7 @@ export const Annoncements = () => {
         try {
             const response = await axiosInstance.get("/Announcements", {
                 headers: {
-                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI`,
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
             });
             setAnnoncements(response.data);
@@ -204,7 +204,7 @@ export const Annoncements = () => {
                 Type: type
             }, {
                 headers: {
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI'  // Replace `yourToken` with the actual token
+                    Authorization: `Bearer ${localStorage.getItem("token")}`  // Replace `yourToken` with the actual token
                 }
             });
 
@@ -247,7 +247,7 @@ export const Annoncements = () => {
                 },
                 {
                     headers: {
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI`
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
                     }
                 }
             );
@@ -270,7 +270,7 @@ export const Annoncements = () => {
         try {
             const response = await axiosInstance.delete(`/Announcements`, {
                 headers: {
-                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmYWRpLmlicmFoaW0iLCJyb2xlIjoiQ29hY2giLCJqdGkiOiJlNDM5ODhiMS0xNmU4LTRhN2QtOGFkNC1mNzAxNjUxNGRiZWIiLCJuYmYiOjE3MzUzMjExOTYsImV4cCI6MTczNTQwNzU5NiwiaWF0IjoxNzM1MzIxMTk2fQ.b3e7akvDFMwQ-P8h9C5ret-soZRG79eMLxYZGw_pMOI`,
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
                     "Content-Type": "application/json", // Ensures JSON content
                 },
                 data: {
