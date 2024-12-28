@@ -1,7 +1,7 @@
 "use client"
 import styles from "@styles/dashboard.module.css"
 import Image from 'next/image';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BsCalendar3 } from "react-icons/bs";
 import { CiClock2 } from "react-icons/ci";
 import { MdAnnouncement } from "react-icons/md";

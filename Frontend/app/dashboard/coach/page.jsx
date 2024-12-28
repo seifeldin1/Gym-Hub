@@ -24,19 +24,25 @@ const Dashboard = () => {
         setIsPanelOpen(!isPanelOpen);
     };
 
+    const handleLogOut = () => {
+        // Perform logout actions here, then navigate
+        window.location.href = '/'; // This will navigate to the home page with a page reload
+    };
+
     const renderPanel = () => {
         switch (activePanel) {
             case "home":
-                return <Home/>;
+                return <Home />;
             case "calendar":
-                return <Calendar/>;
+                return <Calendar />;
             case "clients":
-                return <Clients/>
+                return <Clients />
             case "report":
-                return <Report/>;
+                return <Report />;
             case "personnal_details":
-                return <PersonnalDetails/>;
+                return <PersonnalDetails />;
             case "log_out":
+                handleLogOut()
                 return <div> </div>;
             default:
                 return <div>Select a Panel</div>;

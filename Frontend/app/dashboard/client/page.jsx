@@ -1,6 +1,6 @@
 'use client'
 import styles from '@styles/navbar.module.css'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RiHome5Line } from "react-icons/ri";
 import { LuCalendar } from "react-icons/lu";
 import { BsFillPersonVcardFill } from "react-icons/bs";
@@ -20,6 +20,11 @@ const Dashboard = () => {
         setIsPanelOpen(!isPanelOpen);
     };
 
+    const handleLogOut = () => {
+        // Perform logout actions here, then navigate
+        window.location.href = '/'; // This will navigate to the home page with a page reload
+    };
+
     const renderPanel = () => {
         switch (activePanel) {
             case "home":
@@ -31,6 +36,7 @@ const Dashboard = () => {
             case "personnal_details":
                 return <PersonnalDetails/>;
             case "log_out":
+                handleLogOut()
                 return <div> </div>;
             default:
                 return <div>Select a Panel</div>;
