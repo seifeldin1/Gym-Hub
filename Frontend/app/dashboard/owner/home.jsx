@@ -43,25 +43,54 @@ export const NextMeet = () => {
     )
 }
 
+
 export const RecentReports = () => {
     const [reports, setReports] = useState([]);
 
-    useEffect(() => {
+    const FetchReports = async () => {
+        try {
+            const response = await axiosInstance.get("/Reports/GetAllBranchManagerReports", {
+                headers: {
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjcmlzdGlhbm8ucm9uYWxkbyIsInJvbGUiOiJPd25lciIsImp0aSI6ImVlODY4ZGFiLTVkZDgtNDU5MC1hOTBhLTMyODNhZTEyNGFhYyIsIm5iZiI6MTczNTMyNzU1NSwiZXhwIjoxNzM1NDEzOTU1LCJpYXQiOjE3MzUzMjc1NTV9.V4NMHF7mWvlpC5U-EnyZ-wKDCC_C40XZbOPZ-fHcC9A'
+                },
+            });
 
-    })
+            // Format reports and set state
+            const formattedReports = response.data.map((report) => ({
+                managerName: report.managerName || "N/A", // Handle missing manager name
+                title: report.title,
+                date_posted: report.generatedDate.split("T")[0], // Extract date
+                status: report.status,
+                type: report.type,
+            }));
+
+            setReports(formattedReports); // Set the formatted reports to state
+        } catch (error) {
+            if (error.response) {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else {
+                console.log(`Error: ${error.message}`);
+            }
+        }
+    };
+
+    useEffect(() => {
+        FetchReports(); // Call the FetchReports function to load data when the component mounts
+    }, []);
 
     return (
-        <div className=" text-white p-2 rounded-lg shadow-md mx-auto">
+        <div className="text-white p-2 rounded-lg shadow-md mx-auto">
             <h1 className="text-2xl font-bold text-lime-400 text-center mb-4">
                 Recent Reports
             </h1>
-            <div className="overflow-x-auto">
-                <table className="w-full table-auto border-collapse ">
+            <div className="overflow-y-auto max-h-[27vh] customScroll">
+                <table className="w-full table-auto border-collapse">
                     <thead className="bg-[#DBFF55] text-[#4A4A4A]">
                         <tr>
-                            <th className="px-4 py-3 text-left">Name</th>
+                            <th className="px-4 py-3 text-left">Manager Name</th>
                             <th className="px-4 py-3 text-left">Date</th>
-                            <th className="px-4 py-3 text-left">Description</th>
                             <th className="px-4 py-3 text-left">Status</th>
                             <th className="px-4 py-3 text-left">Type</th>
                         </tr>
@@ -73,9 +102,8 @@ export const RecentReports = () => {
                                 className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
                                     } hover:bg-gray-700 transition-colors`}
                             >
-                                <td className="px-4 py-3 align-top">{report.name}</td>
-                                <td className="px-4 py-3 align-top">{report.date}</td>
-                                <td className="px-4 py-3 align-top">{report.description}</td>
+                                <td className="px-4 py-3 align-top">{report.managerName}</td>
+                                <td className="px-4 py-3 align-top">{report.date_posted}</td>
                                 <td
                                     className={`px-4 py-3 align-top font-bold ${report.status === "Completed"
                                         ? "text-green-400"
@@ -95,6 +123,7 @@ export const RecentReports = () => {
         </div>
     );
 };
+
 
 
 export const Annoncements = () => {

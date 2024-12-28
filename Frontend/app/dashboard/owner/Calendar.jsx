@@ -10,6 +10,8 @@ const Calendar = () => {
     const [eventsLoaded, setEventsLoaded] = useState(false);
     const calendarRef = useRef(null);
 
+    
+
     const fetchEvents = useCallback(async () => {
         if (eventsLoaded) return;
 
