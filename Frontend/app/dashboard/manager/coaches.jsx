@@ -62,7 +62,6 @@ const CoachData = () => {
                 Editable Details
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-
                 {/* Salary */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -73,8 +72,7 @@ const CoachData = () => {
                     name="Experience_Years"
                     className="w-full h-[2.5rem] ]text-center py-3 border-none rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black bg-transparent"
                     defaultValue=""
-                    required
-                  >
+                    required>
                     <option value="" disabled>
                       Select a branch to move coach to
                     </option>
@@ -249,13 +247,14 @@ const ClientCard = ({ name, bmr, weight, height, workoutPlan, nutritionPlan, sta
   );
 };
 
-
 const Home = () => {
   return (
     <>
       <DashHeader page_name="Coaches" />
-      <div className='w-full gap-3 px-6 max-h-[90%] overflow-y-auto customScroll'>
+      {/*register a new coach */}
 
+
+      <div className='w-full gap-3 px-6 max-h-[90%] overflow-y-auto customScroll'>
         {clients.map((client, index) => (
           <ClientCard
             key={index}
