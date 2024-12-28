@@ -54,6 +54,8 @@ const LoginPage = () => {
                 setSuccess(`Login Successful! Welcome ${response.data.userType}`);
                 // Save token and redirect
                 localStorage.setItem("token", response.data.token);
+                localStorage.setItem("userType", response.data.userType);
+                localStorage.setItem("id", response.data.id);
                 // Example: router.push('/dashboard');
             } else {
                 setUsernameError("Invalid Username");
