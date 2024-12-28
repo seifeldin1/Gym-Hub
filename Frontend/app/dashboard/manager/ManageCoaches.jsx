@@ -5,7 +5,7 @@ import React from 'react';
 const ClientCard = ({ name, bmr, weight, height, workoutPlan, nutritionPlan, startDate, endDate }) => {
   return (
     <>
-      <div className="p-5 bg-neutral-800 rounded-xl shadow-xl hover:shadow-2xl border-2 border-neutral-800 hover:border-green-500 my-4 w-[100%] h-[11rem]">
+      <div className="p-5 bg-neutral-800 rounded-xl shadow-xl hover:shadow-2xl border-2 border-neutral-800 hover:border-green-500 my-4 w-[100%] h-fit">
 
         <div className='flex items-center gap-1 mb-5'>
           <h1 className="text-3xl font-bold text-green-500 mr-[52rem]">{name}</h1>
@@ -31,6 +31,13 @@ const ClientCard = ({ name, bmr, weight, height, workoutPlan, nutritionPlan, sta
             <option value="3">Coach 4</option>
             <option value="4">Coach 5</option>
           </select>
+          <div className=''>
+            <button
+              type="submit"
+              className="p-5 mt-3 mx-[40%] w-fit h-fit text-3xl bg-green-500 text-white font-bold rounded-full shadow-md hover:bg-transparent hover:text-green-500 transition duration-300" onClick={() => setIsModalOpen(true)}>
+              Activate Account
+            </button>
+          </div>
 
         </div>
       </div>
