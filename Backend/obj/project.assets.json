@@ -7443,19 +7443,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Seifeldin Sameh\\.nuget\\packages\\": {}
+    "C:\\Users\\amras\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj",
+      "projectUniqueName": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "D:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj",
-      "packagesPath": "C:\\Users\\Seifeldin Sameh\\.nuget\\packages\\",
-      "outputPath": "D:\\My_Database_Project\\Gym-Hub\\Backend\\obj\\",
+      "projectPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\Backend.csproj",
+      "packagesPath": "C:\\Users\\amras\\.nuget\\packages\\",
+      "outputPath": "D:\\amr ashraf\\CCE\\Data Base\\Gym-Hub\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Seifeldin Sameh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\amras\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -7558,7 +7558,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
