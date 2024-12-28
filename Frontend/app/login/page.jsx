@@ -6,6 +6,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import style from '@styles/login.module.css';
+import axiosInstance from "@app/axios";
 // import vid1 from "@public/videos/login_bg1.mp4";
 // import vid2 from "@public/videos/login_bg2.mp4";
 // import vid3 from "@public/videos/login_bg3.mp4";
@@ -24,6 +25,7 @@ const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [currentVideo  , setCurrentVideo] = useState(0)
     const [fade , setFade] = useState(false)
+    const [error , setError] = useState("")
 
     const ChangeDarkMode = () => { setDrkMode(!darkMode) }
     const ChangePasswordVisibility = () => { setShowPassword(!showPassword) }
@@ -32,6 +34,7 @@ const LoginPage = () => {
         setUsernameError("")
         setPasswordError("")
         setSuccess("")
+        setError("")
         if (!username || !password) {
             if (!username) {
                 setUsernameError("Please enter your username")
@@ -43,14 +46,24 @@ const LoginPage = () => {
         }
         setLoading(true)
         try {
-            // const response = await axios.post(/*api*/ , {
-            //     username: username,
-            //     password: password
-            // })
-            setSuccess("Login Successful! Redirecting....")
-            //TODO: Redirect to the dashboard 
+            const response = await axiosInstance.post("/Credentials/login", {
+                Username: username,
+                Password: password,
+            });
+            if (response.status === 200 && response.data.success) {
+                setSuccess(`Login Successful! Welcome ${response.data.userType}`);
+                // Save token and redirect
+                localStorage.setItem("token", response.data.token);
+                // Example: router.push('/dashboard');
+            } else {
+                setUsernameError("Invalid Username");
+                setPasswordError("Invalid Password");
+            }
+            
         } catch (error) {
-            setError("Invalid username or password")
+            console.error("Error logging in:", error);
+            const serverMessage = error.response.data.message;
+            setError(serverMessage || "An error occurred. Please try again.")
         } finally {
             setLoading(false)
         }
@@ -225,7 +238,25 @@ const LoginPage = () => {
                         </Button>
                     </div>
 
-                    {success && <p className="text-yellow-200 mt-2 p-4">{success}</p>}
+                    {success && <p 
+                                    className="text-yellow-400 mt-4 font-bold"
+                                    style={{
+                                        fontSize: "1.1rem",
+                                        textAlign: "center",
+                                        backgroundColor: "rgba(26, 31, 2, 0.11)",
+                                        padding: "10px",
+                                        borderRadius: "5px",
+                                    }}>{success}</p>}
+                    {error && <p 
+                                className="text-red-600 mt-4 font-bold"
+                                style={{
+                                    fontSize: "1.1rem",
+                                    textAlign: "center",
+                                    backgroundColor: "rgba(255, 0, 0, 0.1)",
+                                    padding: "10px",
+                                    borderRadius: "5px",
+                                }}>
+                    {error}</p>}
 
 
                 </div>

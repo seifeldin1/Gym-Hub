@@ -3,6 +3,8 @@ import React from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, BarElement } from 'chart.js';
+import { useEffect, useState } from "react";
+import axiosInstance from '../../axios';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend, Title, CategoryScale, LinearScale, BarElement);
@@ -63,50 +65,151 @@ export const CashflowChart = () => {
 };
 
 const NumEmployee = () => {
-    const data = {
+    const [numData, setNumData] = useState([]);
+    const [chartData, setChartData] = useState({
         labels: ['Clients', 'Coaches', 'Managers'],
         datasets: [
             {
                 label: 'Number',
-                data: [300, 50, 100], // Data values
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'], // Colors for the segments
+                data: [0, 0, 0], // Default data values, will be updated with API response
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
                 hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-                cutout: '70%', // Creates the white center (70% of the chart's radius is cut out)
-                borderWidth: 2, // Optional: Add a border for each segment
-                borderColor: '#fff', // Optional: White border for a cleaner look
+                cutout: '70%',
+                borderWidth: 2,
+                borderColor: '#fff',
             },
         ],
+    });
+
+    const FetchNumData = async () => {
+        try {
+            const response = await axiosInstance.get("/Statistics/Numerical", {
+                headers: {
+                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjcmlzdGlhbm8ucm9uYWxkbyIsInJvbGUiOiJPd25lciIsImp0aSI6ImVlODY4ZGFiLTVkZDgtNDU5MC1hOTBhLTMyODNhZTEyNGFhYyIsIm5iZiI6MTczNTMyNzU1NSwiZXhwIjoxNzM1NDEzOTU1LCJpYXQiOjE3MzUzMjc1NTV9.V4NMHF7mWvlpC5U-EnyZ-wKDCC_C40XZbOPZ-fHcC9A`,
+                },
+            });
+
+            const data = response.data;
+            console.log(data)
+            // Map the data and filter out the null values
+            const transformedData = [
+                { name: "Clients", number: data.total_Number_Of_Clients },
+                { name: "Coaches", number: data.total_Number_Of_Coaches },
+                { name: "Managers", number: data.total_Number_Of_Branch_Managers },
+                { name: "Branches", number: data.total_Number_Of_Branches },
+                { name: "Equipments", number: data.total_Number_Of_Equipments },
+                { name: "Coaches Per Branch", number: data.total_Number_Of_Coaches_Per_Branch },
+                { name: "Equipments Per Branch", number: data.total_Number_Of_Equipments_Per_Branch },
+            ].filter(item => item.number !== null); // Filter out items where number is null
+
+            console.log(transformedData);
+            setNumData(transformedData);
+
+            // Update pie chart data with the number of clients, coaches, and managers
+            const clients = data.total_Number_Of_Clients || 0;
+            const coaches = data.total_Number_Of_Coaches || 0;
+            const managers = data.total_Number_Of_Branch_Managers || 0;
+
+            setChartData(prevData => ({
+                ...prevData,
+                datasets: [
+                    {
+                        ...prevData.datasets[0],
+                        data: [clients, coaches, managers], // Update the chart data
+                    },
+                ],
+            }));
+
+            console.log(chartData);
+        } catch (error) {
+            if (error.response) {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else {
+                console.log(`Error: ${error.message}`);
+            }
+        }
     };
+
+    useEffect(() => {
+        FetchNumData(); // Fetch the data when the component mounts
+    }, []);
+
     const options = {
-        responsive: true, // Ensures the chart adjusts to the container
-        maintainAspectRatio: false, // Allows flexibility with the aspect ratio
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: 'top', // Position the legend
+                position: 'top',
             },
             tooltip: {
-                enabled: true, // Enables tooltips
+                enabled: true,
             },
             title: {
-                display: true, // Enables the title
-                text: 'Total People Distribution', // Text of the title
+                display: true,
+                text: 'Total People Distribution',
                 font: {
-                    size: 15, // Font size of the title
+                    size: 15,
                 },
-                color: '#333', // Color of the title text
+                color: 'white',
             },
         },
     };
-    return <Pie options={options} data={data} />;
+
+    return <Pie options={options} data={chartData} />;
 };
 
+
 const TotalMoney = () => {
+    const [finData, setfinData] = useState([]);
+    
+    const FetctFinData = async () => {
+        try {
+            const response = await axiosInstance.get("/Statistics/Financial", {
+                headers: {
+                    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjcmlzdGlhbm8ucm9uYWxkbyIsInJvbGUiOiJPd25lciIsImp0aSI6ImVlODY4ZGFiLTVkZDgtNDU5MC1hOTBhLTMyODNhZTEyNGFhYyIsIm5iZiI6MTczNTMyNzU1NSwiZXhwIjoxNzM1NDEzOTU1LCJpYXQiOjE3MzUzMjc1NTV9.V4NMHF7mWvlpC5U-EnyZ-wKDCC_C40XZbOPZ-fHcC9A`,
+                },
+            });
+
+            const data = response.data;
+            console.log(response);
+
+            // Map only the necessary data for Income and Outcome
+            const transformedData = [
+                { name: "Income", number: data.total_Income},
+                { name: "Outcome", number: data.total_Outcome}
+            ];
+
+            // Filter out null values
+            const filteredData = transformedData.filter(item => item.number !== null);
+            console.log(filteredData);
+            setfinData(filteredData);
+        } catch (error) {
+            if (error.response) {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else {
+                console.log(`Error: ${error.message}`);
+            }
+        }
+    };
+
+    useEffect(() => {
+        FetctFinData();
+    }, []);
+
+    // Get income and outcome values from fetched data
+    const income = finData.find(item => item.name === "Income")?.number || 0;
+    const outcome = finData.find(item => item.name === "Outcome")?.number || 0;
+
     const data = {
-        labels: ['Income', 'Spent'],
+        labels: ['Income', 'Outcome'],
         datasets: [
             {
                 label: 'Amount',
-                data: [5000, 3000], // Data values
+                data: [income, outcome], // Dynamic data for Income and Outcome
                 backgroundColor: ['#FF6384', '#36A2EB'], // Colors for the segments
                 hoverBackgroundColor: ['#FF6384', '#36A2EB'],
                 cutout: '70%', // Creates the white center (70% of the chart's radius is cut out)
@@ -115,6 +218,7 @@ const TotalMoney = () => {
             },
         ],
     };
+
     const options = {
         responsive: true, // Ensures the chart adjusts to the container
         maintainAspectRatio: false, // Allows flexibility with the aspect ratio
@@ -131,10 +235,11 @@ const TotalMoney = () => {
                 font: {
                     size: 15, // Font size of the title
                 },
-                color: '#333', // Color of the title text
+                color: 'white', // Color of the title text
             },
         },
     };
+
     return <Pie options={options} data={data} />;
 };
 

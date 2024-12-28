@@ -1,20 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashHeader } from "@components/NavBar";
 import { IoEyeSharp } from "react-icons/io5";
 import { AiFillEyeInvisible } from "react-icons/ai";
+import axiosInstance from '../../axios';
 
 const Report = () => {
   const [formData, setFormData] = useState({
-    phoneNumber: "123-456-7890",
-    password: "mypassword123",
-    salary: "$5,000",
-    nationalNumber: "123456789",
-    gender: "Male",
-    age: 30,
-    email: "example@email.com", // Email field is editable
-    sharePercentage: "25%",
-    establishedBranches: "4",
+    phoneNumber: '',
+    password: '',
+    email: '',
+    salary: '',
+    sharePercentage: '',
+    establishedBranches: '',
+    nationalNumber: '',
+    gender: '',
+    age: '',
+    user_ID: '',  // Add user_ID to formData for consistency
   });
+
+  const [initialData, setInitialData] = useState(null); // To store initial fetched data
+
+  const FetchReports = async () => {
+    try {
+      const response = await axiosInstance.get("/Owner", {
+        headers: {
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjcmlzdGlhbm8ucm9uYWxkbyIsInJvbGUiOiJPd25lciIsImp0aSI6ImVlODY4ZGFiLTVkZDgtNDU5MC1hOTBhLTMyODNhZTEyNGFhYyIsIm5iZiI6MTczNTMyNzU1NSwiZXhwIjoxNzM1NDEzOTU1LCJpYXQiOjE3MzUzMjc1NTV9.V4NMHF7mWvlpC5U-EnyZ-wKDCC_C40XZbOPZ-fHcC9A'
+        },
+      });
+
+      const ownerData = response.data[0]; // Take the first owner for simplicity
+      setInitialData(ownerData); // Set the initial data when fetched
+
+      // Map the fetched data to formData state
+      setFormData({
+        phoneNumber: ownerData.phone_Number,
+        password: '', // You can leave password blank or set a default if needed
+        email: ownerData.email,
+        salary: ownerData.salary || '',
+        sharePercentage: ownerData.share_Percentage * 100 || '',
+        establishedBranches: ownerData.established_branches || '',
+        nationalNumber: ownerData.national_Number,
+        gender: ownerData.gender,
+        age: ownerData.age,
+        user_ID: ownerData.user_ID, // Ensure user_ID is part of the formData
+      });
+    } catch (error) {
+      console.log("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    FetchReports();
+  }, []);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,17 +63,68 @@ const Report = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Changes saved!");
+
+    if (!initialData) {
+      alert("Initial data not loaded.");
+      return;
+    }
+
+    // Prepare the updated data only with changed fields
+    const updatedData = { user_ID: formData.user_ID }; // Always include user_ID
+
+    // Check if the password has been changed
+    if (formData.password && formData.password !== initialData.password) {
+      updatedData.passwordHashed = formData.password; // Use 'passwordHashed' instead of 'password'
+    }
+
+    // Compare each field with the initial data and add it to updatedData if changed
+    Object.keys(formData).forEach((key) => {
+      // Exclude the password field from being checked here since it's handled above
+      if (key !== 'password' && formData[key] !== initialData[key]) {
+        // Match the property names from the response (e.g., 'phoneNumber' -> 'phone_Number')
+        const mappedKey = {
+          phoneNumber: 'phone_Number',
+          salary: 'salary',
+          sharePercentage: 'share_Percentage',
+          establishedBranches: 'established_branches',
+          nationalNumber: 'national_Number',
+          gender: 'gender',
+          age: 'age',
+          email: 'email',
+        }[key] || key;
+
+        updatedData[mappedKey] = formData[key];
+      }
+    });
+
+    console.log(updatedData);
+    try {
+      const response = await axiosInstance.put("/Owner", updatedData, {
+        headers: {
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjcmlzdGlhbm8ucm9uYWxkbyIsInJvbGUiOiJPd25lciIsImp0aSI6ImVlODY4ZGFiLTVkZDgtNDU5MC1hOTBhLTMyODNhZTEyNGFhYyIsIm5iZiI6MTczNTMyNzU1NSwiZXhwIjoxNzM1NDEzOTU1LCJpYXQiOjE3MzUzMjc1NTV9.V4NMHF7mWvlpC5U-EnyZ-wKDCC_C40XZbOPZ-fHcC9A',
+        },
+      });
+
+      if (response.status === 200) {
+        alert("Changes saved successfully!");
+      } else {
+        alert("Failed to save changes.");
+      }
+    } catch (error) {
+      console.log("Error saving changes:", error);
+      alert("An error occurred while saving changes.");
+    }
   };
+
 
   return (
     <>
       <DashHeader page_name="Personal Details" />
       <div className="flex flex-col items-center mt-5 space-y-6">
         <h2 className="text-5xl font-extrabold text-green-500">
-          Seif Al-tutu
+          Edit Your Details
         </h2>
         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-4xl">
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -45,7 +133,7 @@ const Report = () => {
               <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
                 Editable Details
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-3 gap-6">
                 {/* Phone Number */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
@@ -77,15 +165,7 @@ const Report = () => {
                       onClick={togglePasswordVisibility}
                       className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-gray-700"
                     >
-                      {showPassword ? (
-                        <span className="material-icons">
-                          <IoEyeSharp />
-                        </span>
-                      ) : (
-                        <span className="material-icons text-lg">
-                          <AiFillEyeInvisible />
-                        </span>
-                      )}
+                      {showPassword ? <IoEyeSharp /> : <AiFillEyeInvisible />}
                     </button>
                   </div>
                 </div>
@@ -117,18 +197,11 @@ const Report = () => {
                   { label: "Established Branches", value: formData.establishedBranches },
                   { label: "National Number", value: formData.nationalNumber },
                   { label: "Gender", value: formData.gender },
-                  { label: "Age", value: formData.age },
+                  { label: "Age", value: formData.age }
                 ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-gray-100 rounded-lg p-4 shadow-sm"
-                  >
-                    <p className="text-sm font-medium text-gray-500">
-                      {item.label}
-                    </p>
-                    <p className="text-lg font-semibold text-gray-700">
-                      {item.value}
-                    </p>
+                  <div key={idx} className="bg-gray-100 rounded-lg p-4 shadow-sm">
+                    <p className="text-sm font-medium text-gray-500">{item.label}</p>
+                    <p className="text-lg font-semibold text-gray-700">{item.value}</p>
                   </div>
                 ))}
               </div>
