@@ -91,22 +91,26 @@ const JobListing = () => {
                             <h2 className="text-2xl font-bold text-black mr-10">Add A New Job Title</h2>
                         </div>
                         <form action="">
-                            <div className="grid grid-cols-4">
+                            <div className="grid grid-cols-5">
                                 <div>
                                     <label htmlFor="progress_summary" className="block text-lg font-semibold text-gray-600">Title <span className="text-red-500">*</span></label>
-                                    <input type="text" id="progress_summary" name="Candidate_Name" className="mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="What is Report About?" required />
+                                    <input type="text" id="progress_summary" name="Candidate_Name" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="What is Report About?" required />
                                 </div>
                                 <div>
                                     <label htmlFor="goals_achieved" className="block text-lg font-semibold text-gray-600">Experience Years <span className="text-red-500">*</span></label>
-                                    <input type="number" id="goals_achieved" name="Candidate_Name" className="mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Years of Experience" required />
+                                    <input type="number" id="goals_achieved" name="Candidate_Name" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Years of Experience" required />
                                 </div>
                                 <div>
-                                    <label htmlFor="challenges_faced" className="block text-lg font-semibold text-gray-600">Deadline</label>
-                                    <input type="date" id="challenges_faced" name="Candidate_Name" className="mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Last date to allow submission" />
+                                    <label htmlFor="challenges_faced" className="block text-lg font-semibold text-gray-600">Date Deadline</label>
+                                    <input type="date" id="challenges_faced" name="Candidate_Name" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Last date to allow submission" />
+                                </div>
+                                <div>
+                                    <label htmlFor="challenges_faced" className="block text-lg font-semibold text-gray-600">Time Deadline</label>
+                                    <input type="time" id="challenges_faced" name="Candidate_Name" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Last date to allow submission" />
                                 </div>
                                 <div>
                                     <label htmlFor="challenges_faced" className="block text-lg font-semibold text-gray-600">Location</label>
-                                    <input type="text" id="challenges_faced" name="Candidate_Name" className="mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Workplace Location" />
+                                    <input type="text" id="challenges_faced" name="Candidate_Name" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Workplace Location" />
                                 </div>
 
                             </div>
