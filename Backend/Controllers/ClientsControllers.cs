@@ -61,6 +61,15 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+
+        [HttpGet("/Solo")]
+        [Authorize(Roles = "Coach , Client")]
+        public IActionResult GetClientById([FromBody] GetByIDModel c){
+            var result = ClientsService.GetClientById(c.id);
+            return Ok(result);
+
+        }
+
         [HttpGet]
         [Authorize(Roles = "Owner,Coach,BranchManager,Client")]
         public IActionResult GetClients()
