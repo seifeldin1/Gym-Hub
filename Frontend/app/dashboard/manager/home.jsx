@@ -1,7 +1,7 @@
 "use client"
 import styles from "@styles/dashboard.module.css"
 import Image from 'next/image';
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { BsCalendar3 } from "react-icons/bs";
 import { CiClock2 } from "react-icons/ci";
 import { MdAnnouncement } from "react-icons/md";
@@ -9,6 +9,7 @@ import { IoMdAddCircle } from "react-icons/io";
 import { DashHeader } from '@components/NavBar';
 import { NumStat } from './Statistics';
 import { CashflowChart } from './Statistics';
+import axiosInstance from "@app/axios";
 
 
 export const NextMeet = () => {
@@ -222,72 +223,88 @@ const clients = [
     }
 ];
 
-const ClientCard = ({ name, workoutPlan, nutritionPlan, startDate, endDate }) => {
+const CoachCard = ({ name, hireDate, experienceYears, status, speciality }) => {
     return (
-        <>
         <div className="p-3 bg-neutral-800 rounded-xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-2 border border-gray-200 my-4 w-fit flex flex-col">
-            <h2 className="text-2xl font-bold mb-2 text-green-500 text-center">{name}</h2>
-            <p className="text-white mb-1 text-sm"><strong>Workout Plan:</strong> {workoutPlan}</p>
-            <p className="text-white mb-1 text-sm"><strong>Nutrition Plan:</strong> {nutritionPlan}</p>
-            <p className="text-white mb-1 text-sm"><strong>Start Date:</strong> {startDate}</p>
-            <p className="text-white mb-1 text-sm"><strong>End Date:</strong> {endDate}</p>
+            <h2 className="text-2xl font-bold mb-2 text-green-500 text-center">{name || "Unknown"}</h2>
+            <p className="text-white mb-1 text-sm"><strong>Hire Date:</strong> {hireDate || "Not Specified"}</p>
+            <p className="text-white mb-1 text-sm"><strong>Experience Years:</strong> {experienceYears || "0"}</p>
+            <p className="text-white mb-1 text-sm"><strong>Status:</strong> {status || "Not Specified"}</p>
+            <p className="text-white mb-1 text-sm"><strong>Speciality:</strong> {speciality || "Not Specified"}</p>
             <button className="mt-3 px-3 py-1 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">View Details</button>
         </div>
-        </>
     );
 };
 
-
-
-
-
 const Home = () => {
+    const [coaches, setCoaches] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchCoaches = async () => {
+            try {
+                const token = localStorage.getItem("token"); // Ensure the token exists
+                const response = await axiosInstance.get("/Coach", {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+                    },
+                });
+                setCoaches(response.data); // Assuming the API sends a list of coaches
+            } catch (error) {
+                console.error("Error fetching coaches:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCoaches();
+    }, []);
+
+    if (isLoading) {
+        return <p className="text-center text-white">Loading...</p>;
+    }
+
     return (
         <>
             <DashHeader page_name="Home" />
-            <div className='flex gap-3'>
-
-
+            <div className="flex gap-3">
                 <div className="flex flex-col w-[75%]">
-
-                    <div className='w-[100%] h-[40%] flex gap-2 flex-row mb-4'>
-
-                        <div className='w-[25%] h-[100%] flex flex-col gap-3'>
-                            <NextMeet/>
+                    <div className="w-[100%] h-[40%] flex gap-2 flex-row mb-4">
+                        <div className="w-[25%] h-[100%] flex flex-col gap-3">
+                            <NextMeet />
                         </div>
-                        <div className='bg-[#131313] rounded-2xl px-5 py-3 mx-auto w-[75%] h-[100%]'>
-                            <h1 className="text-2xl text-white">
-                                Clients
-                            </h1>
+                        <div className="bg-[#131313] rounded-2xl px-5 py-3 mx-auto w-[75%] h-[100%]">
+                            <h1 className="text-2xl text-white">Coaches</h1>
                             <div className="inline-flex space-x-6 max-w-full overflow-x-auto whitespace-nowrap customScroll">
-                                {clients.map((client, index) => (
-                                    <ClientCard
+                                {coaches.length > 0 ? (
+                                   coaches.map((coach, index) => (
+                                    <CoachCard
                                         key={index}
-                                        name={client.name}
-                                        workoutPlan={client.workoutPlan}
-                                        nutritionPlan={client.nutritionPlan}
-                                        startDate={client.startDate}
-                                        endDate={client.endDate}
+                                        name={`${coach.first_Name} ${coach.last_Name}`} // Use first_Name and last_Name from API response
+                                        hireDate={coach.hire_Date}
+                                        experienceYears={coach.experience_Years || 0} // Default to 0 if undefined
+                                        status={coach.status || "Not Specified"} // Provide a fallback value
+                                        speciality={coach.speciality || "Not Specified"}
                                     />
-                                ))}
+                                ))
+                                ) : (
+                                    <p className="text-white">No coaches found.</p>
+                                )}
                             </div>
                         </div>
-
                     </div>
 
                     <div className="bg-[#131313] text-white px-2 py-2 rounded-xl flex-grow ml-4">
-                            <RecentReports/>
+                        <RecentReports />
                     </div>
-
                 </div>
 
-
-                <div className='w-[25%] h-[85vh]'>
+                <div className="w-[25%] h-[85vh]">
                     <Annoncements />
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default Home
+export default Home;
