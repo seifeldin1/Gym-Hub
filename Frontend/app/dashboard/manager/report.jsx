@@ -12,9 +12,8 @@ const Report = () => {
     const FetchReports = async () => {
         try {
             
-            const response = await axiosInstance.get("/Reports/GetAllBranchManagerReports", {
+            const response = await axiosInstance.get("/Reports/GetAllBranchManagerReports",{
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvbWFyLmZhcm91ayIsInJvbGUiOiJCcmFuY2hNYW5hZ2VyIiwianRpIjoiNGRiYTFiNTgtODAyMS00ODVkLTg0NjEtNjJkM2QxMjI3NDc4IiwibmJmIjoxNzM1MzUyOTE2LCJleHAiOjE3MzU0MzkzMTYsImlhdCI6MTczNTM1MjkxNn0.oMYXNEXekbEGgejT6oecX0k47ftxPBZyhoHQe03Pgpk',
                 },
             });

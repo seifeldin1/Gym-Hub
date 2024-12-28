@@ -61,8 +61,18 @@ const Candidates = () => {
     const FetchCandidates = async () => {
         try {
             const response = await axiosInstance.get("/JobPost", {
+                Branch_Posted_ID: 1, // Assuming a placeholder value for Branch_Posted_ID
+                    Title: newJob.title,
+                    Experience_Years_Required: newJob.experience_years_required,
+                    Deadline: deadline,
+                    Location: newJob.location,
+                    Skills_Required: newJob.skills_required,
+                    Description: newJob.description,
+                    Date_Posted: new Date().toISOString().split("T")[0], // Use today's date
+                },
+                {
                 headers: {
-                    Authorization: 'Bearer <your-token-here>',
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJvbWFyLmZhcm91ayIsInJvbGUiOiJCcmFuY2hNYW5hZ2VyIiwianRpIjoiNGRiYTFiNTgtODAyMS00ODVkLTg0NjEtNjJkM2QxMjI3NDc4IiwibmJmIjoxNzM1MzUyOTE2LCJleHAiOjE3MzU0MzkzMTYsImlhdCI6MTczNTM1MjkxNn0.oMYXNEXekbEGgejT6oecX0k47ftxPBZyhoHQe03Pgpk',
                 },
             });
 

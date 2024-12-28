@@ -26,8 +26,7 @@ namespace Backend.Database
             return new MySqlConnection(connectionString);
         }*/
 
-       
-        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=AmrAshraf@0135789@;";
+        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=Seif@2004;";
         //Create connection 
         public MySqlConnection ConnectToDatabase()
         {
@@ -421,17 +420,17 @@ namespace Backend.Database
 
                 //Created by => branch manager or coach just like announcements 
                 var createEventsTableCommand = new MySqlCommand(@"
-                    CREATE TABLE IF NOT EXISTS Events(
-                        Event_ID INT PRIMARY KEY AUTO_INCREMENT,
-                        Title VARCHAR(70) NOT NULL,
-                        Type VARCHAR(100) NOT NULL,
-                        Start_Date DATETIME NOT NULL,
-                        End_Date DATETIME NOT NULL , 
-                        Description VARCHAR(500) , 
-                        Location VARCHAR(200),
-                        Created_By_ID INT , 
-                        FOREIGN KEY(Created_By_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
-                    );
+                        CREATE TABLE IF NOT EXISTS Events(
+                            Event_ID INT PRIMARY KEY AUTO_INCREMENT,
+                            Title VARCHAR(70) NOT NULL,
+                            Type VARCHAR(100) NOT NULL,
+                            Start_Date DATETIME NOT NULL,
+                            End_Date DATETIME NOT NULL , 
+                            Description VARCHAR(500) , 
+                            Location VARCHAR(200),
+                            Created_By_ID INT , 
+                            FOREIGN KEY(Created_By_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                        );
                 ", connection);
                 createEventsTableCommand.ExecuteNonQuery();
 

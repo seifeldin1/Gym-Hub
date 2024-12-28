@@ -26,7 +26,8 @@ namespace Backend.Controllers
                     success = true,
                     message = result.message,
                     token = result.token,
-                    userType = result.userType
+                    userType = result.userType,
+                    id = result.id
                 });
             }
             

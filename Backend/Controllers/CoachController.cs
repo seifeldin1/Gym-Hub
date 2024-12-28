@@ -44,7 +44,7 @@ namespace Backend.Controllers
         [Authorize(Roles = "Coach , BranchManager , Owner")]
         public IActionResult GetCoaches()
         {
-            var coachList =coachservice.GetCoach();
+            var coachList = coachservice.GetCoach();
             return Ok(coachList);
         }
 
@@ -77,13 +77,14 @@ namespace Backend.Controllers
 
         [HttpGet("Solo")]
         [Authorize(Roles = "Coach , BranchManager")]
-        public IActionResult GetCoachById([FromBody] GetByIDModel model){
+        public IActionResult GetCoachById([FromBody] GetByIDModel model)
+        {
             var coach = coachservice.GetCoachById(model.id);
             return Ok(coach);
         }
 
         [HttpPut("UpdateCoach")]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public IActionResult UpdateCoachData([FromBody] CoachUpdaterModel entry)
         {
             // Call the service to update the Branch
@@ -136,7 +137,7 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-        
+
         [HttpPut("UpdateCoachStatus")]
         [Authorize(Roles = "Coach")]
         public IActionResult UpdateStatus([FromBody] updatingStatus entry)
@@ -145,7 +146,7 @@ namespace Backend.Controllers
             {
                 return BadRequest(new { message = "Invalid Coach ID provided." });
             }
-            var result = coachservice.UpdateCoachStatus(entry.id,entry.Status);         // Return success response after update
+            var result = coachservice.UpdateCoachStatus(entry.id, entry.Status);         // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -190,10 +191,10 @@ namespace Backend.Controllers
         }
 
         [HttpGet("ViewMyClients")]
-        [Authorize(Roles = "Coach")]
-        public IActionResult  ViewMyClients([FromBody] GetByIDModel entry)
+        [Authorize(Roles = "Coach, Owner")]
+        public IActionResult ViewMyClients([FromQuery] int id)
         {
-            var clientList =coachservice.ViewMyClients(entry.id);
+            var clientList = coachservice.ViewMyClients(id);
             return Ok(clientList);
         }
 
