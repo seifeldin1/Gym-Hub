@@ -403,6 +403,82 @@ namespace Backend.Services
 
         }
 
+        public CoachModel GetCoachById(int id) // Get Coach Data by Coach ID
+        {
+            var coach = new CoachModel();
+            
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                
+                // Modify the query to fetch the coach by its ID
+                string query = @"
+                    SELECT c.*, 
+                        u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, 
+                        u.Last_Name, u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+                    FROM Coach c 
+                    LEFT JOIN User u ON c.Coach_ID = u.User_ID
+                    WHERE c.Coach_ID = @CoachId;";  // Filter by coach ID
+                
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    // Adding the parameter to avoid SQL injection
+                    command.Parameters.AddWithValue("@CoachId", id);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        // Check if there's any row returned
+                        if (reader.Read())
+                        {
+                            // Handle nullable Fire_Date
+                            DateTime? fireDate = null;
+                            if (!reader.IsDBNull(reader.GetOrdinal("Fire_Date")))
+                            {
+                                fireDate = reader.GetDateTime(reader.GetOrdinal("Fire_Date"));
+                            }
+
+                            // Map the data from the reader to the coach object
+                            coach.Coach_ID = reader.GetInt32("Coach_ID");
+                            coach.Salary = reader.GetInt32("Salary");
+                            coach.Penalties = reader.GetInt32("Penalties");
+                            coach.Bonuses = reader.GetInt32("Bonuses");
+                            coach.Hire_Date = DateOnly.FromDateTime(reader.GetDateTime("Hire_Date"));
+                            coach.Fire_Date = fireDate.HasValue ? DateOnly.FromDateTime(fireDate.Value) : (DateOnly?)null;
+                            coach.Experience_Years = reader.IsDBNull(reader.GetOrdinal("Experience_Years")) ? null : reader.GetInt32("Experience_Years");
+                            coach.Works_For_Branch = reader.IsDBNull(reader.GetOrdinal("Works_For_Branch")) ? null : reader.GetInt32("Works_For_Branch");
+                            coach.Daily_Hours_Worked = reader.GetInt32("Daily_Hours_Worked");
+                            coach.Shift_Start = reader.IsDBNull(reader.GetOrdinal("Shift_Start")) ? (TimeSpan?)null : reader.GetTimeSpan("Shift_Start");
+                            coach.Shift_Ends = reader.IsDBNull(reader.GetOrdinal("Shift_Ends")) ? (TimeSpan?)null : reader.GetTimeSpan("Shift_Ends");
+                            coach.Speciality = reader.GetString("Speciality");
+                            coach.Status = reader.IsDBNull(reader.GetOrdinal("Status")) ? null : reader.GetString("Status");
+                            coach.Contract_Length = reader.IsDBNull(reader.GetOrdinal("Contract_Length")) ? 0 : reader.GetInt32("Contract_Length");
+
+                            // Map the associated user data
+                            coach.User_ID = reader.GetInt32("User_ID");
+                            coach.Username = reader.GetString("Username");
+                            coach.PasswordHashed = reader.GetString("PasswordHashed");
+                            coach.Type = reader.GetString("Type");
+                            coach.First_Name = reader.GetString("First_Name");
+                            coach.Last_Name = reader.GetString("Last_Name");
+                            coach.Email = reader.GetString("Email");
+                            coach.Phone_Number = reader.GetString("Phone_Number");
+                            coach.Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? null : reader.GetString("Gender");
+                            coach.Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age");
+                            coach.National_Number = reader.GetString("National_Number");
+                        }
+                        else
+                        {
+                            // If no coach found for the given ID, return null
+                            return null;
+                        }
+                    }
+                }
+            }
+
+            return coach;
+        }
+
+
 
         public string GetCoachName(int id){
             using (var connection = database.ConnectToDatabase()){
