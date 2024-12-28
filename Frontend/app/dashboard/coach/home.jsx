@@ -13,8 +13,73 @@ import axiosInstance from '../../axios';
 
 
 
+import React from "react";
+
 export const NextMeet = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        title: "",
+        meetingID: "",
+        date: "",
+        time: ""
+    });
+    const [notification, setNotification] = useState(null);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        const coachId = localStorage.getItem("id"); // Get coach ID from local storage
+        if (!coachId) {
+            setNotification({ type: "error", message: "Coach ID not found in local storage." });
+            return;
+        }
+    
+        // Combine date and time into a single datetime string
+        const datetime = `${formData.date}T${formData.time}:00`; // ISO format
+    
+        try {
+            // Fetch coach details using the API
+            const token = localStorage.getItem("token");
+            const coachResponse = await axiosInstance.get(`Coach/Solo?id=${coachId}`, {
+                headers: { Authorization: `Bearer ${token}` }, // Replace with actual token
+            });
+    
+            if (coachResponse.status !== 200 || !coachResponse.data) {
+                throw new Error("Failed to fetch coach details.");
+            }
+    
+            const coachName = coachResponse.data.fullName; // Adjust based on the actual field returned
+    
+            // Construct MeetingDetails object
+            const meetingData = {
+                Coach_ID: parseInt(coachId, 10),
+                CoachName: coachName,
+                Title: formData.title,
+                Time: datetime, // Combined datetime
+                Meeting_ID: formData.meetingID
+            };
+    
+            // Send meeting data to the backend
+            const response = await axiosInstance.post("Meetings/schedule", meetingData, {
+                headers: { Authorization: `Bearer ${token}` }, // Replace with actual token
+            });
+    
+            if (response.status === 200) {
+                setNotification({ type: "success", message: "Meeting scheduled successfully!" });
+                setFormData({ title: "", meetingID: "", date: "", time: "" }); // Reset form
+                setIsModalOpen(false);
+            }
+        } catch (error) {
+            setNotification({ type: "error", message: error.response?.data?.message || "Failed to schedule meeting." });
+        }
+    };
+    
+
     return (
         <>
             {/* Modal (Pop-Out) */}
@@ -90,8 +155,8 @@ export const NextMeet = () => {
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
 export const RecentReports = () => {
     const clients = [
@@ -519,6 +584,7 @@ const Home = () => {
 
     const FetchClients = async (id) => {
         try {
+            const token = localStorage.getItem("token");
             const response = await axiosInstance.get('/Coach/ViewMyClients', {
                 params: {
                     id: 5  // Passing the ID as a query parameter
