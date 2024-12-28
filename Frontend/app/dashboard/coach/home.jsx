@@ -13,85 +13,196 @@ import axiosInstance from '../../axios';
 
 
 
+import React from "react";
+
 export const NextMeet = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        title: "",
+        meetingID: "",
+        date: "",
+        time: ""
+    });
+    const [notification, setNotification] = useState(null);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        const coachId = localStorage.getItem("id"); // Get coach ID from local storage
+        if (!coachId) {
+            setNotification({ type: "error", message: "Coach ID not found in local storage." });
+            return;
+        }
+    
+        // Combine date and time into a single datetime string
+        const datetime = `${formData.date}T${formData.time}:00`; // ISO format
+    
+        try {
+            // Fetch coach details using the API
+            const token = localStorage.getItem("token");
+            const coachResponse = await axiosInstance.get(`Coach/Solo?id=${coachId}`, {
+                headers: { Authorization: `Bearer ${token}` }, // Replace with actual token
+            });
+    
+            if (coachResponse.status !== 200 || !coachResponse.data) {
+                throw new Error("Failed to fetch coach details.");
+            }
+    
+            const coachName = coachResponse.data.fullName; // Adjust based on the actual field returned
+    
+            // Construct MeetingDetails object
+            const meetingData = {
+                Coach_ID: parseInt(coachId, 10),
+                CoachName: coachName,
+                Title: formData.title,
+                Time: datetime, // Combined datetime
+                Meeting_ID: formData.meetingID
+            };
+    
+            // Send meeting data to the backend
+            const response = await axiosInstance.post("Meetings/schedule", meetingData, {
+                headers: { Authorization: `Bearer ${token}` }, // Replace with actual token
+            });
+    
+            if (response.status === 200) {
+                setNotification({ type: "success", message: "Meeting scheduled successfully!" });
+                setFormData({ title: "", meetingID: "", date: "", time: "" }); // Reset form
+                setIsModalOpen(false);
+            }
+        } catch (error) {
+            setNotification({ type: "error", message: error.response?.data?.message || "Failed to schedule meeting." });
+        }
+    };
+    
+
     return (
         <>
-        {/* Modal (Pop-Out) */}
-        {isModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                <div className="bg-white p-6 rounded-lg shadow-lg w-[60%] h-fit">
-                    <div className="flex flex-row justify-center items-center mb-3">
-                        <h2 className="text-2xl font-bold text-black mr-10">Add A New Meeting</h2>
-                    </div>
-                    <form onSubmit="">
-                        <div className="grid grid-cols-4 gap-4">
-                            <div>
-                                <label htmlFor="title" className="block text-lg font-semibold text-gray-600">Title <span className="text-red-500">*</span></label>
-                                <input type="text" id="title" name="title" value=""onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Meeting title" required />
-                            </div>
-                            <div>
-                                <label htmlFor="experience_years_required" className="block text-lg font-semibold text-gray-600">Meeting ID <span className="text-red-500">*</span></label>
-                                <input type="number" id="experience_years_required" name="experience_years_required" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="ID of meeting" required />
-                            </div>
-                            <div>
-                                <label htmlFor="deadline" className="block text-lg font-semibold text-gray-600">Date Deadline</label>
-                                <input type="date" id="deadline" name="deadline" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" />
-                            </div>
-                            <div>
-                                <label htmlFor="time_deadline" className="block text-lg font-semibold text-gray-600">Time Deadline</label>
-                                <input type="time" id="time_deadline" name="time_deadline" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" />
-                            </div>
-                        </div>
-                        <div className="flex justify-between gap-3">
-                            <button className="bg-green-600 border-2 border-green-600 text-white font-bold py-2 px-4 rounded-full hover:bg-transparent hover:text-green-600 transition duration-400" type="submit">
-                                Add Meeting
-                            </button>
-                            <button className="bg-red-600 border-2 border-red-600 text-white font-bold py-2 px-4 rounded-full hover:bg-transparent hover:text-red-600 transition duration-400" onClick={() => setIsModalOpen(false)}>
-                                Close
-                            </button>
-                        </div>
-                    </form>
+            {/* Notification */}
+            {notification && (
+                <div className={`alert ${notification.type === "error" ? "alert-error" : "alert-success"}`}>
+                    {notification.message}
                 </div>
-            </div>
-        )}
+            )}
 
-        <div className="bg-[#131313] text-[#F7F7F7] w-[90%] h-[100%] rounded-2xl mx-auto py-1">
-            <div className="w-[90%] mt-2 mx-auto flex flex-col gap-3">
-                <div className="flex flex-row justify-between">
-                    <h2 className="text-2xl mb-4">
-                        Next Meeeting
-                    </h2>
-                    <button
-                        type="submit"
-                        className="p-1 w-fit h-fit text-3xl bg-green-500 text-white font-bold rounded-full shadow-md hover:bg-transparent hover:text-green-500 transition duration-300" onClick={() => setIsModalOpen(true)}>
-                        <IoMdAddCircle/>
-                    </button>
-                </div>
-                <div className="flex gap-2 items-center text-xs">
-                    <div className="flex gap-1">
-                        <BsCalendar3 size={15} />
-                        11 Nov
+            {/* Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-[60%] h-fit">
+                        <div className="flex flex-row justify-center items-center mb-3">
+                            <h2 className="text-2xl font-bold text-black mr-10">Add A New Meeting</h2>
+                        </div>
+                        <form onSubmit={handleSubmit}>
+                            <div className="grid grid-cols-4 gap-4">
+                                <div>
+                                    <label htmlFor="title" className="block text-lg font-semibold text-gray-600">
+                                        Title <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="title"
+                                        name="title"
+                                        value={formData.title}
+                                        onChange={handleChange}
+                                        className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black"
+                                        placeholder="Meeting title"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="meetingID" className="block text-lg font-semibold text-gray-600">
+                                        Meeting ID <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="number"
+                                        id="meetingID"
+                                        name="meetingID"
+                                        value={formData.meetingID}
+                                        onChange={handleChange}
+                                        className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black"
+                                        placeholder="ID of meeting"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="date" className="block text-lg font-semibold text-gray-600">
+                                        Date Deadline
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="date"
+                                        name="date"
+                                        value={formData.date}
+                                        onChange={handleChange}
+                                        className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black"
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="time" className="block text-lg font-semibold text-gray-600">
+                                        Time Deadline
+                                    </label>
+                                    <input
+                                        type="time"
+                                        id="time"
+                                        name="time"
+                                        value={formData.time}
+                                        onChange={handleChange}
+                                        className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex justify-between gap-3">
+                                <button
+                                    className="bg-green-600 border-2 border-green-600 text-white font-bold py-2 px-4 rounded-full hover:bg-transparent hover:text-green-600 transition duration-400"
+                                    type="submit"
+                                >
+                                    Add Meeting
+                                </button>
+                                <button
+                                    className="bg-red-600 border-2 border-red-600 text-white font-bold py-2 px-4 rounded-full hover:bg-transparent hover:text-red-600 transition duration-400"
+                                    onClick={() => setIsModalOpen(false)}
+                                    type="button"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <div className="flex gap-1">
-                        <CiClock2 size={15} />
-                        11:00 am
-                    </div>
                 </div>
-                <div className="mx-auto">
-                    <Image
-                        src="/assets/images/Dashboard/NextMeet.jpg" // Path to your image in the public folder
-                        alt="Meeting Image"
-                        width={350}
-                        height={150}
-                        className="rounded-xl"
-                    />
+            )}
+
+            {/* Main Content */}
+            <div className="bg-[#131313] text-[#F7F7F7] w-[90%] h-[100%] rounded-2xl mx-auto py-1">
+                <div className="w-[90%] mt-2 mx-auto flex flex-col gap-3">
+                    <div className="flex flex-row justify-between">
+                        <h2 className="text-2xl mb-4">Next Meeting</h2>
+                        <button
+                            type="submit"
+                            className="p-1 w-fit h-fit text-3xl bg-green-500 text-white font-bold rounded-full shadow-md hover:bg-transparent hover:text-green-500 transition duration-300"
+                            onClick={() => setIsModalOpen(true)}
+                        >
+                            <IoMdAddCircle />
+                        </button>
+                    </div>
+                    <div className="flex gap-2 items-center text-xs">
+                        <div className="flex gap-1">
+                            <BsCalendar3 size={15} />
+                            11 Nov
+                        </div>
+                        <div className="flex gap-1">
+                            <CiClock2 size={15} />
+                            11:00 am
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
         </>
-    )
-}
+    );
+};
 
 export const RecentReports = () => {
     const clients = [
@@ -277,11 +388,12 @@ const Home = () => {
 
     const FetchClients = async (id) => {
         try {
+            const token = localStorage.getItem("token");
             const response = await axiosInstance.get('/Coach/ViewMyClients', {
                 id: id
             }, {
                 headers: {
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJoZW5rc2hoaCIsInJvbGUiOiJDb2FjaCIsImp0aSI6IjVkMmZjZDkxLTJjYjEtNGE2ZC04ZDE3LThlNGI0MTA5MjVlMiIsIm5iZiI6MTczNTMzMjcwNCwiZXhwIjoxNzM1NDE5MTA0LCJpYXQiOjE3MzUzMzI3MDR9.EZVAumq_mhec5Z63FAU5rbX_KmuLOQm7yiSjAdnz5io',
+                    Authorization: `Bearer ${token}`,
                 }
             });
 
