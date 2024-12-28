@@ -182,7 +182,7 @@ namespace Backend.Database
                 var createCandidateTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Candidate(
                         Candidate_ID INT AUTO_INCREMENT PRIMARY KEY, 
-                        First_Name VARCHAR(255) NOT NULL,
+                        First_NamePhone_Number VARCHAR(255) NOT NULL,
                         Last_Name VARCHAR(255) NOT NULL,
                         Age INT NOT NULL,
                         National_Number BIGINT NOT NULL UNIQUE ,
@@ -214,7 +214,7 @@ namespace Backend.Database
                         Branch_Posted_ID INT, 
                         Description VARCHAR(255) NOT NULL, 
                         Title VARCHAR(50) NOT NULL, 
-                        Date_Posted DATETIME NOT NULL, 
+                        Date_Posted DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
                         Skills_Required VARCHAR(255) NOT NULL, 
                         Experience_Years_Required INT NOT NULL, 
                         Deadline DATETIME NOT NULL, 
@@ -420,17 +420,17 @@ namespace Backend.Database
 
                 //Created by => branch manager or coach just like announcements 
                 var createEventsTableCommand = new MySqlCommand(@"
-                    CREATE TABLE IF NOT EXISTS Events(
-                        Event_ID INT PRIMARY KEY AUTO_INCREMENT,
-                        Title VARCHAR(70) NOT NULL,
-                        Type VARCHAR(100) NOT NULL,
-                        Start_Date DATETIME NOT NULL,
-                        End_Date DATETIME NOT NULL , 
-                        Description VARCHAR(500) , 
-                        Location VARCHAR(200),
-                        Created_By_ID INT , 
-                        FOREIGN KEY(Created_By_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
-                    );
+                        CREATE TABLE IF NOT EXISTS Events(
+                            Event_ID INT PRIMARY KEY AUTO_INCREMENT,
+                            Title VARCHAR(70) NOT NULL,
+                            Type VARCHAR(100) NOT NULL,
+                            Start_Date DATETIME NOT NULL,
+                            End_Date DATETIME NOT NULL , 
+                            Description VARCHAR(500) , 
+                            Location VARCHAR(200),
+                            Created_By_ID INT , 
+                            FOREIGN KEY(Created_By_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                        );
                 ", connection);
                 createEventsTableCommand.ExecuteNonQuery();
 

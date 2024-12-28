@@ -40,6 +40,9 @@ const ClientCard = ({
           <p className="text-orange-500 font-bold">Description: </p>
           <p className="text-white font-bold">{description || "No Description Provided"}</p>
         </div>
+        <button className="bg-red-600 border-2 border-red-600 text-white font-bold py-2 px-4 rounded-full hover:bg-transparent hover:text-red-600 transition duration-400 mt-2" onClick={() => setIsModalOpen(false)}>
+            Delete Job Post
+        </button>
       </div>
     );
   };

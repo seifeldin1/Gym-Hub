@@ -75,6 +75,13 @@ namespace Backend.Controllers
             });
         }
 
+        [HttpGet("Solo")]
+        [Authorize(Roles = "Coach , BranchManager")]
+        public IActionResult GetCoachById([FromBody] GetByIDModel model){
+            var coach = coachservice.GetCoachById(model.id);
+            return Ok(coach);
+        }
+
         [HttpPut("UpdateCoach")]
         [Authorize(Roles = "Coach, Owner")]
         public IActionResult UpdateCoachData([FromBody] CoachUpdaterModel entry)

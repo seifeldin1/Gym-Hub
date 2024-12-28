@@ -38,6 +38,14 @@ namespace Backend.Controllers
             });
 
         }
+
+        [HttpGet("Solo")]
+        [Authorize(Roles = "Owner , BranchManager")]
+        public IActionResult GetBranchManagers([FromBody] GetByIDModel manager){
+            var result = branchmanagersService.GetBranchManagerById(manager.id);
+            return Ok(result);
+        }
+        
         [HttpPut("UpdateBranchManager")]
         [Authorize(Roles = "BranchManager")]
         public IActionResult UpdateBranchManager([FromBody] BranchManagerUpdaterModel entry)
