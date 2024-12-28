@@ -191,10 +191,6 @@ const CoachData = () => {
     );
   };
 
-
-
-
-
 const clients = [
     {
         name: 'John Doe',
@@ -275,8 +271,6 @@ const Home = () => {
                         endDate={client.endDate}
                     />
                 ))}
-
-
             </div>
 
         </>
