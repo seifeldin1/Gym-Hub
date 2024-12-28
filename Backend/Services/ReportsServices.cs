@@ -1,28 +1,34 @@
 using Backend.Database;
 using Backend.Models;
 using MySql.Data.MySqlClient;
-namespace Backend.Services{
-    public class ReportsServices{
+namespace Backend.Services
+{
+    public class ReportsServices
+    {
         private readonly GymDatabase database;
-        public ReportsServices(GymDatabase database){
+        public ReportsServices(GymDatabase database)
+        {
             this.database = database;
         }
 
-        public (bool success , string message) GenerateClientReport(Report report , int clientID , int coachId){
-            using(var connection = database.ConnectToDatabase()){
+        public (bool success, string message) GenerateClientReport(Report report, int clientID, int coachId)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
                 connection.Open();
                 var query = @"INSERT INTO ClientProgress (Client_ID, Coach_ID, ProgressSummary, GoalsAchieved, ChallengesFaced, NextSteps) 
                             VALUES (@ClientID, @CoachID, @ProgressSummary, @GoalsAchieved, @ChallengesFaced, @NextSteps)";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@ClientID" , clientID);
-                    command.Parameters.AddWithValue("@CoachID" , coachId);
-                    command.Parameters.AddWithValue("@ProgressSummary" , report.ProgressSummary);
-                    command.Parameters.AddWithValue("@GoalsAchieved" , report.GoalsAchieved);
-                    command.Parameters.AddWithValue("@ChallengesFaced" , report.ChallengesFaced);
-                    command.Parameters.AddWithValue("@NextSteps" , report.NextSteps);
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@ClientID", clientID);
+                    command.Parameters.AddWithValue("@CoachID", coachId);
+                    command.Parameters.AddWithValue("@ProgressSummary", report.ProgressSummary);
+                    command.Parameters.AddWithValue("@GoalsAchieved", report.GoalsAchieved);
+                    command.Parameters.AddWithValue("@ChallengesFaced", report.ChallengesFaced);
+                    command.Parameters.AddWithValue("@NextSteps", report.NextSteps);
                     command.ExecuteNonQuery();
                 }
-                return(true , "report generated successfully");
+                return (true, "report generated successfully");
             }
         }
         public List<Report> GetClientReports(int clientID)
@@ -131,9 +137,23 @@ namespace Backend.Services{
             {
                 connection.Open();
                 var query = @"
-                    SELECT Report_ID, Manager_Reported_ID, Title, Generated_Date, Type, Status, Content 
-                    FROM Reports 
-                    ORDER BY Generated_Date DESC";
+        SELECT 
+            r.Report_ID, 
+            r.Manager_Reported_ID, 
+            CONCAT(u.First_Name, ' ', u.Last_Name) AS ManagerName, 
+            r.Title, 
+            r.Generated_Date, 
+            r.Type, 
+            r.Status, 
+            r.Content 
+        FROM 
+            Reports r
+        LEFT JOIN 
+            Branch_Manager bm ON r.Manager_Reported_ID = bm.Branch_Manager_ID
+        LEFT JOIN 
+            User u ON bm.Branch_Manager_Id = u.User_Id
+        ORDER BY 
+            r.Generated_Date DESC";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -144,6 +164,7 @@ namespace Backend.Services{
                             {
                                 ReportID = reader.GetInt32("Report_ID"),
                                 ManagerReportedID = reader.IsDBNull(reader.GetOrdinal("Manager_Reported_ID")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("Manager_Reported_ID")),
+                                ManagerName = reader.IsDBNull(reader.GetOrdinal("ManagerName")) ? null : reader.GetString("ManagerName"),
                                 Title = reader.GetString("Title"),
                                 GeneratedDate = reader.GetDateTime("Generated_Date"),
                                 Type = reader.GetString("Type"),
@@ -153,10 +174,12 @@ namespace Backend.Services{
                             reports.Add(report);
                         }
                     }
-                    return reports;
                 }
             }
+            return reports;
         }
+
+
 
 
 
