@@ -9,13 +9,14 @@ import { TbReport } from "react-icons/tb";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { AiOutlineUsergroupDelete } from "react-icons/ai";
 import { BsListColumnsReverse } from "react-icons/bs";
+import { IoMdSettings } from "react-icons/io";
 import { FaRectangleList } from "react-icons/fa6";
 import { MdLogout } from "react-icons/md";
 import { FaPeopleGroup } from "react-icons/fa6";
 import GymIcon from '@public/assets/images/image.png';
 import Home from './home';
 import Calendar from './Calendar';
-import Clients from './clients'
+import ManageCoaches from './ManageCoaches'
 import Report from './report';
 import Coaches from './coaches';
 import JobListing from './jobListing';
@@ -36,8 +37,8 @@ const Dashboard = () => {
                 return <Home/>;
             case "calendar":
                 return <Calendar/>;
-            case "clients":
-                return <Clients/>
+            case "ManageCoaches":
+                return <ManageCoaches/>
             case "coaches":
                 return <Coaches/>
             case "report":
@@ -82,11 +83,11 @@ const Dashboard = () => {
                         </div>
                         <div
                             className={styles.icon}
-                            onClick={() => setActivePanel("clients")}
+                            onClick={() => setActivePanel("ManageCoaches")}
                             role="button"
                             tabIndex={0}
                         >
-                            <FaPeopleGroup size={26} />
+                            <IoMdSettings size={26} />
                         </div>
                         <div
                             className={styles.icon}

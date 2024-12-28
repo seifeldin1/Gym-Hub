@@ -27,7 +27,7 @@ namespace Backend.Database
         }*/
 
        
-        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=$$eif@eldin_1020;";
+        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=AmrAshraf@0135789@;";
         //Create connection 
         public MySqlConnection ConnectToDatabase()
         {
@@ -183,7 +183,7 @@ namespace Backend.Database
                 var createCandidateTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Candidate(
                         Candidate_ID INT AUTO_INCREMENT PRIMARY KEY, 
-                        First_Name VARCHAR(255) NOT NULL,
+                        First_NamePhone_Number VARCHAR(255) NOT NULL,
                         Last_Name VARCHAR(255) NOT NULL,
                         Age INT NOT NULL,
                         National_Number BIGINT NOT NULL UNIQUE ,
