@@ -75,7 +75,7 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpGet]
+        [HttpGet("Solo")]
         [Authorize(Roles = "Coach , BranchManager")]
         public IActionResult GetCoachById([FromBody] GetByIDModel model){
             var coach = coachservice.GetCoachById(model.id);
