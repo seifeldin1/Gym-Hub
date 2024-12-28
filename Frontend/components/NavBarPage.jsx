@@ -10,7 +10,7 @@ const NavBarPage = ({ page_name }) => {
             <div className={`${styles.DivOFbuttons}`}>
                 <img className="ease-in h-8 duration-300 hover:scale-110 mx-52" src={GYMlogo.src} alt="Description of the image" />
                 <div className="w-full h-10 flex items-center justify-between rounded-full text-lg font-semibold">
-                    <Link href="/home">
+                    <Link href="/">
                         <button className={`${page_name === "home" ? styles.NavButtonsSelected : styles.NavButtons}`}>Home</button>
                     </Link>
                     <Link href="/about">
