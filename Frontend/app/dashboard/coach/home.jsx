@@ -1,7 +1,6 @@
 "use client"
 import styles from "@styles/dashboard.module.css"
 import Image from 'next/image';
-import { useState } from "react";
 import { BsCalendar3 } from "react-icons/bs";
 import { CiClock2 } from "react-icons/ci";
 import { MdAnnouncement } from "react-icons/md";
@@ -9,6 +8,8 @@ import { IoMdAddCircle } from "react-icons/io";
 import { DashHeader } from '@components/NavBar';
 import { NumStat } from './Statistics';
 import { CashflowChart } from './Statistics';
+import { useEffect, useState } from "react";
+import axiosInstance from '../../axios';
 
 
 export const NextMeet = () => {
@@ -184,74 +185,90 @@ export const Annoncements = () => {
     );
 };
 
-const clients = [
-    {
-        name: 'John Doe',
-        workoutPlan: 'Strength',
-        nutritionPlan: 'High Protein',
-        startDate: 'Jan 2024',
-        endDate: 'Dec 2024'
-    },
-    {
-        name: 'Jane Smith',
-        workoutPlan: 'Cardio',
-        nutritionPlan: 'Balanced',
-        startDate: 'Mar 2024',
-        endDate: 'Mar 2025'
-    },
-    {
-        name: 'Jane Smith',
-        workoutPlan: 'Cardio',
-        nutritionPlan: 'Balanced',
-        startDate: 'Mar 2024',
-        endDate: 'Mar 2025'
-    },
-    {
-        name: 'Jane Smith',
-        workoutPlan: 'Cardio',
-        nutritionPlan: 'Balanced',
-        startDate: 'Mar 2024',
-        endDate: 'Mar 2025'
-    },
-    {
-        name: 'Jane Smith',
-        workoutPlan: 'Cardio',
-        nutritionPlan: 'Balanced',
-        startDate: 'Mar 2024',
-        endDate: 'Mar 2025'
-    }
-];
+const Clients = () => {
+    
 
-const ClientCard = ({ name, workoutPlan, nutritionPlan, startDate, endDate }) => {
     return (
-        <>
-        <div className="p-3 bg-neutral-800 rounded-xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-2 border border-gray-200 my-4 w-fit flex flex-col">
-            <h2 className="text-2xl font-bold mb-2 text-green-500 text-center">{name}</h2>
-            <p className="text-white mb-1 text-sm"><strong>Workout Plan:</strong> {workoutPlan}</p>
-            <p className="text-white mb-1 text-sm"><strong>Nutrition Plan:</strong> {nutritionPlan}</p>
-            <p className="text-white mb-1 text-sm"><strong>Start Date:</strong> {startDate}</p>
-            <p className="text-white mb-1 text-sm"><strong>End Date:</strong> {endDate}</p>
-            <button className="mt-3 px-3 py-1 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">View Details</button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {clients.map((client, index) => (
+                <div
+                    key={index}
+                    className="p-3 bg-neutral-800 rounded-xl shadow-xl hover:shadow-2xl transition-transform transform hover:-translate-y-2 border border-gray-200 my-4 w-fit flex flex-col"
+                >
+                    <h2 className="text-2xl font-bold mb-2 text-green-500 text-center">
+                        {client.fullName || "Unknown"}
+                    </h2>
+                    <p className="text-white mb-1 text-sm">
+                        <strong>Age:</strong> {client.age || "N/A"}
+                    </p>
+                    <p className="text-white mb-1 text-sm">
+                        <strong>BMR:</strong> {client.bmr || "N/A"}
+                    </p>
+                    <p className="text-white mb-1 text-sm">
+                        <strong>Weight:</strong> {client.weight_kg || "N/A"} kg
+                    </p>
+                    <p className="text-white mb-1 text-sm">
+                        <strong>Height:</strong> {client.height_cm || "N/A"} cm
+                    </p>
+                    <button className="mt-3 px-3 py-1 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">
+                        View Details
+                    </button>
+                </div>
+            ))}
         </div>
-        </>
     );
 };
 
 
 
 
-
 const Home = () => {
+    const [clients, setClients] = useState([]);
+
+    const FetchClients = async (id) => {
+        try {
+            const response = await axiosInstance.get('/Coach/ViewMyClients', {
+                id:id
+            }, {
+                headers: {
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJoZW5rc2hoaCIsInJvbGUiOiJDb2FjaCIsImp0aSI6IjVkMmZjZDkxLTJjYjEtNGE2ZC04ZDE3LThlNGI0MTA5MjVlMiIsIm5iZiI6MTczNTMzMjcwNCwiZXhwIjoxNzM1NDE5MTA0LCJpYXQiOjE3MzUzMzI3MDR9.EZVAumq_mhec5Z63FAU5rbX_KmuLOQm7yiSjAdnz5io',
+                }
+            });
+
+            // Map response data to match the component's structure
+            console.log(response.data);
+            const formattedClients = response.data.map((client) => ({
+                fullName: client.full_Name,
+                age: client.age,
+                bmr: client.bmr,
+                weight_kg: client.weight_kg,
+                height_cm: client.height_cm,
+            }));
+            setClients(formattedClients);
+        } catch (error) {
+            if (error.response) {
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else {
+                console.log(`Error: ${error.message}`);
+            }
+        }
+    };
+
+    useEffect(() => {
+        const id=3;
+        FetchClients(id);
+    }, []);
     return (
         <>
+
             <DashHeader page_name="Home" />
             <div className='flex gap-3'>
 
 
                 <div className="flex flex-col w-[75%]">
-
                     <div className='w-[100%] h-[40%] flex gap-2 flex-row mb-4'>
-
                         <div className='w-[25%] h-[100%] flex flex-col gap-3'>
                             <NextMeet/>
                         </div>
@@ -263,7 +280,7 @@ const Home = () => {
                                 {clients.map((client, index) => (
                                     <ClientCard
                                         key={index}
-                                        name={client.name}
+                                        fullName={client.fullName}
                                         workoutPlan={client.workoutPlan}
                                         nutritionPlan={client.nutritionPlan}
                                         startDate={client.startDate}

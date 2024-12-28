@@ -451,10 +451,10 @@ namespace Backend.Services
                                 Email = reader.GetString("Email"),
                                 Phone_Number = reader.GetString("Phone_Number"),
                                 Gender = reader.GetString("Gender"),
-                                Age = reader.GetInt32("Age"),
-                                BMR = reader.GetInt32("BMR"),
-                                Weight_kg = reader.GetDouble("Weight_kg"),
-                                Height_cm = reader.GetDouble("Height_cm"),
+                                Age=  reader.IsDBNull(reader.GetOrdinal("Age")) ? null: reader.GetInt32("Age"),
+                                BMR=  reader.IsDBNull(reader.GetOrdinal("BMR")) ? null: reader.GetInt32("BMR"),
+                                Weight_kg=  reader.IsDBNull(reader.GetOrdinal("Weight_kg")) ? null: reader.GetInt32("Weight_kg"),
+                                Height_cm=  reader.IsDBNull(reader.GetOrdinal("Height_cm")) ? null: reader.GetInt32("Height_cm"),
                                 Membership_Type = reader.GetString("Membership_Type"),
                             });
                         }
