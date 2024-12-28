@@ -17,78 +17,78 @@ export const NextMeet = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     return (
         <>
-        {/* Modal (Pop-Out) */}
-        {isModalOpen && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                <div className="bg-white p-6 rounded-lg shadow-lg w-[60%] h-fit">
-                    <div className="flex flex-row justify-center items-center mb-3">
-                        <h2 className="text-2xl font-bold text-black mr-10">Add A New Meeting</h2>
+            {/* Modal (Pop-Out) */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-[60%] h-fit">
+                        <div className="flex flex-row justify-center items-center mb-3">
+                            <h2 className="text-2xl font-bold text-black mr-10">Add A New Meeting</h2>
+                        </div>
+                        <form onSubmit="">
+                            <div className="grid grid-cols-4 gap-4">
+                                <div>
+                                    <label htmlFor="title" className="block text-lg font-semibold text-gray-600">Title <span className="text-red-500">*</span></label>
+                                    <input type="text" id="title" name="title" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Meeting title" required />
+                                </div>
+                                <div>
+                                    <label htmlFor="experience_years_required" className="block text-lg font-semibold text-gray-600">Meeting ID <span className="text-red-500">*</span></label>
+                                    <input type="number" id="experience_years_required" name="experience_years_required" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="ID of meeting" required />
+                                </div>
+                                <div>
+                                    <label htmlFor="deadline" className="block text-lg font-semibold text-gray-600">Date Deadline</label>
+                                    <input type="date" id="deadline" name="deadline" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" />
+                                </div>
+                                <div>
+                                    <label htmlFor="time_deadline" className="block text-lg font-semibold text-gray-600">Time Deadline</label>
+                                    <input type="time" id="time_deadline" name="time_deadline" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" />
+                                </div>
+                            </div>
+                            <div className="flex justify-between gap-3">
+                                <button className="bg-green-600 border-2 border-green-600 text-white font-bold py-2 px-4 rounded-full hover:bg-transparent hover:text-green-600 transition duration-400" type="submit">
+                                    Add Meeting
+                                </button>
+                                <button className="bg-red-600 border-2 border-red-600 text-white font-bold py-2 px-4 rounded-full hover:bg-transparent hover:text-red-600 transition duration-400" onClick={() => setIsModalOpen(false)}>
+                                    Close
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <form onSubmit="">
-                        <div className="grid grid-cols-4 gap-4">
-                            <div>
-                                <label htmlFor="title" className="block text-lg font-semibold text-gray-600">Title <span className="text-red-500">*</span></label>
-                                <input type="text" id="title" name="title" value=""onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="Meeting title" required />
-                            </div>
-                            <div>
-                                <label htmlFor="experience_years_required" className="block text-lg font-semibold text-gray-600">Meeting ID <span className="text-red-500">*</span></label>
-                                <input type="number" id="experience_years_required" name="experience_years_required" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" placeholder="ID of meeting" required />
-                            </div>
-                            <div>
-                                <label htmlFor="deadline" className="block text-lg font-semibold text-gray-600">Date Deadline</label>
-                                <input type="date" id="deadline" name="deadline" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" />
-                            </div>
-                            <div>
-                                <label htmlFor="time_deadline" className="block text-lg font-semibold text-gray-600">Time Deadline</label>
-                                <input type="time" id="time_deadline" name="time_deadline" value="" onChange="" className="w-52 mt-2 px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 text-black" />
-                            </div>
-                        </div>
-                        <div className="flex justify-between gap-3">
-                            <button className="bg-green-600 border-2 border-green-600 text-white font-bold py-2 px-4 rounded-full hover:bg-transparent hover:text-green-600 transition duration-400" type="submit">
-                                Add Meeting
-                            </button>
-                            <button className="bg-red-600 border-2 border-red-600 text-white font-bold py-2 px-4 rounded-full hover:bg-transparent hover:text-red-600 transition duration-400" onClick={() => setIsModalOpen(false)}>
-                                Close
-                            </button>
-                        </div>
-                    </form>
                 </div>
-            </div>
-        )}
+            )}
 
-        <div className="bg-[#131313] text-[#F7F7F7] w-[90%] h-[100%] rounded-2xl mx-auto py-1">
-            <div className="w-[90%] mt-2 mx-auto flex flex-col gap-3">
-                <div className="flex flex-row justify-between">
-                    <h2 className="text-2xl mb-4">
-                        Next Meeeting
-                    </h2>
-                    <button
-                        type="submit"
-                        className="p-1 w-fit h-fit text-3xl bg-green-500 text-white font-bold rounded-full shadow-md hover:bg-transparent hover:text-green-500 transition duration-300" onClick={() => setIsModalOpen(true)}>
-                        <IoMdAddCircle/>
-                    </button>
-                </div>
-                <div className="flex gap-2 items-center text-xs">
-                    <div className="flex gap-1">
-                        <BsCalendar3 size={15} />
-                        11 Nov
+            <div className="bg-[#131313] text-[#F7F7F7] w-[90%] h-[100%] rounded-2xl mx-auto py-1">
+                <div className="w-[90%] mt-2 mx-auto flex flex-col gap-3">
+                    <div className="flex flex-row justify-between">
+                        <h2 className="text-2xl mb-4">
+                            Next Meeeting
+                        </h2>
+                        <button
+                            type="submit"
+                            className="p-1 w-fit h-fit text-3xl bg-green-500 text-white font-bold rounded-full shadow-md hover:bg-transparent hover:text-green-500 transition duration-300" onClick={() => setIsModalOpen(true)}>
+                            <IoMdAddCircle />
+                        </button>
                     </div>
-                    <div className="flex gap-1">
-                        <CiClock2 size={15} />
-                        11:00 am
+                    <div className="flex gap-2 items-center text-xs">
+                        <div className="flex gap-1">
+                            <BsCalendar3 size={15} />
+                            11 Nov
+                        </div>
+                        <div className="flex gap-1">
+                            <CiClock2 size={15} />
+                            11:00 am
+                        </div>
                     </div>
-                </div>
-                <div className="mx-auto">
-                    <Image
-                        src="/assets/images/Dashboard/NextMeet.jpg" // Path to your image in the public folder
-                        alt="Meeting Image"
-                        width={350}
-                        height={150}
-                        className="rounded-xl"
-                    />
+                    <div className="mx-auto">
+                        <Image
+                            src="/assets/images/Dashboard/NextMeet.jpg" // Path to your image in the public folder
+                            alt="Meeting Image"
+                            width={350}
+                            height={150}
+                            className="rounded-xl"
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
         </>
     )
 }
@@ -520,8 +520,9 @@ const Home = () => {
     const FetchClients = async (id) => {
         try {
             const response = await axiosInstance.get('/Coach/ViewMyClients', {
-                id: 5  // Send the id in the body
-            }, {
+                params: {
+                    id: 5  // Passing the ID as a query parameter
+                },
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`
                 }
@@ -530,7 +531,7 @@ const Home = () => {
             // Map response data to match the component's structure
             console.log(response.data);
             const formattedClients = response.data.map((client) => ({
-                fullName: client.full_Name,
+                fullName: client.fullName,
                 age: client.age,
                 bmr: client.bmr,
                 weight_kg: client.weight_kg,
@@ -554,7 +555,6 @@ const Home = () => {
 
     useEffect(() => {
         const id = 3;
-        const id = 3;
         FetchClients(id);
     }, []);
 
@@ -565,7 +565,6 @@ const Home = () => {
                 <div className="flex flex-col w-[75%]">
                     <div className='w-[100%] h-[40%] flex gap-2 flex-row mb-4'>
                         <div className='w-[25%] h-[100%] flex flex-col gap-3'>
-                            <NextMeet />
                             <NextMeet />
                         </div>
                         <div className='bg-[#131313] rounded-2xl px-5 py-3 mx-auto w-[75%] h-[100%]'>
@@ -592,7 +591,6 @@ const Home = () => {
                     </div>
 
                     <div className="bg-[#131313] text-white px-2 py-2 rounded-xl flex-grow ml-4">
-                        <RecentReports />
                         <RecentReports />
                     </div>
                 </div>

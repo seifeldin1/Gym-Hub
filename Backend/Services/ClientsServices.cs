@@ -73,63 +73,6 @@ namespace Backend.Services
             }
         }
 
-        public ClientsModel GetClientById(int clientId)
-        {
-            ClientsModel client = null;
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                string query = @"
-            SELECT c.*, 
-            u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, u.Last_Name, 
-            u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
-            FROM Client c
-            LEFT JOIN User u ON c.Client_ID = u.User_ID
-            WHERE c.Client_ID = @Client_ID;";
-
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Client_ID", clientId);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            client = new ClientsModel
-                            {
-                                Client_ID = reader.GetInt32("Client_ID"),
-                                Join_Date = DateOnly.FromDateTime(reader.GetDateTime("Join_Date")),
-                                BMR = reader.IsDBNull(reader.GetOrdinal("BMR")) ? null : reader.GetInt32("BMR"),
-                                Weight_kg = reader.IsDBNull(reader.GetOrdinal("Weight_kg")) ? null : reader.GetInt32("Weight_kg"),
-                                Height_cm = reader.IsDBNull(reader.GetOrdinal("Height_cm")) ? null : reader.GetInt32("Height_cm"),
-                                Belong_To_Coach_ID = reader.IsDBNull(reader.GetOrdinal("Belong_To_Coach_ID")) ? null : reader.GetInt32("Belong_To_Coach_ID"),
-                                AccountActivated = reader.GetBoolean("AccountActivated"),
-                                Start_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("Start_Date_Membership")),
-                                End_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("End_Date_Membership")),
-                                Membership_Type = reader.GetString("Membership_Type"),
-                                Fees_Of_Membership = reader.GetInt32("Fees_Of_Membership"),
-                                Membership_Period_Months = reader.GetInt32("Membership_Period_Months"),
-                                User_ID = reader.GetInt32("User_ID"),
-                                Username = reader.GetString("Username"),
-                                PasswordHashed = reader.GetString("PasswordHashed"),
-                                Type = reader.GetString("Type"),
-                                First_Name = reader.GetString("First_Name"),
-                                Last_Name = reader.GetString("Last_Name"),
-                                Email = reader.GetString("Email"),
-                                Phone_Number = reader.GetString("Phone_Number"),
-                                Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? null : reader.GetString("Gender"),
-                                Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age"),
-                                National_Number = reader.GetString("National_Number")
-                            };
-                        }
-                    }
-                }
-            }
-
-            return client;
-        }
-
-
         //* DeleteClient : Deletes a Client from Client Relation
         public (bool success, string message) DeleteClient(int id)
         {
