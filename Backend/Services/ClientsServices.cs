@@ -405,5 +405,73 @@ namespace Backend.Services
                 }
             }
         }
+
+        public ClientsModel GetClientById(int id)
+        {
+            var client = new ClientsModel();
+            
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+
+                // Modify the query to fetch a client by its ID
+                string query = @"
+                    SELECT c.*, 
+                        u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, u.Last_Name, 
+                        u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+                    FROM Client c
+                    LEFT JOIN User u ON c.Client_ID = u.User_ID
+                    WHERE c.Client_ID = @ClientId;";  // Filter by client ID
+
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    // Adding the parameter to avoid SQL injection
+                    command.Parameters.AddWithValue("@ClientId", id);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        // Check if there's any row returned
+                        if (reader.Read())
+                        {
+                            // Map the data from the reader to the client object
+                            client.Client_ID = reader.GetInt32("Client_ID");
+                            client.Join_Date = DateOnly.FromDateTime(reader.GetDateTime("Join_Date"));
+                            client.BMR = reader.IsDBNull(reader.GetOrdinal("BMR")) ? null : reader.GetInt32("BMR");
+                            client.Weight_kg = reader.IsDBNull(reader.GetOrdinal("Weight_kg")) ? null : reader.GetInt32("Weight_kg");
+                            client.Height_cm = reader.IsDBNull(reader.GetOrdinal("Height_cm")) ? null : reader.GetInt32("Height_cm");
+                            client.Belong_To_Coach_ID = reader.IsDBNull(reader.GetOrdinal("Belong_To_Coach_ID")) ? null : reader.GetInt32("Belong_To_Coach_ID");
+                            client.AccountActivated = reader.GetBoolean("AccountActivated");
+                            client.Start_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("Start_Date_Membership"));
+                            client.End_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("End_Date_Membership"));
+                            client.Membership_Type = reader.GetString("Membership_Type");
+                            client.Fees_Of_Membership = reader.GetInt32("Fees_Of_Membership");
+                            client.Membership_Period_Months = reader.GetInt32("Membership_Period_Months");
+
+                            // Map the associated user data
+                            client.User_ID = reader.GetInt32("User_ID");
+                            client.Username = reader.GetString("Username");
+                            client.PasswordHashed = reader.GetString("PasswordHashed");
+                            client.Type = reader.GetString("Type");
+                            client.First_Name = reader.GetString("First_Name");
+                            client.Last_Name = reader.GetString("Last_Name");
+                            client.Email = reader.GetString("Email");
+                            client.Phone_Number = reader.GetString("Phone_Number");
+                            client.Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? null : reader.GetString("Gender");
+                            client.Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age");
+                            client.National_Number = reader.GetString("National_Number");
+                        }
+                        else
+                        {
+                            // Return null or handle the case when no client is found for the given ID
+                            return null;
+                        }
+                    }
+                }
+            }
+
+            return client;
+        }
+
+        
     }
 }

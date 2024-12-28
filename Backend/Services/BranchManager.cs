@@ -319,6 +319,76 @@ namespace Backend.Services
                 }
             }
         }
+        public BranchManagerModel GetBranchManagerById(int id) // Get Branch Manager Data by ID
+        {
+            var branchManager = new BranchManagerModel();
+            
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                
+                // Modify the query to fetch the branch manager by their ID
+                string query = @"
+                    SELECT bm.*, 
+                        u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, 
+                        u.Last_Name, u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+                    FROM Branch_Manager bm
+                    INNER JOIN User u ON bm.Branch_Manager_ID = u.User_ID
+                    WHERE bm.Branch_Manager_ID = @BranchManagerId;"; // Filter by Branch_Manager_ID
+                
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    // Adding the parameter to avoid SQL injection
+                    command.Parameters.AddWithValue("@BranchManagerId", id);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        // Check if there's any row returned
+                        if (reader.Read())
+                        {
+                            // Handle nullable Fire_Date
+                            DateTime? fireDate = null;
+                            if (!reader.IsDBNull(reader.GetOrdinal("Fire_Date")))
+                            {
+                                fireDate = reader.GetDateTime(reader.GetOrdinal("Fire_Date"));
+                            }
+
+                            // Map the data from the reader to the branch manager object
+                            branchManager.Branch_Manager_ID = reader.GetInt32("Branch_Manager_ID");
+                            branchManager.Salary = reader.GetInt32("Salary");
+                            branchManager.Penalties = reader.GetInt32("Penalties");
+                            branchManager.Bonuses = reader.GetInt32("Bonuses");
+                            branchManager.Hire_Date = DateOnly.FromDateTime(reader.GetDateTime("Hire_Date"));
+                            branchManager.Employee_Under_Supervision = reader.GetInt32("Employee_Under_Supervision");
+                            branchManager.Fire_Date = fireDate.HasValue ? DateOnly.FromDateTime(fireDate.Value) : (DateOnly?)null;
+                            branchManager.Manages_Branch_ID = reader.GetInt32("Manages_Branch_ID");
+                            branchManager.Contract_Length = reader.GetInt32("Contract_Length");
+
+                            // Map the associated user data
+                            branchManager.User_ID = reader.GetInt32("User_ID");
+                            branchManager.Username = reader.GetString("Username");
+                            branchManager.PasswordHashed = reader.GetString("PasswordHashed");
+                            branchManager.Type = reader.GetString("Type");
+                            branchManager.First_Name = reader.GetString("First_Name");
+                            branchManager.Last_Name = reader.GetString("Last_Name");
+                            branchManager.Email = reader.GetString("Email");
+                            branchManager.Phone_Number = reader.GetString("Phone_Number");
+                            branchManager.Gender = reader.GetString("Gender");
+                            branchManager.Age = reader.GetInt32("Age");
+                            branchManager.National_Number = reader.GetString("National_Number");
+                        }
+                        else
+                        {
+                            // If no branch manager found for the given ID, return null
+                            return null;
+                        }
+                    }
+                }
+            }
+
+            return branchManager;
+        }
+
         public (bool success, string message) UpdateBranchManagerContract(int id ,int Contract)
         {
             using (var connection = database.ConnectToDatabase())

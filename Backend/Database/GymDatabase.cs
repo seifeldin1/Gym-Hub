@@ -215,7 +215,7 @@ namespace Backend.Database
                         Branch_Posted_ID INT, 
                         Description VARCHAR(255) NOT NULL, 
                         Title VARCHAR(50) NOT NULL, 
-                        Date_Posted DATETIME NOT NULL, 
+                        Date_Posted DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
                         Skills_Required VARCHAR(255) NOT NULL, 
                         Experience_Years_Required INT NOT NULL, 
                         Deadline DATETIME NOT NULL, 
