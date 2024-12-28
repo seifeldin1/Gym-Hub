@@ -76,7 +76,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("UpdateCoach")]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public IActionResult UpdateCoachData([FromBody] CoachUpdaterModel entry)
         {
             // Call the service to update the Branch
@@ -183,7 +183,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("ViewMyClients")]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public IActionResult  ViewMyClients([FromBody] GetByIDModel entry)
         {
             var clientList =coachservice.ViewMyClients(entry.id);

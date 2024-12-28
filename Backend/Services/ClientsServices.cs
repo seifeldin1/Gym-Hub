@@ -73,13 +73,70 @@ namespace Backend.Services
             }
         }
 
+        public ClientsModel GetClientById(int clientId)
+        {
+            ClientsModel client = null;
+            using (var connection = database.ConnectToDatabase())
+            {
+                connection.Open();
+                string query = @"
+            SELECT c.*, 
+            u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, u.Last_Name, 
+            u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+            FROM Client c
+            LEFT JOIN User u ON c.Client_ID = u.User_ID
+            WHERE c.Client_ID = @Client_ID;";
+
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Client_ID", clientId);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            client = new ClientsModel
+                            {
+                                Client_ID = reader.GetInt32("Client_ID"),
+                                Join_Date = DateOnly.FromDateTime(reader.GetDateTime("Join_Date")),
+                                BMR = reader.IsDBNull(reader.GetOrdinal("BMR")) ? null : reader.GetInt32("BMR"),
+                                Weight_kg = reader.IsDBNull(reader.GetOrdinal("Weight_kg")) ? null : reader.GetInt32("Weight_kg"),
+                                Height_cm = reader.IsDBNull(reader.GetOrdinal("Height_cm")) ? null : reader.GetInt32("Height_cm"),
+                                Belong_To_Coach_ID = reader.IsDBNull(reader.GetOrdinal("Belong_To_Coach_ID")) ? null : reader.GetInt32("Belong_To_Coach_ID"),
+                                AccountActivated = reader.GetBoolean("AccountActivated"),
+                                Start_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("Start_Date_Membership")),
+                                End_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("End_Date_Membership")),
+                                Membership_Type = reader.GetString("Membership_Type"),
+                                Fees_Of_Membership = reader.GetInt32("Fees_Of_Membership"),
+                                Membership_Period_Months = reader.GetInt32("Membership_Period_Months"),
+                                User_ID = reader.GetInt32("User_ID"),
+                                Username = reader.GetString("Username"),
+                                PasswordHashed = reader.GetString("PasswordHashed"),
+                                Type = reader.GetString("Type"),
+                                First_Name = reader.GetString("First_Name"),
+                                Last_Name = reader.GetString("Last_Name"),
+                                Email = reader.GetString("Email"),
+                                Phone_Number = reader.GetString("Phone_Number"),
+                                Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? null : reader.GetString("Gender"),
+                                Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age"),
+                                National_Number = reader.GetString("National_Number")
+                            };
+                        }
+                    }
+                }
+            }
+
+            return client;
+        }
+
+
         //* DeleteClient : Deletes a Client from Client Relation
         public (bool success, string message) DeleteClient(int id)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query ="DELETE FROM User WHERE User_ID=@User_ID ;";
+                string query = "DELETE FROM User WHERE User_ID=@User_ID ;";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@Id", id);
@@ -117,10 +174,10 @@ namespace Backend.Services
                             {
                                 Client_ID = reader.GetInt32("Client_ID"),
                                 Join_Date = DateOnly.FromDateTime(reader.GetDateTime("Join_Date")),
-                                BMR = reader.IsDBNull(reader.GetOrdinal("BMR")) ? null: reader.GetInt32("BMR"),
-                                Weight_kg = reader.IsDBNull(reader.GetOrdinal("Weight_kg")) ? null: reader.GetInt32("Weight_kg"),
-                                Height_cm = reader.IsDBNull(reader.GetOrdinal("Height_cm")) ? null: reader.GetInt32("Height_cm"),
-                                Belong_To_Coach_ID=  reader.IsDBNull(reader.GetOrdinal("Belong_To_Coach_ID")) ? null: reader.GetInt32("Belong_To_Coach_ID"),
+                                BMR = reader.IsDBNull(reader.GetOrdinal("BMR")) ? null : reader.GetInt32("BMR"),
+                                Weight_kg = reader.IsDBNull(reader.GetOrdinal("Weight_kg")) ? null : reader.GetInt32("Weight_kg"),
+                                Height_cm = reader.IsDBNull(reader.GetOrdinal("Height_cm")) ? null : reader.GetInt32("Height_cm"),
+                                Belong_To_Coach_ID = reader.IsDBNull(reader.GetOrdinal("Belong_To_Coach_ID")) ? null : reader.GetInt32("Belong_To_Coach_ID"),
                                 AccountActivated = reader.GetBoolean("AccountActivated"),
                                 Start_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("Start_Date_Membership")),
                                 End_Date_Membership = DateOnly.FromDateTime(reader.GetDateTime("End_Date_Membership")),
@@ -138,7 +195,7 @@ namespace Backend.Services
                                 Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? null : reader.GetString("Gender"),
                                 Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age"),
                                 National_Number = reader.GetString("National_Number"),
-                                
+
                             });
                         }
                         return ClientsList;
@@ -196,7 +253,7 @@ namespace Backend.Services
             }
 
         }
-        
+
         public (bool success, string message) AddRateCoach(RatingModel entry)
         {
             using (var connection = database.ConnectToDatabase())
@@ -205,9 +262,9 @@ namespace Backend.Services
                 string query = "INSERT INTO Ratings (Coach_ID,Client_ID,Rate) VALUES (@Coach_ID,@Client_ID,@Rate);";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Coach_ID",entry.Coach_ID);
-                    command.Parameters.AddWithValue("@Client_ID",entry.Client_ID);
-                    command.Parameters.AddWithValue("@Rate",entry.Rate);
+                    command.Parameters.AddWithValue("@Coach_ID", entry.Coach_ID);
+                    command.Parameters.AddWithValue("@Client_ID", entry.Client_ID);
+                    command.Parameters.AddWithValue("@Rate", entry.Rate);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -303,7 +360,7 @@ namespace Backend.Services
                     userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
                 }
 
-                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;": null;
+                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;" : null;
 
                 userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
 
@@ -325,11 +382,12 @@ namespace Backend.Services
                 {
                     clientFields.Add("Weight_kg=@Weight_kg");
                     clientParameters.Add(new MySqlParameter("@Weight_kg", entry.Weight_kg));
-                    string insertquery="INSERT INTO Progress (Client_ID, Weight_kg)VALUES (@Client_ID, @Weight_kg);";
-                    using (var command = new MySqlCommand(insertquery, connection)){
-                    command.Parameters.AddWithValue("@Client_ID", entry.User_ID);
-                    command.Parameters.AddWithValue("@Weight_kg", entry.Weight_kg);
-                    command.ExecuteNonQuery();
+                    string insertquery = "INSERT INTO Progress (Client_ID, Weight_kg)VALUES (@Client_ID, @Weight_kg);";
+                    using (var command = new MySqlCommand(insertquery, connection))
+                    {
+                        command.Parameters.AddWithValue("@Client_ID", entry.User_ID);
+                        command.Parameters.AddWithValue("@Weight_kg", entry.Weight_kg);
+                        command.ExecuteNonQuery();
                     }
                 }
                 if (entry.Height_cm > 0)
@@ -337,7 +395,7 @@ namespace Backend.Services
                     clientFields.Add("Height_cm=@Height_cm");
                     clientParameters.Add(new MySqlParameter("@Height_cm", entry.Height_cm));
                 }
-                
+
                 if (entry.Belong_To_Coach_ID.HasValue)
                 {
                     clientFields.Add("Belong_To_Coach_ID=@Belong_To_Coach_ID");
@@ -353,13 +411,13 @@ namespace Backend.Services
                     clientFields.Add("End_Date_Membership=@End_Date_Membership");
                     clientParameters.Add(new MySqlParameter("@End_Date_Membership", entry.End_Date_Membership.HasValue ? (object)entry.End_Date_Membership.Value.ToString("yyyy-MM-dd") : DBNull.Value));
                 }
-                
+
                 if (!string.IsNullOrEmpty(entry.Membership_Type))
                 {
                     clientFields.Add("Membership_Type=@Membership_Type");
                     clientParameters.Add(new MySqlParameter("@Membership_Type", entry.Membership_Type));
                 }
-                if (entry.Fees_Of_Membership>0)
+                if (entry.Fees_Of_Membership > 0)
                 {
                     clientFields.Add("Fees_Of_Membership=@Fees_Of_Membership");
                     clientParameters.Add(new MySqlParameter("@Fees_Of_Membership", entry.Fees_Of_Membership));
@@ -370,7 +428,7 @@ namespace Backend.Services
                     clientParameters.Add(new MySqlParameter("@Membership_Period_Months", entry.Membership_Period_Months));
                 }
 
-                var clientQuery = clientFields.Count > 0 ? $"UPDATE Client SET {string.Join(",", clientFields)} WHERE Client_ID=@Client_ID;": null;
+                var clientQuery = clientFields.Count > 0 ? $"UPDATE Client SET {string.Join(",", clientFields)} WHERE Client_ID=@Client_ID;" : null;
 
                 clientParameters.Add(new MySqlParameter("@Client_ID", entry.User_ID));
 

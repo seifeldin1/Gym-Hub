@@ -3,89 +3,23 @@ import { DashHeader } from "@components/NavBar";
 
 const Report = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [Reports, SetReports] = useState([]);
 
-    const Reports = [
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
-        },
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
-        },
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
-        },
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
-        },
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
-        },
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
-        },
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
-        },
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
-        },
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
-        },
-        {
-            name: "Ahmed Al-Nona",
-            progress_summary: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur eum omnis fugit in vel? Magni, modi obcaecati tempora animi delectus magnam iure nemo repudiandae, illum, corrupti fuga non quis asperiores.",
-            goals_achieved: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            challenges_faced: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            next_steps: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas justo augue, pulvinar id elit ac, imperdiet iaculis nunc. Cras nec.",
-            date_posted: "22-4-2004",
+    const FetchReports = async () => {
+        try {
+            const response = await axiosInstance.get("/Coach/ViewMyClients", {
+                id: 5
+            },{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                },
+            });
+
+
+        } catch (error) {
+            console.log("Error fetching data:", error);
         }
-    ];
+    };
 
     return (
         <>

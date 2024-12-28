@@ -69,6 +69,8 @@ namespace Backend.Controllers
             return Ok(clientList);
         }
 
+        
+
         [HttpPut("UpdateClient")]
         [Authorize(Roles = "Client")]
         public IActionResult UpdateClient([FromBody] ClientUpdaterModel entry)
