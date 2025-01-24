@@ -26,7 +26,7 @@ namespace Backend.Database
             return new MySqlConnection(connectionString);
         }*/
 
-        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=Seif@2004;";
+        private const string connectionString = "Server=127.0.0.1;Database=GymHub;User=root;Password=$$eif@eldin_1020;";
         //Create connection 
         public MySqlConnection ConnectToDatabase()
         {
@@ -47,43 +47,43 @@ namespace Backend.Database
                 var useDatabaseCommand = new MySqlCommand("USE GymHub;", connection);
                 useDatabaseCommand.ExecuteNonQuery();
 
-                var createUserTableCommand = new MySqlCommand(@"
-                    CREATE TABLE IF NOT EXISTS User(
-                        User_ID INT AUTO_INCREMENT PRIMARY KEY, 
-                        Username VARCHAR(255) NOT NULL UNIQUE,
-                        PasswordHashed VARCHAR(255) NOT NULL,
-                        Type VARCHAR(50) NOT NULL, 
-                        First_Name VARCHAR(255) NOT NULL, 
-                        Last_Name VARCHAR(255) NOT NULL, 
-                        Email VARCHAR(255) NOT NULL UNIQUE, 
-                        Phone_Number VARCHAR(100) NOT NULL UNIQUE,
-                        Gender VARCHAR(20), 
-                        Age INT, 
-                        National_Number BIGINT NOT NULL UNIQUE
-                    );
-                ", connection);
-                createUserTableCommand.ExecuteNonQuery();
+                // var createUserTableCommand = new MySqlCommand(@"
+                //     CREATE TABLE IF NOT EXISTS User(
+                //         User_ID INT AUTO_INCREMENT PRIMARY KEY, 
+                //         Username VARCHAR(255) NOT NULL UNIQUE,
+                //         PasswordHashed VARCHAR(255) NOT NULL,
+                //         Type VARCHAR(50) NOT NULL, 
+                //         First_Name VARCHAR(255) NOT NULL, 
+                //         Last_Name VARCHAR(255) NOT NULL, 
+                //         Email VARCHAR(255) NOT NULL UNIQUE, 
+                //         Phone_Number VARCHAR(100) NOT NULL UNIQUE,
+                //         Gender VARCHAR(20), 
+                //         Age INT, 
+                //         National_Number BIGINT NOT NULL UNIQUE
+                //     );
+                // ", connection);
+                // createUserTableCommand.ExecuteNonQuery();
 
-                var createOwnerTableCommand = new MySqlCommand(@"
-                    CREATE TABLE IF NOT EXISTS Owner(
-                        Owner_ID INT NOT NULL PRIMARY KEY,
-                        Share_Percentage INT NOT NULL, 
-                        Established_branches INT NOT NULL,
-                        FOREIGN KEY(Owner_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
-                    );
-                ", connection);
-                createOwnerTableCommand.ExecuteNonQuery();
+                // var createOwnerTableCommand = new MySqlCommand(@"
+                //     CREATE TABLE IF NOT EXISTS Owner(
+                //         Owner_ID INT NOT NULL PRIMARY KEY,
+                //         Share_Percentage INT NOT NULL, 
+                //         Established_branches INT NOT NULL,
+                //         FOREIGN KEY(Owner_ID) REFERENCES User(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
+                //     );
+                // ", connection);
+                // createOwnerTableCommand.ExecuteNonQuery();
 
-                var createBranchTableCommand = new MySqlCommand(@"
-                    CREATE TABLE IF NOT EXISTS Branch(
-                        Branch_ID INT AUTO_INCREMENT PRIMARY KEY,
-                        Branch_Name VARCHAR(255) NOT NULL,
-                        Location VARCHAR(255),
-                        Opening_Time TIME NOT NULL, 
-                        Closing_Time TIME NOT NULL
-                    )
-                ", connection);
-                createBranchTableCommand.ExecuteNonQuery();
+                // var createBranchTableCommand = new MySqlCommand(@"
+                //     CREATE TABLE IF NOT EXISTS Branch(
+                //         Branch_ID INT AUTO_INCREMENT PRIMARY KEY,
+                //         Branch_Name VARCHAR(255) NOT NULL,
+                //         Location VARCHAR(255),
+                //         Opening_Time TIME NOT NULL, 
+                //         Closing_Time TIME NOT NULL
+                //     )
+                // ", connection);
+                // createBranchTableCommand.ExecuteNonQuery();
 
                 var createBranchManagerTableCommand = new MySqlCommand(@"
                     CREATE TABLE IF NOT EXISTS Branch_Manager(

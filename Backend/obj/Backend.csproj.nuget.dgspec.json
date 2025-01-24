@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj": {}
+    "E:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj": {}
   },
   "projects": {
-    "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj": {
+    "E:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj",
+        "projectUniqueName": "E:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj",
         "projectName": "Backend",
-        "projectPath": "/home/engseif/Desktop/Work/Gym-Hub/Backend/Backend.csproj",
-        "packagesPath": "/home/engseif/.nuget/packages/",
-        "outputPath": "/home/engseif/Desktop/Work/Gym-Hub/Backend/obj/",
+        "projectPath": "E:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj",
+        "packagesPath": "C:\\Users\\ben10\\.nuget\\packages\\",
+        "outputPath": "E:\\My_Database_Project\\Gym-Hub\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/engseif/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\ben10\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -71,6 +71,16 @@
               "target": "Package",
               "version": "[9.0.0, )"
             },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
               "version": "[8.0.0, )"
@@ -90,6 +100,10 @@
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.3, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
@@ -115,7 +129,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
