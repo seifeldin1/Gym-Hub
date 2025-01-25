@@ -9,7 +9,7 @@ namespace Backend.Configurations{
                     .HasKey(o=>o.OwnerID);
 
             builder.Property(o=>o.OwnerID)
-                    .HasColumnName("OwnerID")
+                    .HasColumnName("Owner_ID")
                     .ValueGeneratedNever();
 
             builder.HasOne(o=>o.User)

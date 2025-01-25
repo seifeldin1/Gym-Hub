@@ -5,7 +5,11 @@ namespace Backend.Configurations{
     public class BranchConfiguration : IEntityTypeConfiguration<Branch>{
         public void Configure(EntityTypeBuilder<Branch> builder){
             builder.ToTable("Branch")
-            .HasKey(b => b.BranchID);
+                    .HasKey(b => b.BranchID);
+
+            builder.Property(b => b.BranchID)
+                    .HasColumnName("Branch_ID")
+                    .ValueGeneratedOnAdd();
 
             builder.Property(b=>b.Branch_Name)
                     .IsRequired()

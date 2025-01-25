@@ -9,10 +9,34 @@ namespace Backend.DbModels{
         public DateOnly Hire_Date {get; set;}
         public int Employee_Under_Supervision {get; set;}
         public DateOnly? Fire_Date {get; set;}
+        public DateOnly? Renewal_Date {get; set;}
         public int? Manages_Branch_ID {get; set;}
         public int? Contract_Length {get; set;}
         public User User { get; set; } //Navigation property
         public Branch Branch { get; set; } //Navigation property
+
+        
+
+        // Adjust contract length based on renewal date, fallback to Hire_Date if Renewal_Date is null
+        public void UpdateContractLength()
+        {
+            if (!Contract_Length.HasValue) return; // Exit early if contract length is not set
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            var referenceDate = Renewal_Date ?? Hire_Date; // Use Renewal_Date if available, else Hire_Date
+            var yearsSinceReference = today.Year - referenceDate.Year;
+
+            if (today < referenceDate.AddYears(yearsSinceReference)) // Account for exact date
+                yearsSinceReference--;
+
+            Contract_Length = Math.Max(0, Contract_Length.Value - yearsSinceReference);
+        }
+
+        // Reset contract length during renewal
+        public void RenewContract(int newContractLength, DateOnly newRenewalDate)
+        {
+            Contract_Length = newContractLength;
+            Renewal_Date = newRenewalDate;
+        }
 
     }
 }

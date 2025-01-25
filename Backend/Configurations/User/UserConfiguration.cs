@@ -8,7 +8,8 @@ namespace Backend.Configurations{
                     .HasKey(u => u.UserID);
 
             builder.Property(u=>u.UserID)
-                    .ValueGeneratedOnAdd();
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("User_ID");
 
             builder.Property(u=>u.Username)
                     .IsRequired()
