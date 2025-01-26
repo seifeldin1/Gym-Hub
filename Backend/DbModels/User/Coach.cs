@@ -20,6 +20,15 @@ namespace Backend.DbModels
         public Branch Branch { get; set; }
         public User User { get; set; }
 
+        public ICollection<Client> Clients { get; set; }
+        public ICollection<Diet> Diet { get; set; }
+        public ICollection<Skills> Skills { get; set; }
+        public ICollection<Rating> Rate { get; set; }
+        public ICollection<Workout> Workout { get; set; }
+        public ICollection<Meeting> meetings { get; set; }
+        public ICollection<ClientProgress> ClientProgress { get; set; }
+
+
         // Calculate daily worked hours
         public void CalculateDailyHoursWorked()
         {

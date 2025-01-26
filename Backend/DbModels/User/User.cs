@@ -13,5 +13,9 @@ namespace Backend.DbModels{
         public string? Gender {get; set;}
         public int? Age {get; set;}
         public long National_Number {get; set;}
+
+        public ICollection<Announcement> Announcements {get; set;}
+
+        
     }
 }

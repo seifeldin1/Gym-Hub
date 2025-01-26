@@ -12,5 +12,6 @@ namespace Backend.DbModels
         public string Status { get; set; }
         public string ResumeLink { get; set; }
         public string LinkedinAccountLink { get; set; }
+        public ICollection<Application> Application { get; set; }
     }
 }

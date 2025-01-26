@@ -19,5 +19,12 @@ namespace Backend.DbModels
 
         public Coach Coach { get; set; } 
         public User User { get; set; } 
+        public ICollection<Progress> Progress { get; set; }
+        public ICollection<Rating> Rates { get; set; }
+        public ICollection<PerformWorkout> Workouts { get; set; }
+        public ICollection<Recommendation> Recommendations { get; set; }
+        public ICollection<ClientProgress> ClientProgress { get; set; }
+
+
     }
 }

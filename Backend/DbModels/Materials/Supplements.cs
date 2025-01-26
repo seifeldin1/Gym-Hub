@@ -15,5 +15,11 @@ namespace Backend.DbModels
         public int ScoopSizeGrams { get; set; }
         public int ScoopNumberPackage { get; set; }
         public string ScoopDetail { get; set; }
+
+        public ICollection<SupplementsNeeded> SupplementsNeeded { get; set; }
+        public ICollection<Diet> Diet { get; set; }
+        public ICollection<Recommendation> recommendations { get; set; }
+
+
     }
 }

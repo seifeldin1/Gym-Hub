@@ -11,7 +11,7 @@ namespace Backend.DbModels
         public string Location { get; set; }
         public int? CreatedByID { get; set; }
 
-        public User CreatedBy { get; set; }
+        public Branch_Manager Branch_Manager { get; set; }
     }
 
 }

@@ -13,5 +13,6 @@ namespace Backend.DbModels
         public string Location { get; set; }
 
         public Branch BranchPosted { get; set; }
+        public ICollection<Application> Application { get; set; }
     }
 }

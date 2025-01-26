@@ -10,6 +10,6 @@ namespace Backend.DbModels
         public string Status { get; set; } 
         public string Content { get; set; }
 
-        public Branch_Manager ManagerReported { get; set; }
+        public Branch_Manager Branch_Manager { get; set; }
     }
 }

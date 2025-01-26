@@ -12,5 +12,6 @@ namespace Backend.DbModels
         public int? BelongToBranchID { get; set; }
 
         public Branch Branch { get; set; }
+        
     }
 }

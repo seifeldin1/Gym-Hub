@@ -4,8 +4,9 @@ namespace Backend.DbModels
     {
         public string SkillName { get; set; }
 
-        public int? ClientID { get; set; }
+        public int? CoachID { get; set; }
 
         public Coach Coach { get; set; }
+        
     }
 }

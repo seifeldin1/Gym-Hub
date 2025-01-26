@@ -12,5 +12,8 @@ namespace Backend.DbModels
         public int? DurationMin { get; set; }
 
         public Coach CreatedByCoach { get; set; }
+        public ICollection<PerformWorkout> Workouts { get; set; }
+
+
     }
 }

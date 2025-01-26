@@ -10,5 +10,10 @@ namespace Backend.DbModels
         public int Calories { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+
+        public ICollection<SupplementsNeeded> SupplementsNeeded { get; set; }
+        public ICollection<Diet> Diet { get; set; }
+        public ICollection<Recommendation> recommendations { get; set; }
+
     }
 }

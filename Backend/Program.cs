@@ -1,15 +1,15 @@
-using Backend.Database;
+using Backend.Context;
 using Backend.Controllers;
-using Backend.Services;
-using Backend.Middleware;
-using Backend.Utils;
 using Backend.Hubs;
-using Microsoft.AspNetCore.Authorization;
+using Backend.Middleware;
+using Backend.Services;
+using Backend.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using MySql.Data.MySqlClient;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,7 +32,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
@@ -43,6 +42,7 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader();    // Allow any headers
         });
 });
+
 // Add Authorization Policies
 builder.Services.AddAuthorization(options =>
 {
@@ -59,17 +59,14 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
     });
 
-// Register Database services
-builder.Services.AddScoped<GymDatabase>();
-
-// Register MySQL connection with connection string from configuration
-builder.Services.AddScoped<MySqlConnection>(provider =>
+// Register AppDbContext using MySQL
+builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("myConnectionString");
-    return new MySqlConnection(connectionString);
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 41)));
 });
 
-// Register application services (this should include your custom services for various features)
+// Register application services
 builder.Services.AddScoped<CredentialServices>();
 builder.Services.AddScoped<ApplicationServices>();
 builder.Services.AddScoped<Workout>();
@@ -101,9 +98,6 @@ builder.Services.AddScoped<StatisticsServices>();
 builder.Services.AddScoped<InterviewService>();
 builder.Services.AddScoped<SignUpCheckerServices>();
 
-
-
-
 // Add SignalR for real-time communications
 builder.Services.AddSignalR();
 
@@ -120,17 +114,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// Initialize the database at startup
+// Automatically apply EF Core migrations
 using (var scope = app.Services.CreateScope())
 {
     try
     {
-        var gymDatabase = scope.ServiceProvider.GetRequiredService<GymDatabase>();
-        gymDatabase.DatabaseSetUp();  // Assuming this method handles DB setup
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        dbContext.Database.Migrate(); // Apply pending migrations
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"An error occurred while setting up the database: {ex.Message}");
+        Console.WriteLine($"An error occurred while applying migrations: {ex.Message}");
     }
 }
 

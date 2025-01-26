@@ -15,8 +15,9 @@ namespace Backend.DbModels{
         public User User { get; set; } //Navigation property
         public Branch Branch { get; set; } //Navigation property
 
-        
-
+        public ICollection<Report> Reports { get; set; }
+        public ICollection<InterviewTime> Interview { get; set; }        
+        public ICollection<Event> Events { get; set; }        
         // Adjust contract length based on renewal date, fallback to Hire_Date if Renewal_Date is null
         public void UpdateContractLength()
         {
