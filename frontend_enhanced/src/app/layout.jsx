@@ -1,4 +1,6 @@
 import '../styles/globals.css';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false; // Disable automatic CSS injection
 
 export const metadata = {
   title: 'Pulse Fit',
