@@ -59,17 +59,17 @@
               "target": "Package",
               "version": "[8.0.0, )"
             },
-            "Microsoft.AspNetCore.Cors": {
+            "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[2.2.0, )"
+              "version": "[8.0.2, )"
             },
-            "Microsoft.AspNetCore.SignalR": {
+            "Microsoft.EntityFrameworkCore.Design": {
               "target": "Package",
-              "version": "[1.1.0, )"
+              "version": "[8.0.2, )"
             },
-            "Microsoft.AspNetCore.SignalR.Common": {
+            "Microsoft.EntityFrameworkCore.Tools": {
               "target": "Package",
-              "version": "[9.0.0, )"
+              "version": "[8.0.2, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -90,6 +90,10 @@
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.3, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
             },
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
