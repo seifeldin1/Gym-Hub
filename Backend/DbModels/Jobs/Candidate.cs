@@ -9,9 +9,11 @@ namespace Backend.DbModels
         public long NationalNumber { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
         public string ResumeLink { get; set; }
-        public string LinkedinAccountLink { get; set; }
+        public int? ExperienceYears{get; set;}
+
+        public string? LinkedinAccountLink { get; set; }
         public ICollection<Application> Application { get; set; }
     }
 }

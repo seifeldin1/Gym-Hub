@@ -4,49 +4,104 @@ using Backend.Services;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Backend.Controllers {
+namespace Backend.Controllers
+{
     [ApiController]
     [Route("api/Applications")]
-    public class ApplicationsController : ControllerBase{
-        private readonly ApplicationServices services;
+    public class ApplicationsController : ControllerBase
+    {
+        private readonly ApplicationServices _services;
 
-        public ApplicationsController(ApplicationServices appService){
-            services = appService;
+        public ApplicationsController(ApplicationServices appService)
+        {
+            _services = appService;
         }
 
-        
+        /// <summary>
+        /// Apply for a job.
+        /// </summary>
+        /// <param name="request">The job application request containing the candidate and job details.</param>
+        /// <returns>Success or failure response.</returns>
         [HttpPost]
-        public IActionResult ApplyForJob([FromBody] JobApplicationRequest request){// ApplyForJob should have a single parameter object (wrap Candidate and JobPost)
+        public async Task<IActionResult> ApplyForJob([FromBody] JobApplicationRequest request)
+        {
+            if (request == null || request.candidate == null || request.job == null)
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Invalid request. Candidate or job details are missing."
+                });
 
-            var result = services.ApplyForJob(request.candidate , request.job);
-            if(result.success){
-                return Ok(new{
+            var result = await _services.ApplyForJobAsync(request.candidate, request.job);
+            if (result.success)
+            {
+                return Ok(new
+                {
                     success = true,
                     message = result.message
                 });
             }
-            return BadRequest(new{
+
+            return BadRequest(new
+            {
                 success = false,
                 message = result.message
             });
         }
 
+        /// <summary>
+        /// Get all applications for a specific job post.
+        /// </summary>
+        /// <param name="post">The job post to retrieve applications for.</param>
+        /// <returns>List of applications.</returns>
         [HttpGet]
         [Authorize(Roles = "BranchManager")]
-        public IActionResult GetAllApplications([FromBody] JobPost post){
-            var result = services.GetAllApplicationsForPost(post);
+        public async Task<IActionResult> GetAllApplications([FromBody] JobPost post)
+        {
+            if (post.Post_ID<= 0)
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Invalid job post ID."
+                });
+
+            var result = await _services.GetAllApplicationsForPostAsync(post);
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get applicant details by their ID.
+        /// </summary>
+        /// <param name="candidateId">The ID of the candidate.</param>
+        /// <returns>Candidate details.</returns>
         [HttpGet("candidate")]
         [Authorize(Roles = "BranchManager")]
-        public IActionResult GetApplicantByID([FromBody] GetByIDModel candidate){
-            var result = services.GetApplicantForPost(candidate.id);
-            return Ok(result);
-        }
+        public async Task<IActionResult> GetApplicantByID([FromBody] GetByIDModel candidateId)
+        {
+            if (candidateId.id <= 0)
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Invalid candidate ID."
+                });
 
+            var result = await _services.GetApplicantForPostAsync(candidateId.id);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return NotFound(new
+            {
+                success = false,
+                message = "Candidate not found."
+            });
+        }
     }
-    // DTO to handle the body of ApplyForJob
+
+    /// <summary>
+    /// DTO to handle the body of ApplyForJob.
+    /// </summary>
     public class JobApplicationRequest
     {
         public Candidate candidate { get; set; }

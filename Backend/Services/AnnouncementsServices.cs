@@ -1,138 +1,110 @@
+using Backend.Context;
+using Backend.DbModels;
 using Backend.Models;
-using Backend.Database;
-using MySql.Data.MySqlClient;
-namespace Backend.Services {
-    public class AnnouncementsServices{
-        private readonly GymDatabase database;
-        public AnnouncementsServices(GymDatabase gymDatabase)
+using Microsoft.EntityFrameworkCore;
+
+namespace Backend.Services
+{
+    public class AnnouncementsServices
+    {
+        private readonly AppDbContext _dbContext;
+
+        public AnnouncementsServices(AppDbContext dbContext)
         {
-            this.database = gymDatabase;
+            _dbContext = dbContext;
         }
 
-        //* AddAnnouncement : Adds an Announcement into Announcement Relation
-        public (bool success, string message) AddAnnouncement(AnnouncementsModel entry)
+        // Add a new announcement
+        public async Task<(bool success, string message)> AddAnnouncementAsync(AnnouncementsModel entry)
         {
-            using (var connection = database.ConnectToDatabase())
+            var announcement = new Announcement
             {
-                connection.Open();
-                string query = "INSERT INTO Announcements(Author_ID,Author_Role,Title,Content,Date_Posted,Type) VALUES (@Author_ID,@Author_Role,@Title,@Content,@Date_Posted,@Type);";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Author_ID", entry.Author_ID);
-                    command.Parameters.AddWithValue("@Author_Role", entry.Author_Role);
-                    command.Parameters.AddWithValue("@Title", entry.Title);
-                    command.Parameters.AddWithValue("@Content", entry.Content);
-                    command.Parameters.AddWithValue("@Date_Posted", entry.Date_Posted);
-                    command.Parameters.AddWithValue("@Type", entry.Type);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                        return (true, "Announcement added successfully");
-                    else
-                        return (false, "Failed to add Announcement");
-                }
-            }
-        }
+                AuthorID = entry.Author_ID,
+                AuthorRole = entry.Author_Role,
+                Title = entry.Title,
+                Content = entry.Content,
+                DatePosted = entry.Date_Posted,
+                Type = entry.Type
+            };
 
-        //* AddAnnouncement : Gets an Announcement from Announcement Relation
-        public List<AnnouncementsModel> GetAnnouncements()
-        {
-            var announcementsList = new List<AnnouncementsModel>();
-            using (var connection = database.ConnectToDatabase())
+            await _dbContext.Announcement.AddAsync(announcement);
+
+            try
             {
-                connection.Open();
-                string query = "SELECT * FROM Announcements;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        //The while loop iterates through each row of the query result.
-                        //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
-                        while (reader.Read())
-                        {
-                            announcementsList.Add(new AnnouncementsModel
-                            {
-                                Announcements_ID = reader.GetInt32("Announcements_ID"),
-                                Author_ID = reader.GetInt32("Author_ID"),
-                                Author_Role = reader.GetString("Author_Role"),
-                                Title = reader.GetString("Title"),
-                                Content = reader.GetString("Content"),
-                                Date_Posted = reader.GetDateTime("Date_Posted"),
-                                Type = reader.GetString("Type"),
-                            });
-                        }
-                        return announcementsList;
-                    }
-                }
-            }
-        }
-
-        public (bool success , string message) EditAnnouncment(AnnouncementUpdaterModel announcement){
-                if (announcement == null)
-                return (false, "Announcement data is null.");
-            try{
-                string updateQuery = "UPDATE Announcements SET ";        // Base query string
-                List<string> announcementFields = new List<string>();          // List of clauses to include in query
-                List<MySqlParameter> announcmentParameters = new List<MySqlParameter>();  // Query parameters
-
-                if(!string.IsNullOrEmpty(announcement.Title)){
-                    announcementFields.Add("Title = @Title");
-                    announcmentParameters.Add(new MySqlParameter("@Title", announcement.Title));
-                }
-                if(!string.IsNullOrEmpty(announcement.Content)){
-                    announcementFields.Add("Content = @Content");
-                    announcmentParameters.Add(new MySqlParameter("@Content", announcement.Content));
-                }
-                if(!string.IsNullOrEmpty(announcement.Type)){
-                    announcementFields.Add("Type = @Type");
-                    announcmentParameters.Add(new MySqlParameter("@Type", announcement.Type));
-                }
-                if(announcement.Author_ID>0){
-                    announcementFields.Add("Author_ID = @Author_ID");
-                    announcmentParameters.Add(new MySqlParameter("@Author_ID", announcement.Author_ID));
-                }
-                updateQuery +=  string.Join(",",announcementFields)+" WHERE Announcements_ID = @Announcements_ID";
-                announcmentParameters.Add(new MySqlParameter("@Announcements_ID" , announcement.Announcements_ID));
-                using (var connection = database.ConnectToDatabase())
-                {
-                    connection.Open();
-                    using (var command = new MySqlCommand(updateQuery, connection))
-                    {
-                        foreach (var announcmentParameter in announcmentParameters)
-                            command.Parameters.Add(announcmentParameter);
-
-                        int rowsAffected = command.ExecuteNonQuery();
-
-                        if (rowsAffected == 0)
-                            return (false, "No Announcment data was updated.");
-
-                        return (true, "Announcment data was updated successfully.");
-                    }
-                }
+                await _dbContext.SaveChangesAsync();
+                return (true, "Announcement added successfully");
             }
             catch (Exception ex)
             {
                 return (false, $"Error: {ex.Message}");
             }
         }
-        
 
-        //* DeleteAnnouncement : Deletes an Announcement from Announcement Relation
-        public (bool success, string message) DeleteAnnouncement(int id)
+        // Retrieve all announcements
+        public async Task<List<AnnouncementsModel>> GetAnnouncementsAsync()
         {
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                string query = "DELETE FROM Announcements WHERE Announcements_ID=@Id;";
-                using (var command = new MySqlCommand(query, connection))
+            return await _dbContext.Announcement
+                .Select(a => new AnnouncementsModel
                 {
-                    command.Parameters.AddWithValue("@Id", id);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                        return (true, "Announcement Deleted successfully");
-                    else
-                        return (false, "Failed to Delete Announcement");
-                }
+                    Announcements_ID = a.AnnouncementsID,
+                    Author_ID = a.AuthorID,
+                    Author_Role = a.AuthorRole,
+                    Title = a.Title,
+                    Content = a.Content,
+                    Date_Posted = a.DatePosted,
+                    Type = a.Type
+                }).ToListAsync();
+        }
 
+        // Edit an existing announcement
+        public async Task<(bool success, string message)> EditAnnouncementAsync(AnnouncementUpdaterModel announcement)
+        {
+            var existingAnnouncement = await _dbContext.Announcement.FindAsync(announcement.Announcements_ID);
+            if (existingAnnouncement == null)
+            {
+                return (false, "Announcement not found.");
+            }
+
+            // Update fields if they have values
+            if (!string.IsNullOrEmpty(announcement.Title))
+                existingAnnouncement.Title = announcement.Title;
+
+            if (!string.IsNullOrEmpty(announcement.Content))
+                existingAnnouncement.Content = announcement.Content;
+
+            if (!string.IsNullOrEmpty(announcement.Type))
+                existingAnnouncement.Type = announcement.Type;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                return (true, "Announcement updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
+        }
+
+        // Delete an announcement by ID
+        public async Task<(bool success, string message)> DeleteAnnouncementAsync(GetByIDModel model)
+        {
+            var announcement = await _dbContext.Announcement.FindAsync(model.id);
+            if (announcement == null)
+            {
+                return (false, "Announcement not found.");
+            }
+
+            _dbContext.Announcement.Remove(announcement);
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+                return (true, "Announcement deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
             }
         }
     }

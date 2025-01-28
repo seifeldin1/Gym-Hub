@@ -2,7 +2,6 @@ using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Backend.Attributes;
 
 namespace Backend.Controllers
 {
@@ -15,22 +14,20 @@ namespace Backend.Controllers
         public AnnouncementsController(AnnouncementsServices ann_Service)
         {
             this.ann_Service = ann_Service;
-        }   
+        }
 
-        
         [HttpPost("add")]
         //[Authorize(Roles = "BranchManager,Coach")]
-        public IActionResult AddAnnouncement([FromBody] AnnouncementsModel entry)
+        public async Task<IActionResult> AddAnnouncement([FromBody] AnnouncementsModel entry)
         {
-            // Call the service method to add the workout
-            var result = ann_Service.AddAnnouncement(entry);
+            // Call the service method to add the announcement
+            var result = await ann_Service.AddAnnouncementAsync(entry);
             if (result.success)
             {
                 return Ok(new
                 {
                     success = true,
                     message = result.message
-
                 });
             }
 
@@ -39,26 +36,21 @@ namespace Backend.Controllers
                 success = false,
                 message = result.message
             });
-
-            // Return the JSON result
         }
-        
+
         [HttpGet]
         //[Authorize(Roles = "BranchManager,Coach,Owner,Client")]
-        public IActionResult GetAnnouncements()
+        public async Task<IActionResult> GetAnnouncements()
         {
-            var announcementsList = ann_Service.GetAnnouncements();
+            var announcementsList =  await ann_Service.GetAnnouncementsAsync();
             return Ok(announcementsList);
         }
-         
 
         [HttpPut]
         //[Authorize(Roles = "BranchManager,Coach")]
-        public IActionResult EditAnnouncment([FromBody] AnnouncementUpdaterModel announcement)
+        public async Task<IActionResult> EditAnnouncement([FromBody] AnnouncementUpdaterModel announcement)
         {
-            // Call the service to update the Branch
-            var result = ann_Service.EditAnnouncment(announcement);
-            // Return success response after update
+            var result = await ann_Service.EditAnnouncementAsync(announcement);
             if (result.success)
             {
                 return Ok(new
@@ -67,6 +59,7 @@ namespace Backend.Controllers
                     message = result.message
                 });
             }
+
             return BadRequest(new
             {
                 success = false,
@@ -76,17 +69,15 @@ namespace Backend.Controllers
 
         [HttpDelete]
         //[Authorize(Roles = "BranchManager,Coach")]
-        public IActionResult DeleteAnnouncement([FromBody] GetByIDModel announcment)
+        public async Task<IActionResult> DeleteAnnouncement([FromBody] GetByIDModel announcement)
         {
-            var result = ann_Service.DeleteAnnouncement(announcment.id);
-            // Return success response after deletion
+            var result = await ann_Service.DeleteAnnouncementAsync(announcement);
             if (result.success)
             {
                 return Ok(new
                 {
                     success = true,
                     message = result.message
-
                 });
             }
 
@@ -96,6 +87,5 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-
     }
 }

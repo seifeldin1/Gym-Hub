@@ -1,211 +1,154 @@
 using Backend.Models;
-using Backend.Database;
+using Backend.DbModels;
 using MySql.Data.MySqlClient;
-using System.Data;
+using Backend.Context;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services{
     public class ApplicationServices{
-        private readonly GymDatabase database;
-        public ApplicationServices(GymDatabase database){
-            this.database = database;
+        private readonly AppDbContext _dbContext;
+        public ApplicationServices(AppDbContext dbContext){
+            _dbContext = dbContext;
         }
 
-        public (bool success , string message) ApplyForJob(Candidate candidate , JobPost job){
+        public async Task<(bool success , string message)> ApplyForJobAsync(Models.Candidate candidate , JobPost job){
             if (candidate == null || job == null)
                 return (false, "Invalid candidate or job post.");
             if(DateTime.Now > job.Deadline)
                 return (false , "Application deadline has passed");
-            // if (candidate.NationalNumber < long.MinValue || candidate.NationalNumber > long.MaxValue)
-            //     return (false, "NationalNumber exceeds database BIGINT range.");
-            // long nationalNumberAsLong = Convert.ToInt64(candidate.NationalNumber);
+            try{
 
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                using(var transaction = connection.BeginTransaction()){
-
-                    try{
-                        
-                        string query = "SELECT COUNT(*) FROM Candidate Where National_Number = @National_Number;";
-
-                        using(var checkCommand = new MySqlCommand(query , connection , transaction)){
-                    
-                            var command = new MySqlCommand(query, connection);
-                            checkCommand.Parameters.AddWithValue("@National_Number", candidate.NationalNumber);
-                            //Console.WriteLine($"Request Body: {candidate.NationalNumber}");
-
-                            string message="";
-                            int result = Convert.ToInt32(checkCommand.ExecuteScalar());
-                            if(result == 0){
-                                query = "INSERT INTO Candidate VALUES(@ID,@FirstName,@LastName,@Age,@NationalNumber,@PhoneNumber,@Email,@Status,@ResumeLink,@LinkedinLink)";
-                                using(command = new MySqlCommand(query, connection)){
-                                    command.Parameters.AddWithValue("@ID" , candidate.Id);
-                                    command.Parameters.AddWithValue("@FirstName" , candidate.FirstName);
-                                    command.Parameters.AddWithValue("@LastName" , candidate.LastName);
-                                    command.Parameters.AddWithValue("@Age" , candidate.Age);
-                                    command.Parameters.AddWithValue("@NationalNumber" , candidate.NationalNumber);
-                                    command.Parameters.AddWithValue("@PhoneNumber" , candidate.PhoneNumber);
-                                    command.Parameters.AddWithValue("@Email" , candidate.Email);
-                                    if(candidate.Status!=null) command.Parameters.AddWithValue("@Status" , candidate.Status);
-                                    command.Parameters.AddWithValue("@ResumeLink" , candidate.ResumeLink);
-                                    if(candidate.LinkedinAccountLink!=null)command.Parameters.AddWithValue("@LinkedInLink" , candidate.LinkedinAccountLink);
-                                    command.ExecuteNonQuery();
-                                }
-                                message+="Candidate added successfully";
-                            }
-                            else{
-                                string updateQuery = "UPDATE Candidate SET ";
-                                List<string> setClauses = new List<string>();
-                                List<MySqlParameter> parameters = new List<MySqlParameter>();
-                                if(!string.IsNullOrEmpty(candidate.FirstName)){
-                                    setClauses.Add("First_Name = @First_Name");
-                                    parameters.Add(new MySqlParameter("@First_Name" , candidate.FirstName));
-                                }
-                                if(!string.IsNullOrEmpty(candidate.LastName)){
-                                    setClauses.Add("Last_Name = @Last_Name");
-                                    parameters.Add(new MySqlParameter("@Last_Name" , candidate.LastName));
-                                }
-                                if(candidate.Age>0){
-                                    setClauses.Add("Age = @Age");
-                                    parameters.Add(new MySqlParameter("@Age" , candidate.Age));
-                                }
-                        
-                        
-                                if(!string.IsNullOrEmpty(candidate.PhoneNumber)){
-                                    setClauses.Add("Phone_Number = @PhoneNumber");
-                                    parameters.Add(new MySqlParameter("@PhoneNumber" , candidate.PhoneNumber));
-                                }
-                                if(!string.IsNullOrEmpty(candidate.Email)){
-                                    setClauses.Add("Email = @Email");
-                                    parameters.Add(new MySqlParameter("@Email" , candidate.Email));
-                                }
-                                if(!string.IsNullOrEmpty(candidate.Status)){
-                                    setClauses.Add("Status = @Status");
-                                    parameters.Add(new MySqlParameter("@Status" , candidate.Status));
-                                }
-                                if(!string.IsNullOrEmpty(candidate.ResumeLink)){
-                                    setClauses.Add("ResumeLink = @ResumeLink");
-                                    parameters.Add(new MySqlParameter("@ResumeLink" , candidate.ResumeLink));
-                                }
-                                if(!string.IsNullOrEmpty(candidate.LinkedinAccountLink)){
-                                    setClauses.Add("Linkedin_Account_Link = @LinkedAccount");
-                                    parameters.Add(new MySqlParameter("@LinkedAccount" , candidate.LinkedinAccountLink));
-                                }
-                                if (setClauses.Count == 0)
-                                    return (false, "No fields to update.");
-
-                                updateQuery += string.Join(", ", setClauses) + " WHERE National_Number= @National_Number";
-                                parameters.Add(new MySqlParameter("@National_Number" , candidate.NationalNumber));
-
-                                using (var queryCommand = new MySqlCommand(updateQuery, connection)){
-                                    //! Add parameters to the command (Replace @variable with acutal value)
-                                    foreach (var parameter in parameters)
-                                        queryCommand.Parameters.Add(parameter);
-
-                                    int rowsAffected1 = queryCommand.ExecuteNonQuery();
-
-                                    if (rowsAffected1 == 0)
-                                        return (false, "No Candidate data was updated.");
-                                }
-
-                                return (true, "Candidate Data Was updated");
-                            }
+                var existingCandidate = await _dbContext.candidates.FirstOrDefaultAsync(c=> c.NationalNumber == candidate.NationalNumber);
                 
-                        }
-                        string checkQuery="SELECT Candidate_ID FROM Candidate WHERE Email = @email";
-                        int id;
-                        using (var queryCommand = new MySqlCommand(checkQuery, connection)){
-                            queryCommand.Parameters.Add(new MySqlParameter("@email", candidate.Email));
-                            id = (int)queryCommand.ExecuteScalar();
-                        }
-                        query = "INSERT INTO Applications VALUES(@id,@PostId , @Applied_Date , @Years_Of_Experience)";
-                        using(var command = new MySqlCommand(query, connection)){
-                            command.Parameters.AddWithValue("@id", id);
-                            command.Parameters.AddWithValue("@PostId" , job.Post_ID);
-                            command.Parameters.AddWithValue("@Applied_Date" , DateTime.Now);
-                            command.Parameters.AddWithValue("@Years_Of_Experience" , candidate.ExperienceYears);
-                            command.ExecuteNonQuery();
-                        }
+                
 
-                        transaction.Commit();
-                        return(true , "Application is submitted successfully");
-                    }
-                    catch(Exception ex){
-                        transaction.Rollback();
-                        return(false , $"An error occurred while submitting application: {ex.Message}");
-                    }
+                var post = new Post{
+                    PostID = job.Post_ID,
+                    BranchPostedID = job.Branch_Posted_ID,
+                    Description = job.Description, 
+                    Title = job.Title, 
+                    DatePosted = job.Date_Posted,
+                    SkillsRequired = job.Skills_Required,
+                    Deadline =job.Deadline ,
+                    Location =job.Location
+                };
+
+                if (existingCandidate == null){
+                    var newCandidate = new DbModels.Candidate{
+                        CandidateID = candidate.Id,
+                        FirstName = candidate.FirstName, 
+                        LastName = candidate.LastName,
+                        Email = candidate.Email,
+                        PhoneNumber = candidate.PhoneNumber,
+                        NationalNumber = candidate.NationalNumber,
+                        Age = candidate.Age, 
+                        ResumeLink = candidate.ResumeLink, 
+                        Status = candidate.Status, 
+                        ExperienceYears = candidate.ExperienceYears,
+                        LinkedinAccountLink = candidate.LinkedinAccountLink
+                    };
+
+                    await _dbContext.candidates.AddAsync(newCandidate);
                 }
-            
-            }
-                
-                
-        }
-                
-    
+                else{
+                    if(!string.IsNullOrEmpty(candidate.FirstName))
+                        existingCandidate.FirstName = candidate.FirstName;
+                    if(!string.IsNullOrEmpty(candidate.LastName))
+                        existingCandidate.LastName = candidate.LastName;
+                    if(!string.IsNullOrEmpty(candidate.Email))
+                        existingCandidate.Email = candidate.Email;
+                    if(!string.IsNullOrEmpty(candidate.PhoneNumber))
+                        existingCandidate.PhoneNumber = candidate.PhoneNumber;
+                    if(candidate.NationalNumber>0)
+                        existingCandidate.NationalNumber = candidate.NationalNumber;
+                    if(candidate.Age>20)
+                        existingCandidate.Age = candidate.Age;
+                    if(!string.IsNullOrEmpty(candidate.ResumeLink))
+                        existingCandidate.ResumeLink = candidate.ResumeLink;
+                    if(candidate.ExperienceYears>0)
+                        existingCandidate.ExperienceYears = candidate.ExperienceYears;
+                    if(!string.IsNullOrEmpty(candidate.LinkedinAccountLink))
+                        existingCandidate.LinkedinAccountLink = candidate.LinkedinAccountLink;
+                    if(!string.IsNullOrEmpty(candidate.Status))
+                        existingCandidate.Status = candidate.Status;
+                    _dbContext.candidates.Update(existingCandidate);
+                        
+                }
+                var existingApplication = await _dbContext.applications
+                .FirstOrDefaultAsync(a => a.ApplicantID == existingCandidate.CandidateID && a.PostID == job.Post_ID);
 
-        public List<Application> GetAllApplicationsForPost(JobPost job)
-        {
-            var applications = new List<Application>();
+                if (existingApplication != null)
+                return (false, "The candidate has already applied for this job.");
 
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                // Query to join Applications and Candidate tables
-                string query = @"SELECT a.Applicant_ID , a.Post_ID , a.Applied_Date,a.Years_Of_Experience,
-                                c.First_Name, c.Last_Name, c.Resume_Link FROM Applications a
-                                INNER JOIN Candidate c ON a.Applicant_ID = c.Candidate_ID WHERE a.Post_ID = @JobPostID";
-
-                using (var command = new MySqlCommand(query, connection))
+                var application = new DbModels.Application
                 {
-                    command.Parameters.AddWithValue("@JobPostID", job.Post_ID);
+                    ApplicantID = existingCandidate.CandidateID,
+                    PostID = job.Post_ID,
+                    AppliedDate = DateTime.Now,
+                    YearsOfExperience = candidate.ExperienceYears ?? 0
+                };
 
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            applications.Add(new Application
-                            {
-                                Applicant_ID = reader.GetInt32(reader.GetOrdinal("Applicant_ID")),
-                                Post_ID = reader.GetInt32(reader.GetOrdinal("Post_ID")),
-                                applicationDate = reader.GetDateTime(reader.GetOrdinal("Applied_Date")),
-                                Years_Of_Experience = reader.GetInt32(reader.GetOrdinal("Years_Of_Experience")),
-                                Applicant_Name = $"{reader.GetString(reader.GetOrdinal("First_Name"))} {reader.GetString(reader.GetOrdinal("Last_Name"))}", //INSTEAD OF CONCAT
-                                Resume_Link = reader.GetString(reader.GetOrdinal("Resume_Link"))
-                            });
-                        }
-                    }
-                }
+                await _dbContext.applications.AddAsync(application);
+                await _dbContext.SaveChangesAsync();
+
+                return (true, "Application is submitted successfully.");
+
             }
+            catch (Exception ex)
+            {
+                return (false, $"An error occurred while submitting the application: {ex.Message}");
+            }
+
+        }
+
+            
+        public async Task<List<DbModels.Application>> GetAllApplicationsForPostAsync(JobPost job)
+        {
+            if (job == null || job.Post_ID <= 0)
+                return new List<DbModels.Application>();
+
+            // Join Applications with Candidates to retrieve the necessary information
+            var applications = await _dbContext.applications
+                .Where(a => a.PostID == job.Post_ID)
+                .Include(a => a.Candidate) // Use Include to join the Candidate table
+                .Select(a => new DbModels.Application
+                {
+                    ApplicantID = a.Candidate.CandidateID,
+                    PostID = a.PostID,
+                    AppliedDate = a.AppliedDate,
+                    YearsOfExperience = a.YearsOfExperience
+                })
+                .ToListAsync();
 
             return applications;
         }
 
-        public Candidate GetApplicantForPost(int candidateID){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = "SELECT * FROM Candidate WHERE Candidate_ID = @ID";
-                using(var command = new MySqlCommand(query, connection)){
-                    command.Parameters.AddWithValue("@ID" , candidateID );
-                    using(var reader = command.ExecuteReader()){
-                        while(reader.Read()){
-                            return new Candidate{
-                                Id = reader.GetInt32(reader.GetOrdinal("Candidate_ID")),
-                                FirstName = reader.GetString(reader.GetOrdinal("First_Name")),
-                                LastName = reader.GetString(reader.GetOrdinal("Last_Name")),
-                                Age = reader.GetInt32(reader.GetOrdinal("Age")),
-                                NationalNumber = reader.GetString(reader.GetOrdinal("National_Number")),
-                                PhoneNumber = reader.GetString(reader.GetOrdinal("Phone_Number")),
-                                Email = reader.GetString(reader.GetOrdinal("Email")),
-                                ResumeLink = reader.GetString(reader.GetOrdinal("Resume_Link")),
-                                Status =  reader.GetString(reader.GetOrdinal("Status")),
-                                LinkedinAccountLink =  reader.GetString(reader.GetOrdinal("Linkedin_Account_Link"))
-                            };
-                        }
-                    }
-                        
-                }
+        // Get details of a specific candidate by ID
+        public async Task<DbModels.Candidate> GetApplicantForPostAsync(int candidateID)
+        {
+            if (candidateID <= 0)
+                return null;
 
-            }
-            return null;
+            // Retrieve the candidate directly from the database
+            var candidate = await _dbContext.candidates
+                .Where(c => c.CandidateID == candidateID)
+                .Select(c => new DbModels.Candidate
+                {
+                    CandidateID = c.CandidateID,
+                    FirstName = c.FirstName,
+                    LastName = c.LastName,
+                    Age = c.Age,
+                    NationalNumber = c.NationalNumber,
+                    PhoneNumber = c.PhoneNumber,
+                    Email = c.Email,
+                    ResumeLink = c.ResumeLink,
+                    Status = c.Status,
+                    LinkedinAccountLink = c.LinkedinAccountLink
+                })
+                .FirstOrDefaultAsync();
+
+            return candidate;
         }
             
         

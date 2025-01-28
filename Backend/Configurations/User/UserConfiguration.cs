@@ -25,7 +25,7 @@ namespace Backend.Configurations{
 
                 builder.Property(u=>u.PasswordHashed)
                         .IsRequired()
-                        .HasMaxLength(50);
+                        .HasMaxLength(255);
 
                 builder.Property(u=>u.Type)
                         .IsRequired()
