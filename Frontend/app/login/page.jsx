@@ -56,7 +56,7 @@ const LoginPage = () => {
                 const userType = response.data.userType
                 if (userType) {
                     if (userType === 'Owner') {
-                        window.location.href = '/dashboard/owner';  // Redirect to owner page
+                        window.location.href = '/dashboard/manager';  // Redirect to owner page
                     } else if (userType === 'Client') {
                         window.location.href = '/dashboard/client';   // Redirect to user page
                     } else if (userType === 'Coach') {

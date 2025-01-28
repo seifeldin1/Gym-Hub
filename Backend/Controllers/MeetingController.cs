@@ -14,7 +14,7 @@ namespace Backend.Controllers
         private readonly MeetingsServices meetingService;
         private readonly CoachesServices coachesServices;
 
-        public MeetingsController(NotificationServices notification, MeetingsServices meetingService , CoachesServices coachesServices)
+        public MeetingsController(NotificationServices notification, MeetingsServices meetingService, CoachesServices coachesServices)
         {
             this.notificationServices = notification;
             this.meetingService = meetingService;
@@ -22,41 +22,73 @@ namespace Backend.Controllers
         }
 
         [HttpPost("schedule")]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> ScheduleMeeting([FromBody] MeetingDetails meeting)
         {
-            meeting.CoachName = coachesServices.GetCoachName(meeting.Coach_ID);
-            var meetingScheduled = $"Coach {meeting.CoachName} has announced a meeting at {meeting.Time} with a title: {meeting.Title}";
-            await notificationServices.NotifyAllUsersAsync(meetingScheduled);
-
-            var result = meetingService.AddMeeting(meeting);
-            if (result.success)
+            try
             {
-                return Ok(new { message = "Meeting scheduled and notification sent successfully", meeting });
-            }
+                // Ensure Coach_ID and Title are valid
+                if (meeting.Coach_ID <= 0 || string.IsNullOrEmpty(meeting.Title) || meeting.Time == default)
+                {
+                    return BadRequest(new { message = "Invalid Coach ID, Title, or Time" });
+                }
 
-            return BadRequest(new { message = result.message });
+                // Add the new meeting in the service layer
+                var result = meetingService.AddMeeting(meeting);
+
+                // Check the result and return appropriate response
+                if (result.success)
+                {
+                    return Ok(new { message = "Meeting scheduled successfully", meeting });
+                }
+                else
+                {
+                    return BadRequest(new { message = result.message });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log exception (consider using a logging framework here)
+                return StatusCode(500, new { message = $"An error occurred: {ex.Message}" });
+            }
         }
+
 
         [HttpPut("update")]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> UpdateMeeting([FromBody] MeetingDetails meeting)
         {
-            meeting.CoachName = coachesServices.GetCoachName(meeting.Coach_ID);
-            var meetingUpdated = $"Coach: {meeting.CoachName} has updated the meeting: {meeting.Title} to be at {meeting.Time}";
-            await notificationServices.NotifyAllUsersAsync(meetingUpdated);
-
-            var result = meetingService.UpdateMeeting(meeting);
-            if (result.success)
+            try
             {
-                return Ok(new { message = "Meeting updated and notification sent successfully", meeting });
-            }
+                // Ensure Meeting_ID and Coach_ID are valid
+                if (meeting.Meeting_ID <= 0 || meeting.Coach_ID <= 0)
+                {
+                    return BadRequest(new { message = "Invalid Meeting ID or Coach ID" });
+                }
 
-            return BadRequest(new { message = result.message });
+                // Update the meeting in the service layer
+                var result = meetingService.UpdateMeeting(meeting);
+
+                // Check the result and return appropriate response
+                if (result.success)
+                {
+                    return Ok(new { message = "Meeting updated successfully", meeting });
+                }
+                else
+                {
+                    return BadRequest(new { message = result.message });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log exception (consider using a logging framework here)
+                return StatusCode(500, new { message = $"An error occurred: {ex.Message}" });
+            }
         }
 
+
         [HttpDelete]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> DeleteMeeting([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -77,7 +109,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("all")]
-        [Authorize(Roles = "Coach , Client")]
+        [Authorize(Roles = "Coach , Client, Owner")]
         public IActionResult GetMeetings()
         {
             var meetingList = meetingService.GetMeetings();
@@ -85,5 +117,5 @@ namespace Backend.Controllers
         }
     }
 
-    
+
 }

@@ -18,7 +18,7 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                 var userQuery = @"
+                var userQuery = @"
                     INSERT INTO User 
                     (Username,PasswordHashed,Type,First_Name,Last_Name,Email,Phone_Number,Gender,Age,National_Number)
                     VALUES (@Username,@PasswordHashed,@Type, @First_Name,@Last_Name,@Email,@Phone_Number,@Gender,@Age,@National_Number);
@@ -38,21 +38,21 @@ namespace Backend.Services
                     userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
                     userCommand.Parameters.AddWithValue("@Age", entry.Age);
                     userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
-                    int Branch_Manager_ID= (int)Convert.ToInt64(userCommand.ExecuteScalar());
+                    int Branch_Manager_ID = (int)Convert.ToInt64(userCommand.ExecuteScalar());
 
-                string query = @"INSERT INTO Branch_Manager 
+                    string query = @"INSERT INTO Branch_Manager 
                     (Branch_Manager_ID, Salary, Penalties, Bonuses, Hire_Date, Employee_Under_Supervision, Fire_Date, Manages_Branch_ID, Contract_Length)
                     VALUES (@Branch_Manager_ID, @Salary, @Penalties, @Bonuses, @Hire_Date, @Employee_Under_Supervision, @Fire_Date, @Manages_Branch_ID, @Contract_Length);";
 
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Branch_Manager_ID",Branch_Manager_ID);
-                    command.Parameters.AddWithValue("@Salary", entry.Salary);
-                    command.Parameters.AddWithValue("@Penalties", entry.Penalties);
-                    command.Parameters.AddWithValue("@Bonuses", entry.Bonuses);
-                    command.Parameters.AddWithValue("@Hire_Date", entry.Hire_Date.ToString("yyyy-MM-dd"));
-                    command.Parameters.AddWithValue("@Employee_Under_Supervision", entry.Employee_Under_Supervision);
-                    if (entry.Fire_Date.HasValue)
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Branch_Manager_ID", Branch_Manager_ID);
+                        command.Parameters.AddWithValue("@Salary", entry.Salary);
+                        command.Parameters.AddWithValue("@Penalties", entry.Penalties);
+                        command.Parameters.AddWithValue("@Bonuses", entry.Bonuses);
+                        command.Parameters.AddWithValue("@Hire_Date", entry.Hire_Date.ToString("yyyy-MM-dd"));
+                        command.Parameters.AddWithValue("@Employee_Under_Supervision", entry.Employee_Under_Supervision);
+                        if (entry.Fire_Date.HasValue)
                         {
                             command.Parameters.AddWithValue("@Fire_Date", entry.Fire_Date.Value.ToString("yyyy-MM-dd"));
                         }
@@ -60,19 +60,19 @@ namespace Backend.Services
                         {
                             command.Parameters.AddWithValue("@Fire_Date", DBNull.Value);
                         }
-                    command.Parameters.AddWithValue("@Manages_Branch_ID", entry.Manages_Branch_ID);
-                    command.Parameters.AddWithValue("@Contract_Length", entry.Contract_Length);
+                        command.Parameters.AddWithValue("@Manages_Branch_ID", entry.Manages_Branch_ID);
+                        command.Parameters.AddWithValue("@Contract_Length", entry.Contract_Length);
 
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                        return (true, "Branch Manager added successfully");
-                    else
-                        return (false, "Failed to add Branch Manager");
+                        int rowsAffected = command.ExecuteNonQuery();
+                        if (rowsAffected > 0)
+                            return (true, "Branch Manager added successfully");
+                        else
+                            return (false, "Failed to add Branch Manager");
+                    }
                 }
             }
         }
-        }
-           public (bool success, string message) UpdateBranchManager(BranchManagerUpdaterModel entry)
+        public (bool success, string message) UpdateBranchManager(BranchManagerUpdaterModel entry)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -132,7 +132,7 @@ namespace Backend.Services
                     userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
                 }
 
-                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;": null;
+                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;" : null;
 
                 userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
 
@@ -159,7 +159,7 @@ namespace Backend.Services
                     branchmanagerFields.Add("Hire_Date=@Hire_Date");
                     branchmanagerParameters.Add(new MySqlParameter("@Hire_Date", entry.Hire_Date.HasValue ? (object)entry.Hire_Date.Value.ToString("yyyy-MM-dd") : DBNull.Value));
                 }
-                 if (entry.Employee_Under_Supervision.HasValue)
+                if (entry.Employee_Under_Supervision.HasValue)
                 {
                     branchmanagerFields.Add("Employee_Under_Supervision=@Employee_Under_Supervision");
                     branchmanagerParameters.Add(new MySqlParameter("@Employee_Under_Supervision", entry.Employee_Under_Supervision));
@@ -174,7 +174,7 @@ namespace Backend.Services
                     branchmanagerFields.Add("Fire_Date=@Fire_Date");
                     branchmanagerParameters.Add(new MySqlParameter("@Fire_Date", DBNull.Value));
                 }
-               
+
                 if (entry.Manages_Branch_ID.HasValue)
                 {
                     branchmanagerFields.Add("Manages_Branch_ID=@Manages_Branch_ID");
@@ -186,7 +186,7 @@ namespace Backend.Services
                     branchmanagerParameters.Add(new MySqlParameter("@Contract_Length", entry.Contract_Length));
                 }
 
-                var branchmanagerQuery = branchmanagerFields.Count > 0 ? $"UPDATE Branch_Manager SET {string.Join(",", branchmanagerFields)} WHERE Branch_Manager_ID=@Branch_Manager_ID;": null;
+                var branchmanagerQuery = branchmanagerFields.Count > 0 ? $"UPDATE Branch_Manager SET {string.Join(",", branchmanagerFields)} WHERE Branch_Manager_ID=@Branch_Manager_ID;" : null;
 
                 branchmanagerParameters.Add(new MySqlParameter("@Branch_Manager_ID", entry.User_ID));
 
@@ -240,93 +240,129 @@ namespace Backend.Services
                 }
             }
         }
-         public (bool success, string message) ChangeBranchManager(int branchid,int branchmanagerid)
+        public (bool success, string message) ChangeBranchManager(int branchid, int branchmanagerid)
         {
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "UPDATE Branch_Manager SET Manages_Branch_ID=@Manages_Branch_ID WHERE Branch_Manager_ID=@Branch_Manager_ID;";
-                using (var command = new MySqlCommand(query, connection))
+
+                // Validate if the Branch Manager exists
+                string validationQuery = "SELECT COUNT(*) FROM Branch_Manager WHERE Branch_Manager_ID = @Branch_Manager_ID";
+                using (var validationCommand = new MySqlCommand(validationQuery, connection))
                 {
-                    command.Parameters.AddWithValue("@Manages_Branch_ID",branchid);
-                    command.Parameters.AddWithValue("@Branch_Manager_ID",branchmanagerid );
+                    validationCommand.Parameters.AddWithValue("@Branch_Manager_ID", branchmanagerid);
+                    var managerExists = Convert.ToInt32(validationCommand.ExecuteScalar()) > 0;
+
+                    if (!managerExists)
+                    {
+                        return (false, "Branch Manager ID is invalid.");
+                    }
+                }
+
+                // Validate if the Branch exists
+                string branchQuery = "SELECT COUNT(*) FROM Branch_Manager WHERE Manages_Branch_ID = @Manages_Branch_ID";
+                using (var branchCommand = new MySqlCommand(branchQuery, connection))
+                {
+                    branchCommand.Parameters.AddWithValue("@Manages_Branch_ID", branchid);
+                    var branchExists = Convert.ToInt32(branchCommand.ExecuteScalar()) > 0;
+
+                    if (!branchExists)
+                    {
+                        return (false, "Branch ID is invalid.");
+                    }
+                }
+
+                // Perform the update if both are valid
+                string updateQuery = "UPDATE Branch_Manager SET Manages_Branch_ID=@Manages_Branch_ID WHERE Branch_Manager_ID=@Branch_Manager_ID;";
+                using (var command = new MySqlCommand(updateQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@Manages_Branch_ID", branchid);
+                    command.Parameters.AddWithValue("@Branch_Manager_ID", branchmanagerid);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
-
                         return (true, $"Branch:{branchid} changed its Manager to :{branchmanagerid}");
                     }
                     else
                     {
-
-                        return (false, "Failed to Change Branch Manager");
+                        return (false, "Failed to Change Branch Manager.");
                     }
                 }
             }
-
         }
 
+
+
         //* GetBranchManager : Gets Branch Manager Data from Branch Manager Relation
-        public List<BranchManagerModel> GetBranchManager()
+        public List<BranchManagerModel> GetAllBranchManagers() // Get all Branch Managers
         {
-            var BranchManagerList = new List<BranchManagerModel>();
+            var branchManagers = new List<BranchManagerModel>();
+
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
+
+                // Query to fetch all branch managers and their associated user data
                 string query = @"
             SELECT bm.*, 
-            u.User_ID, u.Username, u.PasswordHashed,u.Type,u.First_Name, u.Last_Name, 
-            u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
+                u.User_ID, u.Username, u.PasswordHashed, u.Type, u.First_Name, 
+                u.Last_Name, u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
             FROM Branch_Manager bm
             INNER JOIN User u ON bm.Branch_Manager_ID = u.User_ID;";
+
                 using (var command = new MySqlCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
-                    {  
-                        while (reader.Read())
+                    {
+                        while (reader.Read()) // Loop through all the records
                         {
                             DateTime? Fire_Date = null;
                             if (!reader.IsDBNull(reader.GetOrdinal("Fire_Date")))
                             {
                                 Fire_Date = reader.GetDateTime(reader.GetOrdinal("Fire_Date"));
                             }
-                            BranchManagerList.Add(new BranchManagerModel
+
+                            var branchManager = new BranchManagerModel
                             {
-                                Branch_Manager_ID = reader.GetInt32("Branch_Manager_ID"),
-                                Salary = reader.GetInt32("Salary"),
-                                Penalties = reader.GetInt32("Penalties"),
-                                Bonuses = reader.GetInt32("Bonuses"),
+                                Branch_Manager_ID = reader.IsDBNull(reader.GetOrdinal("Branch_Manager_ID")) ? 0 : reader.GetInt32("Branch_Manager_ID"),
+                                Salary = reader.IsDBNull(reader.GetOrdinal("Salary")) ? 0 : reader.GetInt32("Salary"),
+                                Penalties = reader.IsDBNull(reader.GetOrdinal("Penalties")) ? 0 : reader.GetInt32("Penalties"),
+                                Bonuses = reader.IsDBNull(reader.GetOrdinal("Bonuses")) ? 0 : reader.GetInt32("Bonuses"),
                                 Hire_Date = DateOnly.FromDateTime(reader.GetDateTime("Hire_Date")),
-                                Employee_Under_Supervision = reader.GetInt32("Employee_Under_Supervision"),
+                                Employee_Under_Supervision = reader.IsDBNull(reader.GetOrdinal("Employee_Under_Supervision")) ? 0 : reader.GetInt32("Employee_Under_Supervision"),
                                 Fire_Date = Fire_Date.HasValue ? DateOnly.FromDateTime(Fire_Date.Value) : (DateOnly?)null,
-                                Manages_Branch_ID = reader.GetInt32("Manages_Branch_ID"),
-                                Contract_Length = reader.GetInt32("Contract_Length"),
-                                User_ID = reader.GetInt32("User_ID"),
-                                Username = reader.GetString("Username"),
-                                PasswordHashed = reader.GetString("PasswordHashed"),
-                                Type = reader.GetString("Type"),
-                                First_Name = reader.GetString("First_Name"),
-                                Last_Name = reader.GetString("Last_Name"),
-                                Email = reader.GetString("Email"),
-                                Phone_Number = reader.GetString("Phone_Number"),
-                                Gender = reader.GetString("Gender"),
-                                Age = reader.GetInt32("Age"),
-                                National_Number = reader.GetString("National_Number"),
-                            });
+                                Manages_Branch_ID = reader.IsDBNull(reader.GetOrdinal("Manages_Branch_ID")) ? 0 : reader.GetInt32("Manages_Branch_ID"),
+                                Contract_Length = reader.IsDBNull(reader.GetOrdinal("Contract_Length")) ? 0 : reader.GetInt32("Contract_Length"),
+                                User_ID = reader.IsDBNull(reader.GetOrdinal("User_ID")) ? 0 : reader.GetInt32("User_ID"),
+                                Username = reader.IsDBNull(reader.GetOrdinal("Username")) ? string.Empty : reader.GetString("Username"),
+                                PasswordHashed = reader.IsDBNull(reader.GetOrdinal("PasswordHashed")) ? string.Empty : reader.GetString("PasswordHashed"),
+                                Type = reader.IsDBNull(reader.GetOrdinal("Type")) ? string.Empty : reader.GetString("Type"),
+                                First_Name = reader.IsDBNull(reader.GetOrdinal("First_Name")) ? string.Empty : reader.GetString("First_Name"),
+                                Last_Name = reader.IsDBNull(reader.GetOrdinal("Last_Name")) ? string.Empty : reader.GetString("Last_Name"),
+                                Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? string.Empty : reader.GetString("Email"),
+                                Phone_Number = reader.IsDBNull(reader.GetOrdinal("Phone_Number")) ? string.Empty : reader.GetString("Phone_Number"),
+                                Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? string.Empty : reader.GetString("Gender"),
+                                Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age"),
+                                National_Number = reader.IsDBNull(reader.GetOrdinal("National_Number")) ? string.Empty : reader.GetString("National_Number"),
+                            };
+
+                            branchManagers.Add(branchManager); // Add each branch manager to the list
                         }
-                        return BranchManagerList;
                     }
                 }
             }
+
+            return branchManagers;
         }
+
         public BranchManagerModel GetBranchManagerById(int id) // Get Branch Manager Data by ID
         {
             var branchManager = new BranchManagerModel();
-            
+
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                
+
                 // Modify the query to fetch the branch manager by their ID
                 string query = @"
                     SELECT bm.*, 
@@ -335,7 +371,7 @@ namespace Backend.Services
                     FROM Branch_Manager bm
                     INNER JOIN User u ON bm.Branch_Manager_ID = u.User_ID
                     WHERE bm.Branch_Manager_ID = @BranchManagerId;"; // Filter by Branch_Manager_ID
-                
+
                 using (var command = new MySqlCommand(query, connection))
                 {
                     // Adding the parameter to avoid SQL injection
@@ -389,7 +425,7 @@ namespace Backend.Services
             return branchManager;
         }
 
-        public (bool success, string message) UpdateBranchManagerContract(int id ,int Contract)
+        public (bool success, string message) UpdateBranchManagerContract(int id, int Contract)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -397,8 +433,8 @@ namespace Backend.Services
                 string query = "UPDATE Branch_Manager SET Contract_Length=@Contract_Length WHERE Branch_Manager_ID=@Branch_Manager_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Contract_Length",Contract);
-                    command.Parameters.AddWithValue("@Branch_Manager_ID",id);
+                    command.Parameters.AddWithValue("@Contract_Length", Contract);
+                    command.Parameters.AddWithValue("@Branch_Manager_ID", id);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -417,6 +453,6 @@ namespace Backend.Services
 
 
         //* UpdateBranchManagerData : Update Branch Manager Data in Branch Manager relation
-        
+
     }
 }

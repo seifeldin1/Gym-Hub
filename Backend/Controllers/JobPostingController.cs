@@ -18,7 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult AddJobPost([FromBody] JobPost entry)
         {
             // Call the service method to add the Branch
@@ -49,7 +49,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManage, Owner")]
         public IActionResult DeleteJobPost([FromBody] GetByIDModel entry)
         {
              if (entry.id <= 0)
@@ -76,7 +76,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult UpdateJopPost([FromBody] JobPost entry)
         {
             // Call the service to update the JobPost

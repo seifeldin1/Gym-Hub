@@ -16,7 +16,7 @@ namespace Backend.Controllers
             this.equipmentsService = equipmentsService;
         }
         [HttpPost]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult AddEquipment([FromBody] EquipmentsModel entry)
         {
             // Call the service method to add the workout
@@ -100,7 +100,8 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-                [HttpPut("AssignEquipmentToBranch")]
+        [HttpPut("AssignEquipmentToBranch")]
+        [Authorize(Roles = "Owner , BranchManager")]
         public IActionResult AssignEquipmentToBranch([FromBody] AssigningModel entry)
         {
             // Call the service to Assign client To coach

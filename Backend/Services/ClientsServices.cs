@@ -79,10 +79,11 @@ namespace Backend.Services
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = "DELETE FROM User WHERE User_ID=@User_ID ;";
+                string query = "DELETE FROM User WHERE User_ID = @User_ID;";  // Use @User_ID in the query
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Id", id);
+                    command.Parameters.AddWithValue("@User_ID", id);  // Ensure the parameter name matches the one in the query
+
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                         return (true, "Client Deleted successfully");
@@ -91,6 +92,7 @@ namespace Backend.Services
                 }
             }
         }
+
 
         //* GetClient : Gets Client Data from Client Relation
         public List<ClientsModel> GetClient()
@@ -252,6 +254,7 @@ namespace Backend.Services
                 var userFields = new List<string>();
                 var userParameters = new List<MySqlParameter>();
 
+                Console.WriteLine("Hello");
                 if (!string.IsNullOrEmpty(entry.Username))
                 {
                     userFields.Add("Username=@Username");
@@ -303,13 +306,14 @@ namespace Backend.Services
                     userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
                 }
 
+                Console.WriteLine("Gere");
                 var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;" : null;
-
                 userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
+                Console.WriteLine("Mere EEE");
 
                 var clientFields = new List<string>();
                 var clientParameters = new List<MySqlParameter>();
-
+                Console.WriteLine("Mere EEE");
                 if (entry.Join_Date != default)
                 {
                     clientFields.Add("Join_Date=@Join_Date");
@@ -324,13 +328,16 @@ namespace Backend.Services
                 if (entry.Weight_kg > 0)
                 {
                     clientFields.Add("Weight_kg=@Weight_kg");
+                    Console.WriteLine("Mere EA Sprots");
                     clientParameters.Add(new MySqlParameter("@Weight_kg", entry.Weight_kg));
+                    Console.WriteLine("We are Entering Here");
                     string insertquery = "INSERT INTO Progress (Client_ID, Weight_kg)VALUES (@Client_ID, @Weight_kg);";
                     using (var command = new MySqlCommand(insertquery, connection))
                     {
                         command.Parameters.AddWithValue("@Client_ID", entry.User_ID);
                         command.Parameters.AddWithValue("@Weight_kg", entry.Weight_kg);
                         command.ExecuteNonQuery();
+                        Console.WriteLine(entry.User_ID);
                     }
                 }
                 if (entry.Height_cm > 0)
@@ -378,6 +385,7 @@ namespace Backend.Services
                 int rowsAffected1 = 0;
                 int rowsAffected2 = 0;
 
+                Console.WriteLine(clientQuery);
                 if (userQuery != null)
                 {
                     using (var userCommand = new MySqlCommand(userQuery, connection))
@@ -407,10 +415,11 @@ namespace Backend.Services
             }
         }
 
+
         public ClientsModel GetClientById(int id)
         {
             var client = new ClientsModel();
-            
+
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
@@ -473,6 +482,6 @@ namespace Backend.Services
             return client;
         }
 
-        
+
     }
 }

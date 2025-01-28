@@ -100,7 +100,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("woking-hours")]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult SetWorkingHours([FromBody] TimeModel time)
         {
             // Call the service to set new working Hours

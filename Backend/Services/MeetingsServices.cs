@@ -16,37 +16,53 @@ namespace Backend.Services
         }
         public (bool success, string message) AddMeeting(MeetingDetails entry)
         {
-            using (var connection = database.ConnectToDatabase())
+            try
             {
-                connection.Open();
-                string query = "INSERT INTO Meetings (Coach_ID,Title,Time) VALUES (@Coach_ID,@Title,@Time);";
-                using (var command = new MySqlCommand(query, connection))
+                using (var connection = database.ConnectToDatabase())
                 {
-                    command.Parameters.AddWithValue("@Coach_ID", entry.Coach_ID);
-                    command.Parameters.AddWithValue("@Title", entry.Title);
-                    command.Parameters.AddWithValue("@Time", entry.Time);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
+                    connection.Open();
+                    string query = "INSERT INTO Meetings (Coach_ID, Title, Time) VALUES (@Coach_ID, @Title, @Time);";
 
-                        return (true, "Meeting added successfully");
-                    }
-                    else
+                    using (var command = new MySqlCommand(query, connection))
                     {
+                        // Add parameters for query
+                        command.Parameters.AddWithValue("@Coach_ID", entry.Coach_ID);
+                        command.Parameters.AddWithValue("@Title", entry.Title);
+                        command.Parameters.AddWithValue("@Time", entry.Time);
 
-                        return (false, "Failed to add Meeting");
+                        // Execute the query and get the auto-generated Meeting_ID
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
+                        {
+                            // Get the last inserted Meeting_ID
+                            entry.Meeting_ID = (int)command.LastInsertedId;
+
+                            return (true, "Meeting added successfully");
+                        }
+                        else
+                        {
+                            return (false, "Failed to add Meeting");
+                        }
                     }
                 }
             }
-
+            catch (Exception ex)
+            {
+                return (false, $"An error occurred: {ex.Message}");
+            }
         }
 
-        public string GetMeetingTitle(int id){
-            using (var connection = database.ConnectToDatabase()){
+
+        public string GetMeetingTitle(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
                 connection.Open();
                 string title;
                 string query = "SELECT Title FROM Meetings WHERE Meeting_ID = @ID";
-                using (var command = new MySqlCommand(query, connection)){
+                using (var command = new MySqlCommand(query, connection))
+                {
                     command.Parameters.AddWithValue("@ID", id);
                     using (var reader = command.ExecuteReader())
                     {
@@ -56,7 +72,7 @@ namespace Backend.Services
                         }
                         else
                         {
-                            title=null;
+                            title = null;
                         }
                     }
                 }
@@ -105,7 +121,7 @@ namespace Backend.Services
                             meetingsList.Add(new MeetingDetails
                             {
                                 Meeting_ID = reader.GetInt32("Meeting_ID"),
-                                Coach_ID= reader.GetInt32("Coach_ID"),
+                                Coach_ID = reader.GetInt32("Coach_ID"),
                                 Title = reader.GetString("Title"),
                                 Time = reader.GetDateTime("Time"),
                             });
@@ -120,30 +136,59 @@ namespace Backend.Services
 
         public (bool success, string message) UpdateMeeting(MeetingDetails entry)
         {
-            using (var connection = database.ConnectToDatabase())
+            try
             {
-                connection.Open();
-                string query = "UPDATE Meetings SET Coach_ID=@Coach_ID,Title=@Title,Time=@Time  WHERE Meeting_ID=@Meeting_ID;";
-                using (var command = new MySqlCommand(query, connection))
+                using (var connection = database.ConnectToDatabase())
                 {
-                    command.Parameters.AddWithValue("@Coach_ID", entry.Coach_ID);
-                    command.Parameters.AddWithValue("@Title", entry.Title);
-                    command.Parameters.AddWithValue("@Time", entry.Time);
-                    command.Parameters.AddWithValue("@Meeting_ID", entry.Meeting_ID);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
+                    connection.Open();
 
-                        return (true, "Workout Updated successfully");
+                    // Ensure Meeting_ID is valid
+                    if (entry.Meeting_ID <= 0)
+                    {
+                        return (false, "Invalid Meeting ID");
                     }
-                    else
-                    {
 
-                        return (false, "Failed to Update Workout");
+                    // Update query for updating the meeting
+                    string query = @"
+                UPDATE Meetings
+                SET Coach_ID = @Coach_ID, Title = @Title, Time = @Time
+                WHERE Meeting_ID = @Meeting_ID;
+            ";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        // Add parameters for the query
+                        command.Parameters.AddWithValue("@Coach_ID", entry.Coach_ID);
+                        command.Parameters.AddWithValue("@Title", entry.Title);
+                        command.Parameters.AddWithValue("@Time", entry.Time);
+                        command.Parameters.AddWithValue("@Meeting_ID", entry.Meeting_ID);
+
+                        // Execute the query
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        // Check if any rows were affected
+                        if (rowsAffected > 0)
+                        {
+                            return (true, "Meeting updated successfully");
+                        }
+                        else
+                        {
+                            return (false, "Failed to update meeting: No matching record found");
+                        }
                     }
                 }
             }
-
+            catch (MySqlException ex)
+            {
+                // Log the exception (consider logging it to a file or monitoring tool)
+                return (false, $"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Catch any other exceptions
+                return (false, $"An error occurred: {ex.Message}");
+            }
         }
+
     }
 }
