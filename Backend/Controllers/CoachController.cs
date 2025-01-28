@@ -18,7 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("add")]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult AddCoach([FromBody] CoachModel entry)
         {
             var result = coachservice.AddCoach(entry);
@@ -139,7 +139,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("UpdateCoachStatus")]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public IActionResult UpdateStatus([FromBody] updatingStatus entry)
         {
             if (entry.id <= 0)
@@ -165,7 +165,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("UpdateCoachContract")]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult UpdateCoachContract([FromBody] updatingContract entry)
         {
             if (entry.id <= 0)
@@ -192,9 +192,13 @@ namespace Backend.Controllers
 
         [HttpGet("ViewMyClients")]
         [Authorize(Roles = "Coach, Owner")]
-        public IActionResult ViewMyClients([FromQuery] int id)
+        public IActionResult ViewMyClients([FromBody] ClientRequestModel request)
         {
-            var clientList = coachservice.ViewMyClients(id);
+            var clientList = coachservice.ViewMyClients(request.Id);
+            if (clientList == null || clientList.Count == 0)
+            {
+                return NotFound(new { success = false, message = "No clients found for the specified coach." });
+            }
             return Ok(clientList);
         }
 
@@ -216,5 +220,11 @@ namespace Backend.Controllers
         public int id { get; set; }
         public int Contract { get; set; }
     }
+
+    public class ClientRequestModel
+    {
+        public int Id { get; set; }
+    }
+
 
 }

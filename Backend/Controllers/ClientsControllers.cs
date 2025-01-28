@@ -41,7 +41,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("addrating")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client, Owner")]
         public IActionResult AddRating([FromBody] RatingModel entry)
         {   
             var result = ClientsService.AddRateCoach(entry);
@@ -63,7 +63,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("/Solo")]
-        [Authorize(Roles = "Coach , Client")]
+        [Authorize(Roles = "Coach , Clientm Owner")]
         public IActionResult GetClientById([FromBody] GetByIDModel c){
             var result = ClientsService.GetClientById(c.id);
             return Ok(result);
@@ -81,7 +81,7 @@ namespace Backend.Controllers
         
 
         [HttpPut("UpdateClient")]
-        [Authorize(Roles = "Client")]
+        [Authorize(Roles = "Client, Owner")]
         public IActionResult UpdateClient([FromBody] ClientUpdaterModel entry)
         {
             // Call the service to Assign client To coach
@@ -105,7 +105,7 @@ namespace Backend.Controllers
 
 
         [HttpPut("ActiveAccount")]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult ActiveAccount([FromBody] activeModel activ)
         {
             var result = ClientsService.ActiveAccount(activ.Client_ID);            // Return success response after update
@@ -127,7 +127,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("DeactiveAccount")]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult DeactiveAccount([FromBody] activeModel activ)
         {
             var result = ClientsService.DeactiveAccount(activ.Client_ID);            // Return success response after update
@@ -149,7 +149,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult DeleteClient([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -176,7 +176,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("AssignClientToCoach")]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult AssignClientToCoach([FromBody] CTC ctc)
         {
             // Call the service to Assign client To coach

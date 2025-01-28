@@ -14,7 +14,7 @@ namespace Backend.Controllers{
         }
 
         [HttpPut("Coach")]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult AddPenaltyToCoach([FromBody] PenaltyModel penalty){
             var result = PenaltyServices.AddPenaltyToCoach(penalty.Penalties,penalty.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});

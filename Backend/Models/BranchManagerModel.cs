@@ -1,5 +1,3 @@
-using Org.BouncyCastle.Asn1.Cms;
-
 namespace Backend.Models
 {
     public class BranchManagerModel : UserModel
@@ -11,7 +9,10 @@ namespace Backend.Models
         public DateOnly Hire_Date { get; set; }
         public int Employee_Under_Supervision { get; set; }
         public DateOnly? Fire_Date { get; set; }
-        public int Manages_Branch_ID { get; set; }
+        
+        // Updated this to nullable (int?)
+        public int? Manages_Branch_ID { get; set; }
+        
         public int Contract_Length { get; set; }
     }
 }

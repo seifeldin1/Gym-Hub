@@ -13,7 +13,7 @@ namespace Backend.Controllers{
             this.BonusServices = BonusServices;
         }
         [HttpPut("Coach")]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult AddBonusToCoach([FromBody] BounsModel bouns){
             var result = BonusServices.AddBonusToCoach(bouns.Bouns,bouns.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});

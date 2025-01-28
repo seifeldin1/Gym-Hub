@@ -47,7 +47,7 @@ namespace Backend.Controllers
         }
         
         [HttpPut("UpdateBranchManager")]
-        [Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public IActionResult UpdateBranchManager([FromBody] BranchManagerUpdaterModel entry)
         {
             // Call the service to update the Branch
@@ -99,7 +99,7 @@ namespace Backend.Controllers
         [Authorize(Roles = "Owner , BranchManager")]
         public IActionResult GetBranchManagers()
         {
-            var branchmanagerList = branchmanagersService.GetBranchManager();
+            var branchmanagerList = branchmanagersService.GetAllBranchManagers();
             return Ok(branchmanagerList);
         }
 

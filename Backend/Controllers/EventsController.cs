@@ -15,7 +15,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Coach , BranchManager")]
+        [Authorize(Roles = "Coach , BranchManager, Owner")]
         public IActionResult CreateEvent([FromBody] Events events){
             var result = eventService.AddEvent(events);
             if(result.success) return Ok(new {success = result.success , message = result.message});
@@ -24,7 +24,7 @@ namespace Backend.Controllers
 
 
         [HttpPut]
-        [Authorize(Roles = "Coach , BranchManager")]
+        [Authorize(Roles = "Coach , BranchManager, Owner")]
         public IActionResult UpdateEvent([FromBody] Events events){
             var result = eventService.UpdateEvent(events);
             if(result.success) return Ok(new {success = result.success , message = result.message});
@@ -33,7 +33,7 @@ namespace Backend.Controllers
 
 
         [HttpDelete]
-        [Authorize(Roles = "Coach , BranchManager")]
+        [Authorize(Roles = "Coach , BranchManager, Owner")]
         public IActionResult DeleteEvent(GetByIDModel getByIDModel)
         {
             var result = eventService.DeleteEvent(getByIDModel.id);

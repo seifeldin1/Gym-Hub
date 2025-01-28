@@ -119,13 +119,13 @@ namespace Backend.Services
                             CoachList.Add(new CoachModel
                             {
                                 Coach_ID = reader.GetInt32("Coach_ID"),
-                                Salary =  reader.GetInt32("Salary"),
+                                Salary = reader.GetInt32("Salary"),
                                 Penalties = reader.GetInt32("Penalties"),
-                                Bonuses =  reader.GetInt32("Bonuses"),
+                                Bonuses = reader.GetInt32("Bonuses"),
                                 Hire_Date = DateOnly.FromDateTime(reader.GetDateTime("Hire_Date")),
                                 Fire_Date = Fire_Date.HasValue ? DateOnly.FromDateTime(Fire_Date.Value) : (DateOnly?)null,
-                                Experience_Years =  reader.IsDBNull(reader.GetOrdinal("Experience_Years")) ? null : reader.GetInt32("Experience_Years"),
-                                Works_For_Branch =  reader.IsDBNull(reader.GetOrdinal("Works_For_Branch")) ? null : reader.GetInt32("Works_For_Branch"),
+                                Experience_Years = reader.IsDBNull(reader.GetOrdinal("Experience_Years")) ? null : reader.GetInt32("Experience_Years"),
+                                Works_For_Branch = reader.IsDBNull(reader.GetOrdinal("Works_For_Branch")) ? null : reader.GetInt32("Works_For_Branch"),
                                 Daily_Hours_Worked = reader.GetInt32("Daily_Hours_Worked"),
                                 Shift_Start = reader.IsDBNull(reader.GetOrdinal("Shift_Start")) ? (TimeSpan?)null : reader.GetTimeSpan("Shift_Start"),
                                 Shift_Ends = reader.IsDBNull(reader.GetOrdinal("Shift_Ends")) ? (TimeSpan?)null : reader.GetTimeSpan("Shift_Ends"),
@@ -238,7 +238,7 @@ namespace Backend.Services
                     userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
                 }
 
-                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;": null;
+                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;" : null;
 
                 userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
 
@@ -316,7 +316,7 @@ namespace Backend.Services
                     coachParameters.Add(new MySqlParameter("@Contract_Length", entry.Contract_Length));
                 }
 
-                var coachQuery = coachFields.Count > 0 ? $"UPDATE Coach SET {string.Join(",", coachFields)} WHERE Coach_ID=@Coach_ID;": null;
+                var coachQuery = coachFields.Count > 0 ? $"UPDATE Coach SET {string.Join(",", coachFields)} WHERE Coach_ID=@Coach_ID;" : null;
 
                 coachParameters.Add(new MySqlParameter("@Coach_ID", entry.User_ID));
 
@@ -352,7 +352,7 @@ namespace Backend.Services
             }
         }
 
-        public (bool success, string message) UpdateCoachStatus(int id ,string Status)
+        public (bool success, string message) UpdateCoachStatus(int id, string Status)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -360,8 +360,8 @@ namespace Backend.Services
                 string query = "UPDATE Coach SET Status=@Status WHERE Coach_ID=@Coach_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Status",Status);
-                    command.Parameters.AddWithValue("@Coach_ID",id);
+                    command.Parameters.AddWithValue("@Status", Status);
+                    command.Parameters.AddWithValue("@Coach_ID", id);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -377,7 +377,7 @@ namespace Backend.Services
             }
 
         }
-        public (bool success, string message) UpdateCoachContract(int id ,int Contract)
+        public (bool success, string message) UpdateCoachContract(int id, int Contract)
         {
             using (var connection = database.ConnectToDatabase())
             {
@@ -385,8 +385,8 @@ namespace Backend.Services
                 string query = "UPDATE Coach SET Contract_Length=@Contract_Length WHERE Coach_ID=@Coach_ID;";
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Contract_Length",Contract);
-                    command.Parameters.AddWithValue("@Coach_ID",id);
+                    command.Parameters.AddWithValue("@Contract_Length", Contract);
+                    command.Parameters.AddWithValue("@Coach_ID", id);
                     int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)
                     {
@@ -406,11 +406,11 @@ namespace Backend.Services
         public CoachModel GetCoachById(int id) // Get Coach Data by Coach ID
         {
             var coach = new CoachModel();
-            
+
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                
+
                 // Modify the query to fetch the coach by its ID
                 string query = @"
                     SELECT c.*, 
@@ -419,7 +419,7 @@ namespace Backend.Services
                     FROM Coach c 
                     LEFT JOIN User u ON c.Coach_ID = u.User_ID
                     WHERE c.Coach_ID = @CoachId;";  // Filter by coach ID
-                
+
                 using (var command = new MySqlCommand(query, connection))
                 {
                     // Adding the parameter to avoid SQL injection
@@ -480,12 +480,15 @@ namespace Backend.Services
 
 
 
-        public string GetCoachName(int id){
-            using (var connection = database.ConnectToDatabase()){
+        public string GetCoachName(int id)
+        {
+            using (var connection = database.ConnectToDatabase())
+            {
                 connection.Open();
-                string coachQuery= "Select CONCAT(FirstName, ' ', LastName) AS FullName FROM User WHERE User_ID = @coachID";
+                string coachQuery = "Select CONCAT(FirstName, ' ', LastName) AS FullName FROM User WHERE User_ID = @coachID";
                 string CoachName;
-                using(var coachCommand = new MySqlCommand(coachQuery , connection)){
+                using (var coachCommand = new MySqlCommand(coachQuery, connection))
+                {
                     coachCommand.Parameters.AddWithValue("@coachID", id);
                     using (var reader = coachCommand.ExecuteReader())
                     {
@@ -495,7 +498,7 @@ namespace Backend.Services
                         }
                         else
                         {
-                            CoachName=null;
+                            CoachName = null;
                         }
                     }
                 }
@@ -506,18 +509,37 @@ namespace Backend.Services
         public List<ClientAssignedModel> ViewMyClients(int id)
         {
             var ClientsList = new List<ClientAssignedModel>();
+
+            // Log the input id for debugging
+            Console.WriteLine("Coach ID passed to query: " + id);
+
             using (var connection = database.ConnectToDatabase())
             {
                 connection.Open();
-                string query = @"SELECT u.User_ID, CONCAT(u.First_Name, ' ' , u.Last_Name) AS FullName, u.Email, u.Phone_Number
-                , u.Gender, u.Age, c.BMR , c.Weight_kg , c.Height_cm , c.Membership_Type FROM Client c, User u  WHERE c.Client_ID= u.User_ID AND Belong_To_Coach_ID = @Belong_To_Coach_ID ;";
+                string query = @"
+            SELECT u.User_ID, 
+                   CONCAT(u.First_Name, ' ' , u.Last_Name) AS FullName, 
+                   u.Email, 
+                   u.Phone_Number, 
+                   u.Gender, 
+                   u.Age, 
+                   c.BMR, 
+                   c.Weight_kg, 
+                   c.Height_cm, 
+                   c.Membership_Type 
+            FROM Client c 
+            JOIN User u 
+                ON c.Client_ID = u.User_ID 
+            WHERE c.Belong_To_Coach_ID = @Belong_To_Coach_ID;";
+
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@Belong_To_Coach_ID",id);
+                    // Corrected parameter name to match the query placeholder
+                    command.Parameters.AddWithValue("@Belong_To_Coach_ID", id);
+
                     using (var reader = command.ExecuteReader())
                     {
-                        //The while loop iterates through each row of the query result.
-                        //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
+                        // The while loop iterates through each row of the query result
                         while (reader.Read())
                         {
                             ClientsList.Add(new ClientAssignedModel
@@ -527,18 +549,21 @@ namespace Backend.Services
                                 Email = reader.GetString("Email"),
                                 Phone_Number = reader.GetString("Phone_Number"),
                                 Gender = reader.GetString("Gender"),
-                                Age=  reader.IsDBNull(reader.GetOrdinal("Age")) ? null: reader.GetInt32("Age"),
-                                BMR=  reader.IsDBNull(reader.GetOrdinal("BMR")) ? null: reader.GetInt32("BMR"),
-                                Weight_kg=  reader.IsDBNull(reader.GetOrdinal("Weight_kg")) ? null: reader.GetInt32("Weight_kg"),
-                                Height_cm=  reader.IsDBNull(reader.GetOrdinal("Height_cm")) ? null: reader.GetInt32("Height_cm"),
+                                Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? null : reader.GetInt32("Age"),
+                                BMR = reader.IsDBNull(reader.GetOrdinal("BMR")) ? null : reader.GetInt32("BMR"),
+                                Weight_kg = reader.IsDBNull(reader.GetOrdinal("Weight_kg")) ? null : reader.GetInt32("Weight_kg"),
+                                Height_cm = reader.IsDBNull(reader.GetOrdinal("Height_cm")) ? null : reader.GetInt32("Height_cm"),
                                 Membership_Type = reader.GetString("Membership_Type"),
                             });
                         }
+
+                        // Return the populated list
                         return ClientsList;
                     }
                 }
             }
         }
+
     }
 }
 

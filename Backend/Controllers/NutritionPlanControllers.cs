@@ -18,7 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("add")]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public IActionResult AddNutritionPlan([FromBody] NutritionPlanModel entry)
         {
             // Call the service method to add the NutritionPlan
@@ -40,14 +40,14 @@ namespace Backend.Controllers
             });
         }
         [HttpGet]
-        [Authorize(Roles = "Coach,Client")]
+        [Authorize(Roles = "Coach,Client, Owner")]
         public IActionResult GetNutritionPlans()
         {
             var nutritionplanList = NutritionPlanService.GetNutritionPlans();
             return Ok(nutritionplanList);
         }
         [HttpDelete]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public IActionResult DeleteNutritionPlan([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -71,7 +71,7 @@ namespace Backend.Controllers
             });
         }
         [HttpPut]
-        [Authorize(Roles = "Coach")]
+        [Authorize(Roles = "Coach, Owner")]
         public IActionResult UpdateNutrition([FromBody] NutritionPlanModel entry)
         {
             // Call the service to update the Branch
