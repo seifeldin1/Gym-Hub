@@ -13,17 +13,17 @@ namespace Backend.Controllers{
             this.BonusServices = BonusServices;
         }
         [HttpPut("Coach")]
-        [Authorize(Roles = "BranchManager, Owner")]
-        public IActionResult AddBonusToCoach([FromBody] BounsModel bouns){
-            var result = BonusServices.AddBonusToCoach(bouns.Bouns,bouns.Id);
+        //[Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> AddBonusToCoach([FromBody] BounsModel bouns){
+            var result = await BonusServices.AddBonusToCoachAsync(bouns.Bouns,bouns.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});
             return BadRequest(new{success = result.success , message = result.message });
         }
 
         [HttpPut("Branch-Manager")]
-        [Authorize(Roles = "Owner")]
-        public IActionResult AddBonusToBranchManager([FromBody] BounsModel bouns){
-            var result = BonusServices.AddBonusToBranchManager(bouns.Bouns,bouns.Id);
+        //[Authorize(Roles = "Owner")]
+        public async Task<IActionResult> AddBonusToBranchManager([FromBody] BounsModel bouns){
+            var result = await BonusServices.AddBonusToBranchManagerAsync(bouns.Bouns,bouns.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});
             return Unauthorized(new{success = result.success , message = result.message });
         }

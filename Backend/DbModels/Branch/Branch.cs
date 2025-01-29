@@ -4,6 +4,7 @@ namespace Backend.DbModels{
         public string Branch_Name { get; set; }
         public string? Location { get; set; }
         public TimeOnly Opening_Hour { get; set; }
+        public int Branch_Manager_ID {get; set;}
         public TimeOnly Closing_Hour { get; set; }
         public ICollection<Coach> Coaches { get; set; }
         public ICollection<Branch_Manager> Branch_Managers { get; set; }

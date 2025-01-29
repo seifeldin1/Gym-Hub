@@ -10,19 +10,19 @@ namespace Backend.Controllers
     [Route("api/Branch")]
     public class BranchController : ControllerBase
     {
-        private readonly Branch branchService;
+        private readonly BranchService branchService;
 
-        public BranchController(Branch branchService)
+        public BranchController(BranchService branchService)
         {
             this.branchService = branchService;
         }
 
         [HttpPost]
-        [Authorize(Roles = "Owner")]
-        public IActionResult AddBranch([FromBody] BranchModel entry)
+        //[Authorize(Roles = "Owner")]
+        public async Task<IActionResult> AddBranch([FromBody] BranchModel entry)
         {
             // Call the service method to add the Branch
-            var result = branchService.AddBranch(entry);
+            var result = await branchService.AddBranchAsync(entry);
             if (result.success)
             {
                 return Ok(new
@@ -41,22 +41,22 @@ namespace Backend.Controllers
             // Return the JSON result
         }
         [HttpGet]
-        [Authorize(Roles = "Owner")]
-        public IActionResult GetBranches()
+        //[Authorize(Roles = "Owner")]
+        public async Task<IActionResult> GetBranches()
         {
-            var branchList = branchService.GetBranches();
+            var branchList = await branchService.GetBranchesAsync();
             return Ok(branchList);
         }
 
         [HttpDelete]
-        [Authorize(Roles = "Owner")]
-        public IActionResult DeleteBranch([FromBody] GetByIDModel entry)
+        //[Authorize(Roles = "Owner")]
+        public async Task<IActionResult> DeleteBranch([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Branch ID provided." });
             }
-            var result = branchService.DeleteBranch(entry.id);
+            var result = await branchService.DeleteBranchAsync(entry.id);
             // Return success response after deletion
             if (result.success)
             {
@@ -76,11 +76,11 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Owner")]
-        public IActionResult UpdateBranch([FromBody] BranchModel UpdatedBranch)
+        //[Authorize(Roles = "Owner")]
+        public async Task<IActionResult> UpdateBranch([FromBody] BranchModel UpdatedBranch)
         {
             // Call the service to update the Branch
-            var result = branchService.UpdateBranch(UpdatedBranch);
+            var result = await branchService.UpdateBranchAsync(UpdatedBranch);
             // Return success response after update
             if (result.success)
             {
@@ -100,11 +100,11 @@ namespace Backend.Controllers
         }
 
         [HttpPut("woking-hours")]
-        [Authorize(Roles = "BranchManager, Owner")]
-        public IActionResult SetWorkingHours([FromBody] TimeModel time)
+        //[Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> SetWorkingHours([FromBody] TimeModel time)
         {
             // Call the service to set new working Hours
-            var result = branchService.SetWorkingHours(time.BranchId,time.opt,time.clt);            // Return success response after update
+            var result = await branchService.SetWorkingHoursAsync(time.BranchId,time.opt,time.clt);            // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -125,8 +125,8 @@ namespace Backend.Controllers
     }
 
     public class TimeModel{
-        public TimeSpan opt { get; set; }
-        public TimeSpan clt { get; set; }
+        public TimeOnly opt { get; set; }
+        public TimeOnly clt { get; set; }
         public int BranchId {get; set;}
 
     }

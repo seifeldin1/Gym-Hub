@@ -1,4 +1,3 @@
-using Backend.Services;
 
 namespace Backend.DbModels{
     public class Branch_Manager{

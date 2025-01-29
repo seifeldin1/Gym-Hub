@@ -68,7 +68,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Register application services
 // builder.Services.AddScoped<CredentialServices>();
-// builder.Services.AddScoped<ApplicationServices>();
+ builder.Services.AddScoped<ApplicationServices>();
 // builder.Services.AddScoped<Workout>();
 // builder.Services.AddScoped<Supplements>();
 // builder.Services.AddScoped<Branch>();

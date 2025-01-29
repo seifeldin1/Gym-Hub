@@ -10,17 +10,17 @@ namespace Backend.Controllers
     [Route("api/BranchManager")]
     public class BranchManagerController : ControllerBase
     {
-        private readonly BranchManagers branchmanagersService;
+        private readonly BranchManagerServices branchmanagersService;
 
-        public BranchManagerController(BranchManagers branchmanagersService)
+        public BranchManagerController(BranchManagerServices branchmanagersService)
         {
             this.branchmanagersService = branchmanagersService;
         }
         [HttpPost("add")]
-        [Authorize(Roles = "Owner")]
-        public IActionResult AddBranchManager([FromBody] BranchManagerModel entry)
+        //[Authorize(Roles = "Owner")]
+        public async Task<IActionResult> AddBranchManager([FromBody] BranchManagerModel entry)
         {
-            var result = branchmanagersService.AddBranchManager(entry);
+            var result = await branchmanagersService.AddBranchManagerAsync(entry);
             if (result.success)
             {
                 return Ok(new
@@ -40,18 +40,18 @@ namespace Backend.Controllers
         }
 
         [HttpGet("Solo")]
-        [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult GetBranchManagers([FromBody] GetByIDModel manager){
-            var result = branchmanagersService.GetBranchManagerById(manager.id);
+        //[Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> GetBranchManagers([FromBody] GetByIDModel manager){
+            var result = await branchmanagersService.GetBranchManagerByIdAsync(manager.id);
             return Ok(result);
         }
         
         [HttpPut("UpdateBranchManager")]
-        [Authorize(Roles = "BranchManager, Owner")]
-        public IActionResult UpdateBranchManager([FromBody] BranchManagerUpdaterModel entry)
+        //[Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> UpdateBranchManager([FromBody] BranchManagerUpdaterModel entry)
         {
             // Call the service to update the Branch
-            var result = branchmanagersService.UpdateBranchManager(entry);
+            var result = await branchmanagersService.UpdateBranchManagerAsync(entry);
             // Return success response after update
             if (result.success)
             {
@@ -71,13 +71,13 @@ namespace Backend.Controllers
         }
         [HttpDelete]
         [Authorize(Roles = "Owner")]
-        public IActionResult DeleteBranchManager([FromBody] GetByIDModel entry)
+        public async Task<IActionResult> DeleteBranchManager([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Branch Manager  ID provided." });
             }
-            var result = branchmanagersService.DeleteBranchManager(entry.id);
+            var result = await branchmanagersService.DeleteBranchManagerAsync(entry.id);
             // Return success response after deletion
             if (result.success)
             {
@@ -96,19 +96,19 @@ namespace Backend.Controllers
             });
         }
         [HttpGet]
-        [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult GetBranchManagers()
+        //[Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> GetBranchManagers()
         {
-            var branchmanagerList = branchmanagersService.GetAllBranchManagers();
+            var branchmanagerList = await branchmanagersService.GetBranchManagersAsync();
             return Ok(branchmanagerList);
         }
 
         [HttpPut("ChangeBranchManager")]
-        [Authorize(Roles = "Owner")]
-        public IActionResult ChangeBranchManager([FromBody] ChangingManagerModel entry)
+        //[Authorize(Roles = "Owner")]
+        public async Task<IActionResult> ChangeBranchManager([FromBody] ChangingManagerModel entry)
         {
             // Call the service to update the Branch
-            var result = branchmanagersService.ChangeBranchManager(entry.branchid, entry.branchmanagerid);            // Return success response after update
+            var result = await branchmanagersService.ChangeBranchManagerAsync(entry.branchid, entry.branchmanagerid);            // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -126,14 +126,14 @@ namespace Backend.Controllers
             });
         }
         [HttpPut("UpdateBranchManagerContract")]
-        [Authorize(Roles = "Owner")]
-        public IActionResult UpdateBranchManagerContract([FromBody] updatingContract entry)
+        //[Authorize(Roles = "Owner")]
+        public async Task<IActionResult> UpdateBranchManagerContract([FromBody] updatingContract entry)
         {
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Coach ID provided." });
             }
-            var result = branchmanagersService.UpdateBranchManagerContract(entry.id,entry.Contract);         // Return success response after update
+            var result = await branchmanagersService.UpdateBranchManagerContractAsync(entry.id,entry.Contract);         // Return success response after update
             if (result.success)
             {
                 return Ok(new

@@ -20,11 +20,11 @@ namespace Backend.Controllers
         [HttpPost("add")]
         public IActionResult AddUser([FromBody] UserModel entry)
         {
-            if (!string.IsNullOrEmpty(entry.National_Number))
+            if (entry.National_Number>0)
             {
                 try
                 {
-                    var nationalNumber = BigInteger.Parse(entry.National_Number);
+                    var nationalNumber = entry.National_Number;
                 }
                 catch
                 {

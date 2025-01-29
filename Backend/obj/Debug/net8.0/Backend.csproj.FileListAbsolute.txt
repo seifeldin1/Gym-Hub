@@ -81,6 +81,7 @@
 <<<<<<< HEAD
 =======
 >>>>>>> bc675e2083eed48ea700447aa7ca9a2c3e2081c1
+>>>>>>> 3f92f0977380d18be7728e1091ee106f1683da36
 E:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\appsettings.Development.json
 E:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\appsettings.json
 E:\My_Database_Project\Gym-Hub\Backend\bin\Debug\net8.0\Backend.staticwebassets.runtime.json
@@ -221,4 +222,3 @@ E:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\refint\Backend.dll
 E:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.pdb
 E:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\Backend.genruntimeconfig.cache
 E:\My_Database_Project\Gym-Hub\Backend\obj\Debug\net8.0\ref\Backend.dll
->>>>>>> 3f92f0977380d18be7728e1091ee106f1683da36

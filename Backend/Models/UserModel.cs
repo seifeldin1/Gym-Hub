@@ -14,6 +14,6 @@ namespace Backend.Models
         public string Phone_Number { get; set; }
         public string Gender { get; set; }
         public int Age { get; set; }
-        public string National_Number { get; set; }
+        public long National_Number { get; set; }
     }
 }

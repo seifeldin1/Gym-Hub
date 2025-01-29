@@ -127,7 +127,7 @@ namespace Backend.Services
                     userFields.Add("Age=@Age");
                     userParameters.Add(new MySqlParameter("@Age", entry.Age));
                 }
-                if (!string.IsNullOrEmpty(entry.National_Number))
+                if (entry.National_Number>0)
                 {
                     userFields.Add("National_Number=@National_Number");
                     userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
@@ -219,7 +219,7 @@ namespace Backend.Services
                                 Phone_Number = reader.GetString("Phone_Number"),
                                 Gender = reader.GetString("Gender"),
                                 Age = reader.GetInt32("Age"),
-                                National_Number = reader.GetString("National_Number"),
+                                National_Number = reader.GetInt64("National_Number"),
                             });
                         }
                         return ownerList;

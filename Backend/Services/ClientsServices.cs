@@ -139,7 +139,7 @@ namespace Backend.Services
                                 Phone_Number = reader.GetString("Phone_Number"),
                                 Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? null : reader.GetString("Gender"),
                                 Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age"),
-                                National_Number = reader.GetString("National_Number"),
+                                National_Number = reader.GetInt64("National_Number"),
 
                             });
                         }
@@ -300,7 +300,7 @@ namespace Backend.Services
                     userFields.Add("Age=@Age");
                     userParameters.Add(new MySqlParameter("@Age", entry.Age));
                 }
-                if (!string.IsNullOrEmpty(entry.National_Number))
+                if (entry.National_Number>0)
                 {
                     userFields.Add("National_Number=@National_Number");
                     userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
@@ -468,7 +468,7 @@ namespace Backend.Services
                             client.Phone_Number = reader.GetString("Phone_Number");
                             client.Gender = reader.IsDBNull(reader.GetOrdinal("Gender")) ? null : reader.GetString("Gender");
                             client.Age = reader.IsDBNull(reader.GetOrdinal("Age")) ? 0 : reader.GetInt32("Age");
-                            client.National_Number = reader.GetString("National_Number");
+                            client.National_Number = reader.GetInt64("National_Number");
                         }
                         else
                         {
