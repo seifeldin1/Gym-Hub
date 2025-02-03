@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,11 @@ namespace Backend.Controllers
             this.credentialServices = credentialServices;
         }
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] Credentials entry)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] Credentials entry)
         {
             // Call the service method
-            var result = credentialServices.Login(entry);
+            var result = await credentialServices.Login(entry);
             
             if (result.success){
                 return Ok(new{

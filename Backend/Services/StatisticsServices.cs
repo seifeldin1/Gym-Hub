@@ -1,177 +1,90 @@
-using Backend.Models;
-using Backend.Database;
-using MySql.Data.MySqlClient;
+using Backend.Context;
+using Backend.DbModels;   
+using Backend.Models;     
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Backend.Services
 {
     public class StatisticsServices
     {
-        private readonly GymDatabase database;
-        public StatisticsServices(GymDatabase database)
+        private readonly AppDbContext _context;
+        public StatisticsServices(AppDbContext context)
         {
-            this.database = database;
+            _context = context;
         }
 
-        public NumericalStatistics GetOverallNumericalStatistics()
+        /// <summary>
+        /// Retrieves overall numerical statistics.
+        /// </summary>
+        public async Task<NumericalStatistics> GetOverallNumericalStatisticsAsync()
         {
-            var stats = new NumericalStatistics();
-            using (var connection = database.ConnectToDatabase())
+            var stats = new NumericalStatistics
             {
-                connection.Open();
-                string clientQuery = "SELECT COUNT(Client_ID) FROM Client WHERE AccountActivated = true";
-                string coachQuery = "SELECT COUNT(Coach_ID) FROM Coach";
-                string branchManagerQuery = "SELECT COUNT(Branch_Manager_ID) FROM Branch_Manager";
-                string branchQuery = "SELECT COUNT(Branch_ID) FROM Branch";
-                string equipmentsQuery = "SELECT COUNT(Equipment_ID) From Equipments";
-                using (var command = new MySqlCommand(clientQuery, connection))
-                {
-                    stats.Total_Number_Of_Clients = (long)command.ExecuteScalar();
-                }
-                using (var command = new MySqlCommand(coachQuery, connection))
-                {
-                    stats.Total_Number_Of_Coaches = (long)command.ExecuteScalar();
-                }
-                using (var command = new MySqlCommand(branchManagerQuery, connection))
-                {
-                    stats.Total_Number_Of_Branch_Managers = (long)command.ExecuteScalar();
-                }
-                using (var command = new MySqlCommand(branchQuery, connection))
-                {
-                    stats.Total_Number_Of_Branches = (long)command.ExecuteScalar();
-                }
-                using (var command = new MySqlCommand(equipmentsQuery, connection))
-                {
-                    stats.Total_Number_Of_Equipments = (long)command.ExecuteScalar();
-                }
-                return stats;
-            }
+                Total_Number_Of_Clients = await _context.Clients.CountAsync(c => c.AccountActivated == true),
+                Total_Number_Of_Coaches = await _context.Coaches.CountAsync(),
+                Total_Number_Of_Branch_Managers = await _context.Branch_Managers.CountAsync(),
+                Total_Number_Of_Branches = await _context.Branches.CountAsync(),
+                Total_Number_Of_Equipments = await _context.equipments.CountAsync()
+            };
+
+            return stats;
         }
 
-        public NumericalStatistics GetBranchNumericalStatistics(int id)
+        /// <summary>
+        /// Retrieves numerical statistics for a specific branch.
+        /// </summary>
+        public async Task<NumericalStatistics> GetBranchNumericalStatisticsAsync(int branchId)
         {
-            var stats = new NumericalStatistics();
-            using (var connection = database.ConnectToDatabase())
+            var stats = new NumericalStatistics
             {
-                connection.Open();
-                string coachQuery = "SELECT COUNT(Coach_ID) FROM Coach WHERE Works_For_Branch = @id";
-                string equipmentsQuery = "SELECT COUNT(Equipment_ID) From Equipments WHERE Belong_To_Branch_ID = @id";
-                using (var command = new MySqlCommand(coachQuery, connection))
-                {
-                    command.Parameters.AddWithValue("@id", id);
-                    stats.Total_Number_Of_Coaches_Per_Branch = (long)command.ExecuteScalar();
-                }
-                using (var command = new MySqlCommand(equipmentsQuery, connection))
-                {
-                    command.Parameters.AddWithValue("@id", id);
-                    stats.Total_Number_Of_Equipments_Per_Branch = (long)command.ExecuteScalar();
-                }
-                return stats;
-            }
+                Total_Number_Of_Coaches_Per_Branch = await _context.Coaches.CountAsync(c => c.Works_For_Branch == branchId),
+                Total_Number_Of_Equipments_Per_Branch = await _context.equipments.CountAsync(e => e.BelongToBranchID == branchId)
+            };
+
+            return stats;
         }
 
-        public List<NumericalStatistics> GetAllBranchesNumericalStatistics()
+        /// <summary>
+        /// Retrieves numerical statistics for all branches.
+        /// </summary>
+        public async Task<List<NumericalStatistics>> GetAllBranchesNumericalStatisticsAsync()
         {
-            var allStats = new List<NumericalStatistics>();
-
-            using (var connection = database.ConnectToDatabase())
+            var allStats = await _context.Branches.Select(b => new NumericalStatistics
             {
-                connection.Open();
-
-                // Query to get the branch statistics
-                string query = @"
-            SELECT 
-                b.Branch_ID, 
-                (SELECT COUNT(Coach_ID) FROM Coach WHERE Works_For_Branch = b.Branch_ID) AS CoachCount,
-                (SELECT COUNT(Equipment_ID) FROM Equipments WHERE Belong_To_Branch_ID = b.Branch_ID) AS EquipmentCount
-            FROM Branch b;
-        ";
-
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var stats = new NumericalStatistics
-                            {
-                                Branch_ID = reader.GetInt32("Branch_ID"),
-                                Total_Number_Of_Coaches_Per_Branch = reader.GetInt64("CoachCount"),
-                                Total_Number_Of_Equipments_Per_Branch = reader.GetInt64("EquipmentCount")
-                            };
-
-                            allStats.Add(stats);
-                        }
-                    }
-                }
-            }
+                Branch_ID = b.BranchID,
+                Total_Number_Of_Coaches_Per_Branch = _context.Coaches.Count(c => c.Works_For_Branch == b.BranchID),
+                Total_Number_Of_Equipments_Per_Branch = _context.equipments.Count(e => e.BelongToBranchID == b.BranchID)
+            }).ToListAsync();
 
             return allStats;
         }
 
-
-        public FinancialStatistics GetFinancialStatisticsOverall()
+        /// <summary>
+        /// Retrieves overall financial statistics.
+        /// </summary>
+        public async Task<FinancialStatistics> GetFinancialStatisticsOverallAsync()
         {
             var stats = new FinancialStatistics();
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
 
-                // Define the SQL queries
-                string membershipFeesQuery = "SELECT SUM(Fees_Of_Membership) FROM Client WHERE AccountActivated = true";
-                string coachSalaryQuery = "SELECT SUM(Salary) FROM Coach";
-                string branchManagerSalaryQuery = "SELECT SUM(Salary) FROM Branch_Manager";
-                string equipmentFeesQuery = "SELECT SUM(Purchase_Price) FROM Equipments";
-                string supplementsPurchaseFeesQuery = "SELECT SUM(Purchased_Price) FROM Supplements";
-                string supplementsSellingPriceQuery = "SELECT SUM(Selling_Price) FROM Supplements";
+            // Using nullable long results from SumAsync.
+            stats.Total_Membership_Fees = await _context.Clients.Where(c => c.AccountActivated == true)
+                .SumAsync(c => (long?)c.FeesOfMembership) ?? 0;
+            stats.Total_Coach_Salary = await _context.Coaches.SumAsync(c => (long?)c.Salary) ?? 0;
+            stats.Total_Branch_Manager_Salary = await _context.Branch_Managers.SumAsync(bm => (long?)bm.Salary) ?? 0;
+            stats.Total_Equipment_Purchase_Fees = await _context.equipments.SumAsync(e => (long?)e.PurchasePrice) ?? 0;
+            stats.Total_Supplements_Purchase_Fees = await _context.supplements.SumAsync(s => (long?)s.PurchasedPrice) ?? 0;
+            stats.Total_Supplements_Selling_Price = await _context.supplements.SumAsync(s => (long?)s.SellingPrice) ?? 0;
 
-                // Helper function to handle DBNull
-                long GetLongValueFromQuery(MySqlCommand command)
-                {
-                    var result = command.ExecuteScalar();
-                    return result == DBNull.Value ? 0 : Convert.ToInt64(result);
-                }
+            stats.Total_Salaries = stats.Total_Coach_Salary + stats.Total_Branch_Manager_Salary;
+            stats.Total_Supplement_Fees = stats.Total_Supplements_Selling_Price - stats.Total_Supplements_Purchase_Fees;
+            stats.Total_Income = stats.Total_Membership_Fees + stats.Total_Supplements_Selling_Price;
+            stats.Total_Outcome = stats.Total_Equipment_Purchase_Fees + stats.Total_Salaries + stats.Total_Supplements_Purchase_Fees;
 
-                // Execute queries and assign values
-                using (var command = new MySqlCommand(membershipFeesQuery, connection))
-                {
-                    stats.Total_Membership_Fees = GetLongValueFromQuery(command);
-                }
-
-                using (var command = new MySqlCommand(coachSalaryQuery, connection))
-                {
-                    stats.Total_Coach_Salary = GetLongValueFromQuery(command);
-                }
-
-                using (var command = new MySqlCommand(branchManagerSalaryQuery, connection))
-                {
-                    stats.Total_Branch_Manager_Salary = GetLongValueFromQuery(command);
-                }
-
-                using (var command = new MySqlCommand(equipmentFeesQuery, connection))
-                {
-                    stats.Total_Equipment_Purchase_Fees = GetLongValueFromQuery(command);
-                }
-
-                using (var command = new MySqlCommand(supplementsPurchaseFeesQuery, connection))
-                {
-                    stats.Total_Supplements_Purchase_Fees = GetLongValueFromQuery(command);
-                }
-
-                using (var command = new MySqlCommand(supplementsSellingPriceQuery, connection))
-                {
-                    stats.Total_Supplements_Selling_Price = GetLongValueFromQuery(command);
-                }
-
-                // Calculate totals
-                stats.Total_Salaries = stats.Total_Branch_Manager_Salary + stats.Total_Coach_Salary;
-                stats.Total_Supplement_Fees = stats.Total_Supplements_Selling_Price - stats.Total_Supplements_Purchase_Fees;
-                stats.Total_Income = stats.Total_Membership_Fees + stats.Total_Supplements_Selling_Price;
-                stats.Total_Outcome = stats.Total_Equipment_Purchase_Fees + stats.Total_Salaries + stats.Total_Supplements_Purchase_Fees;
-
-                return stats;
-            }
+            return stats;
         }
-
-
-
     }
 }

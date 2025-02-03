@@ -1,51 +1,54 @@
 using Backend.Models;
 using Backend.Database;
-using MySql.Data.MySqlClient;
-namespace Backend.Services {
-    public class DietServices{
-        public GymDatabase database ; 
-        public DietServices(GymDatabase database){
-            this.database = database;
+using System.Linq;
+using Backend.Context;
+
+namespace Backend.Services
+{
+    public class DietServices
+    {
+        private readonly AppDbContext _context;
+        
+        public DietServices(AppDbContext context)
+        {
+            _context = context;
         }
 
-
-        //* Modification: check if he already is on diet or not 
-        public (bool success , string message) ChooseDiet(Diet diet){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                int checker;
-                string checkquery="SELECT COUNT(*) FROM DIET WHERE Client_Assigned_TO_ID=@Client_Assigned_TO_ID";
-                 using(var command = new MySqlCommand(checkquery , connection)){
-                    command.Parameters.AddWithValue("@Client_Assigned_TO_ID" , diet.Client_Assigned_TO_ID);
-                     checker = (int)command.ExecuteScalar();
-                }
-                string query = @"INSERT INTO DIET(Nutrition_Plan_ID , Supplement_ID , Coach_Created_ID , Client_Assigned_TO_ID, Status, Start_Date , End_Date)
-                VALUES (@planID , @suppID , @coachID , @clientID , @status , @startDate , @endDate)";
-
-                string coachQuery = "SELECT Belong_To_Coach_ID FROM Client WHERE Client_ID = @id";
-                int coachID;
-                using(var command = new MySqlCommand(coachQuery , connection)){
-                    command.Parameters.AddWithValue("@id" , diet.Coach_Created_ID);
-                    coachID = (int)command.ExecuteScalar();
-                }
-                    if(checker>0){
-                        string deletequery="DELETE * FROM DIET WHERE Client_Assigned_TO_ID=@Client_Assigned_TO_ID";
-                    }
-                using(var addCommand = new MySqlCommand(query , connection)){
-                    addCommand.Parameters.AddWithValue("@planID" , diet.Nutrition_Plan_ID);
-                    addCommand.Parameters.AddWithValue("@suppID" , diet.Supplement_ID);
-                    addCommand.Parameters.AddWithValue("@coachID" , coachID);
-                    addCommand.Parameters.AddWithValue("@clientID", diet.Client_Assigned_TO_ID);
-                    addCommand.Parameters.AddWithValue("status" , diet.Status);
-                    addCommand.Parameters.AddWithValue("@startDate" , diet.Start_Date);
-                    addCommand.Parameters.AddWithValue("@endDate" , diet.End_Date);
-                    addCommand.ExecuteNonQuery();
-                }
-                return(true , "diet chosen successfully");
-
+        //* Checks if the client is already assigned a diet before assigning a new one
+        public (bool success, string message) ChooseDiet(Diet diet)
+        {
+            // Check if the client already has a diet assigned
+            var existingDiet = _context.Diet.FirstOrDefault(d => d.ClientAssignedToID == diet.Client_Assigned_TO_ID);
+            
+            if (existingDiet != null)
+            {
+                // Remove existing diet before assigning a new one
+                _context.Diet.Remove(existingDiet);
             }
-        }
 
-        // to be done later : delete a diet 
+            // Retrieve the coach ID of the client from the database
+            var coachID = _context.Clients
+                .Where(c => c.ClientID == diet.Client_Assigned_TO_ID)
+                .Select(c => c.BelongToCoachID)
+                .FirstOrDefault();
+
+            // Create new diet entry
+            var newDiet = new DbModels.Diet
+            {
+                NutritionPlanID = diet.Nutrition_Plan_ID,
+                SupplementID = diet.Supplement_ID,
+                CoachCreatedID = diet.Coach_Created_ID,
+                ClientAssignedToID = diet.Client_Assigned_TO_ID,
+                Status = diet.Status,
+                StartDate = diet.Start_Date,
+                EndDate = diet.End_Date
+            };
+
+            // Add new diet to the database
+            _context.Diet.Add(newDiet);
+            _context.SaveChanges();
+            
+            return (true, "Diet chosen successfully");
+        }
     }
 }

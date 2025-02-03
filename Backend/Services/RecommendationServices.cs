@@ -1,83 +1,90 @@
+using Backend.Context;
+using Backend.DbModels;
 using Backend.Models;
-using Backend.Database;
-using MySql.Data.MySqlClient;
-namespace Backend.Services{
-    public class RecommendationServices{
-        private readonly GymDatabase database;
-        public RecommendationServices(GymDatabase gymDatabase)
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Backend.Services
+{
+    public class RecommendationServices
+    {
+        private readonly AppDbContext _context;
+        public RecommendationServices(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
 
+        public async Task<(bool success, string message)> RecommendNutritionPlanAsync(int clientID, int planID)
+        {
+            var recommendation = new DbModels.Recommendation
+            {
+                ClientID = clientID,
+                PlanID = planID
+            };
 
-        public (bool success , string message) RecommendNutritionPlan(int clientID , int planID){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = "INSERT INTO Recommendation(Client_ID , Plan_ID) values (@client , @plan)";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@client" , clientID);
-                    command.Parameters.AddWithValue("@plan" , planID);
-                    command.ExecuteNonQuery();
-                }
-                return(true , "Recommendation Added Successfully");
-                
+            await _context.recommendations.AddAsync(recommendation);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Recommendation added successfully");
+            }
+            catch (System.Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
             }
         }
 
-        public (bool success , string message) RecommendSupplement(int clientID , int supplementID){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = "INSERT INTO Recommendation(Client_ID , Supplement_ID) values (@client , @supp)";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@client" , clientID);
-                    command.Parameters.AddWithValue("@supp" , supplementID);
-                    command.ExecuteNonQuery();
-                }
-                return(true , "Recommendation Added Successfully");
-                
+        public async Task<(bool success, string message)> RecommendSupplementAsync(int clientID, int supplementID)
+        {
+            var recommendation = new DbModels.Recommendation
+            {
+                ClientID = clientID,
+                SupplementID = supplementID
+            };
+
+            await _context.recommendations.AddAsync(recommendation);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Recommendation added successfully");
+            }
+            catch (System.Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
             }
         }
 
-        public (bool success , string message) RecommendPlanWithSupplement(int clientID ,int planID, int supplementID){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = "INSERT INTO Recommendation(Client_ID ,Plan_ID, Supplement_ID) values (@client ,@plan, @supp)";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@client" , clientID);
-                    command.Parameters.AddWithValue("@plan" , planID);
-                    command.Parameters.AddWithValue("@supp" , supplementID);
-                    command.ExecuteNonQuery();
-                }
-                return(true , "Recommendation Added Successfully");
-                
+        public async Task<(bool success, string message)> RecommendPlanWithSupplementAsync(int clientID, int planID, int supplementID)
+        {
+            var recommendation = new DbModels.Recommendation
+            {
+                ClientID = clientID,
+                PlanID = planID,
+                SupplementID = supplementID
+            };
+
+            await _context.recommendations.AddAsync(recommendation);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Recommendation added successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
             }
         }
 
-        public List<Recommendation> ViewRecommendations(int clientID){
-            var recommendations = new List<Recommendation>();
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = @"SELECT r.Plan_ID, r.Supplement_ID, n.Name AS PlanName, s.Name AS SupplementName
-                FROM Recommendation r LEFT JOIN Nutrition n ON r.Plan_ID = n.Nutrition_ID
-                LEFT JOIN Supplements s ON r.Supplement_ID = s.Supplement_ID
-                WHERE r.Client_ID = @client";
-
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@client" , clientID);
-                    using (var reader = command.ExecuteReader()){
-                        while (reader.Read()) {
-                            recommendations.Add(new Recommendation{
-                                planName = reader["PlanName"].ToString(),
-                                supplementName = reader["SupplementName"].ToString(),
-                            });
-                        }
-                    }
-                }
-                
-            }
+        public async Task<List<DbModels.Recommendation>> ViewRecommendationsAsync(int clientID)
+        {
+            var recommendations = await _context.recommendations
+                .Where(r => r.ClientID == clientID)
+                .Include(r => r.Plan)
+                .Include(r => r.Supplement)
+                .ToListAsync();
             return recommendations;
         }
-
     }
-    
 }

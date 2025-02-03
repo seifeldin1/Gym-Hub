@@ -25,6 +25,7 @@ namespace Backend.DbModels
         public ICollection<Recommendation> Recommendations { get; set; }
         public ICollection<ClientProgress> ClientProgress { get; set; }
 
+        public ICollection<Interested> Interests { get; set; }
 
     }
 }

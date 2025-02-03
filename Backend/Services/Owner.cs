@@ -1,231 +1,178 @@
-using Backend.Database;
-using Backend.Models;
-using MySql.Data.MySqlClient;
+using Backend.Context;
+using Backend.DbModels;       // Your EF entity classes (e.g., User, Owner)
+using Backend.Models;         // Your presentation models (e.g., OwnerModel, OwnerUpdaterModel)
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Backend.Services
 {
-    public class Owner
+    public class OwnerService
     {
-        private readonly GymDatabase database;
-        public Owner(GymDatabase gymDatabase)
+        private readonly AppDbContext _context;
+
+        public OwnerService(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
-         public (bool success, string message) AddOwner(OwnerModel entry)
+
+        /// <summary>
+        /// Adds a new owner. First, it creates a User record then uses the generated User ID for the Owner record.
+        /// </summary>
+        public async Task<(bool success, string message)> AddOwnerAsync(OwnerModel entry)
         {
-            using (var connection = database.ConnectToDatabase())
+            // Create a new User entity
+            var user = new User
             {
-                connection.Open();
-                 var userQuery = @"
-                    INSERT INTO User 
-                    (Username,PasswordHashed,Type,First_Name,Last_Name,Email,Phone_Number,Gender,Age,National_Number)
-                    VALUES (@Username,@PasswordHashed,@Type, @First_Name,@Last_Name,@Email,@Phone_Number,@Gender,@Age,@National_Number);
-                    SELECT LAST_INSERT_ID();
-                ";
-                using (var usercommand = new MySqlCommand(userQuery, connection))
-                {
+                Username = entry.Username,
+                PasswordHashed = BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed),
+                Type = entry.Type,
+                Email = entry.Email,
+                First_Name = entry.First_Name,
+                Last_Name = entry.Last_Name,
+                Phone_Number = entry.Phone_Number,
+                Gender = entry.Gender,
+                Age = entry.Age,
+                National_Number = entry.National_Number
+            };
 
-                    var userCommand = new MySqlCommand(userQuery, connection);
-                    userCommand.Parameters.AddWithValue("@Username", entry.Username);
-                    userCommand.Parameters.AddWithValue("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed));
-                    userCommand.Parameters.AddWithValue("@Type", entry.Type);
-                    userCommand.Parameters.AddWithValue("@Email", entry.Email);
-                    userCommand.Parameters.AddWithValue("@First_Name", entry.First_Name);
-                    userCommand.Parameters.AddWithValue("@Last_Name", entry.Last_Name);
-                    userCommand.Parameters.AddWithValue("@Phone_Number", entry.Phone_Number);
-                    userCommand.Parameters.AddWithValue("@Gender", entry.Gender);
-                    userCommand.Parameters.AddWithValue("@Age", entry.Age);
-                    userCommand.Parameters.AddWithValue("@National_Number", entry.National_Number);
-                    int Owner_ID= (int)Convert.ToInt64(userCommand.ExecuteScalar());
-
-                string query = @"INSERT INTO Owner (Owner_ID,Share_Percentage,Established_branches)
-                    VALUES (@Owner_ID,@Share_Percentage,@Established_branches);";
-
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Owner_ID",Owner_ID);
-                    command.Parameters.AddWithValue("@Share_Percentage", entry.Share_Percentage);
-                    command.Parameters.AddWithValue("@Established_branches", entry.Established_branches);
-
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                        return (true, "Owner added successfully");
-                    else
-                        return (false, "Failed to add Owner");
-                }
+            await _context.Users.AddAsync(user);
+            try
+            {
+                await _context.SaveChangesAsync();
             }
-        }
-        }
-        public (bool success, string message) DeleteOwner(int id)
-        {
-            using (var connection = database.ConnectToDatabase())
+            catch (Exception ex)
             {
-                connection.Open();
-                string query = "DELETE FROM User WHERE User_ID=@Id;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                        return (true, "Owner Deleted successfully");
-                    else
-                        return (false, "Failed to Delete Owner");
-                }
+                return (false, $"Error adding user: {ex.Message}");
             }
-        }
-            public (bool success, string message) UpdateOwner(OwnerUpdaterModel entry)
-        {
-            using (var connection = database.ConnectToDatabase())
+
+            // Create a new Owner entity using the generated user ID
+            var owner = new Owner
             {
-                connection.Open();
+                OwnerID = user.UserID,  // assuming user.ID is generated upon saving
+                SharePercentage = entry.Share_Percentage,
+                Established_branches = entry.Established_branches
+            };
 
-                var userFields = new List<string>();
-                var userParameters = new List<MySqlParameter>();
-
-                if (!string.IsNullOrEmpty(entry.Username))
-                {
-                    userFields.Add("Username=@Username");
-                    userParameters.Add(new MySqlParameter("@Username", entry.Username));
-                }
-                if (!string.IsNullOrEmpty(entry.PasswordHashed))
-                {
-                    userFields.Add("PasswordHashed=@PasswordHashed");
-                    userParameters.Add(new MySqlParameter("@PasswordHashed", BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed)));
-                }
-                if (!string.IsNullOrEmpty(entry.Type))
-                {
-                    userFields.Add("Type=@Type");
-                    userParameters.Add(new MySqlParameter("@Type", entry.Type));
-                }
-                if (!string.IsNullOrEmpty(entry.First_Name))
-                {
-                    userFields.Add("First_Name=@First_Name");
-                    userParameters.Add(new MySqlParameter("@First_Name", entry.First_Name));
-                }
-                if (!string.IsNullOrEmpty(entry.Last_Name))
-                {
-                    userFields.Add("Last_Name=@Last_Name");
-                    userParameters.Add(new MySqlParameter("@Last_Name", entry.Last_Name));
-                }
-                if (!string.IsNullOrEmpty(entry.Email))
-                {
-                    userFields.Add("Email=@Email");
-                    userParameters.Add(new MySqlParameter("@Email", entry.Email));
-                }
-                if (!string.IsNullOrEmpty(entry.Phone_Number))
-                {
-                    userFields.Add("Phone_Number=@Phone_Number");
-                    userParameters.Add(new MySqlParameter("@Phone_Number", entry.Phone_Number));
-                }
-                if (!string.IsNullOrEmpty(entry.Gender))
-                {
-                    userFields.Add("Gender=@Gender");
-                    userParameters.Add(new MySqlParameter("@Gender", entry.Gender));
-                }
-                if (entry.Age > 0)
-                {
-                    userFields.Add("Age=@Age");
-                    userParameters.Add(new MySqlParameter("@Age", entry.Age));
-                }
-                if (entry.National_Number>0)
-                {
-                    userFields.Add("National_Number=@National_Number");
-                    userParameters.Add(new MySqlParameter("@National_Number", entry.National_Number));
-                }
-
-                var userQuery = userFields.Count > 0 ? $"UPDATE User SET {string.Join(",", userFields)} WHERE User_ID=@User_ID;": null;
-
-                userParameters.Add(new MySqlParameter("@User_ID", entry.User_ID));
-
-                var ownerFields = new List<string>();
-                var ownerParameters = new List<MySqlParameter>();
-
-                if (entry.Share_Percentage > 0)
-                {
-                    ownerFields.Add("Share_Percentage=@Share_Percentage");
-                    ownerParameters.Add(new MySqlParameter("@Share_Percentage", entry.Share_Percentage));
-                }
-                if (entry.Established_branches > 0)
-                {
-                    ownerFields.Add("Established_branches=@Established_branches");
-                    ownerParameters.Add(new MySqlParameter("@Established_branches", entry.Established_branches));
-                }
-                var ownerQuery = ownerFields.Count > 0 ? $"UPDATE Owner SET {string.Join(",", ownerFields)} WHERE Owner_ID=@Owner_ID;": null;
-
-                ownerParameters.Add(new MySqlParameter("@Owner_ID", entry.User_ID));
-
-                int rowsAffected1 = 0;
-                int rowsAffected2 = 0;
-
-                if (userQuery != null)
-                {
-                    using (var userCommand = new MySqlCommand(userQuery, connection))
-                    {
-                        userCommand.Parameters.AddRange(userParameters.ToArray());
-                        rowsAffected1 = userCommand.ExecuteNonQuery();
-                    }
-                }
-
-                if (ownerQuery != null)
-                {
-                    using (var ownerCommand = new MySqlCommand(ownerQuery, connection))
-                    {
-                        ownerCommand.Parameters.AddRange(ownerParameters.ToArray());
-                        rowsAffected2 = ownerCommand.ExecuteNonQuery();
-                    }
-                }
-
-                if (rowsAffected1 > 0 || rowsAffected2 > 0)
-                {
-                    return (true, "owner updated successfully.");
-                }
-                else
-                {
-                    return (false, "No updates were made.");
-                }
+            await _context.Owners.AddAsync(owner);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Owner added successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error adding owner: {ex.Message}");
             }
         }
 
-        public List<OwnerModel> GetOwners()
+        /// <summary>
+        /// Deletes an owner by deleting the associated User record. (Assumes cascading deletes are configured.) 
+        /// </summary>
+        public async Task<(bool success, string message)> DeleteOwnerAsync(int id)
         {
-            var ownerList = new List<OwnerModel>();
-            using (var connection = database.ConnectToDatabase())
+            // Find the user (and related owner) by id.
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return (false, "Owner not found");
+
+            _context.Users.Remove(user);
+            try
             {
-                connection.Open();
-                string query = @"
-            SELECT o.*, 
-            u.User_ID, u.Username, u.PasswordHashed,u.Type,u.First_Name, u.Last_Name, 
-            u.Email, u.Phone_Number, u.Gender, u.Age, u.National_Number
-            FROM Owner o
-            INNER JOIN User u ON o.Owner_ID = u.User_ID;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {  
-                        while (reader.Read())
-                        {
-                            ownerList.Add(new OwnerModel
-                            {
-                                Owner_ID = reader.GetInt32("Owner_ID"),
-                                Share_Percentage = reader.GetInt32("Share_Percentage"),
-                                Established_branches = reader.GetInt32("Established_branches"),
-                                User_ID = reader.GetInt32("User_ID"),
-                                Username = reader.GetString("Username"),
-                                PasswordHashed = reader.GetString("PasswordHashed"),
-                                Type = reader.GetString("Type"),
-                                First_Name = reader.GetString("First_Name"),
-                                Last_Name = reader.GetString("Last_Name"),
-                                Email = reader.GetString("Email"),
-                                Phone_Number = reader.GetString("Phone_Number"),
-                                Gender = reader.GetString("Gender"),
-                                Age = reader.GetInt32("Age"),
-                                National_Number = reader.GetInt64("National_Number"),
-                            });
-                        }
-                        return ownerList;
-                    }
-                }
+                await _context.SaveChangesAsync();
+                return (true, "Owner deleted successfully");
             }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to delete owner: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Updates the owner. This method updates both the associated User and Owner records.
+        /// </summary>
+        public async Task<(bool success, string message)> UpdateOwnerAsync(OwnerUpdaterModel entry)
+        {
+            // Find the User record by its ID.
+            var user = await _context.Users.FindAsync(entry.User_ID);
+            if (user == null)
+                return (false, "User not found");
+
+            // Update User fields if provided
+            if (!string.IsNullOrEmpty(entry.Username))
+                user.Username = entry.Username;
+            if (!string.IsNullOrEmpty(entry.PasswordHashed))
+                user.PasswordHashed = BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed);
+            if (!string.IsNullOrEmpty(entry.Type))
+                user.Type = entry.Type;
+            if (!string.IsNullOrEmpty(entry.First_Name))
+                user.First_Name = entry.First_Name;
+            if (!string.IsNullOrEmpty(entry.Last_Name))
+                user.Last_Name = entry.Last_Name;
+            if (!string.IsNullOrEmpty(entry.Email))
+                user.Email = entry.Email;
+            if (!string.IsNullOrEmpty(entry.Phone_Number))
+                user.Phone_Number = entry.Phone_Number;
+            if (!string.IsNullOrEmpty(entry.Gender))
+                user.Gender = entry.Gender;
+            if (entry.Age > 0)
+                user.Age = entry.Age;
+            if (entry.National_Number > 0)
+                user.National_Number = entry.National_Number??user.National_Number;
+
+            // Find the Owner record by the same ID.
+            var owner = await _context.Owners.FindAsync(entry.User_ID);
+            if (owner == null)
+                return (false, "Owner record not found");
+
+            if (entry.Share_Percentage > 0)
+                owner.SharePercentage = entry.Share_Percentage??30;
+            if (entry.Established_branches > 0)
+                owner.Established_branches = entry.Established_branches;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Owner updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error updating owner: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves a list of owners by joining the Owner and User records.
+        /// </summary>
+        public async Task<List<OwnerModel>> GetOwnersAsync()
+        {
+            var owners = await _context.Owners
+                    .Include(o => o.User)
+                    .ToListAsync(); 
+
+            var ownerModels = new List<OwnerModel>();
+            foreach (var owner in owners)
+            {
+                ownerModels.Add(new OwnerModel
+                {
+                    Owner_ID = owner.OwnerID,
+                    Share_Percentage = owner.SharePercentage,
+                    Established_branches = owner.Established_branches??0,
+                    User_ID = owner.User.UserID,
+                    Username = owner.User.Username,
+                    PasswordHashed = owner.User.PasswordHashed,
+                    Type = owner.User.Type,
+                    First_Name = owner.User.First_Name,
+                    Last_Name = owner.User.Last_Name,
+                    Email = owner.User.Email,
+                    Phone_Number = owner.User.Phone_Number,
+                    Gender = owner.User.Gender,
+                    Age = owner.User.Age??35,
+                    National_Number = owner.User.National_Number
+                });
+            }
+            return ownerModels;
         }
     }
 }

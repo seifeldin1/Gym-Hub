@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,12 @@ namespace Backend.Controllers{
         }
 
         [HttpPost]
-        public IActionResult Logout(){
+        public async Task<IActionResult> Logout(){
             var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
             if (string.IsNullOrEmpty(token))
                 return Unauthorized(new { message = "Token is required for logout." });
 
-            var result = logoutServices.Logout(token);
+            var result =await logoutServices.LogoutAsync(token);
             if (result.success)
                 return Ok(new { message = result.message });
             else

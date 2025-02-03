@@ -67,36 +67,37 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 // Register application services
-// builder.Services.AddScoped<CredentialServices>();
- builder.Services.AddScoped<ApplicationServices>();
-// builder.Services.AddScoped<Workout>();
-// builder.Services.AddScoped<Supplements>();
-// builder.Services.AddScoped<Branch>();
-// builder.Services.AddScoped<JobPosting>();
-// builder.Services.AddScoped<Clients>();
-// builder.Services.AddScoped<Equipments>();
-// builder.Services.AddScoped<NotificationServices>();
-// builder.Services.AddScoped<NutritionPlan>();
-// builder.Services.AddScoped<CoachesServices>();
-// builder.Services.AddScoped<BranchManagers>();
-// builder.Services.AddScoped<PerformWorkout>();
-// builder.Services.AddScoped<UsersServices>();
+builder.Services.AddScoped<CredentialServices>();
+builder.Services.AddScoped<ApplicationServices>();
+builder.Services.AddScoped<WorkoutService>();
+builder.Services.AddScoped<SupplementsServices>();
+builder.Services.AddScoped<BranchService>();
+builder.Services.AddScoped<JobPostingService>();
+builder.Services.AddScoped<ClientService>();
+builder.Services.AddScoped<EquipmentService>();
+//builder.Services.AddScoped<NotificationServices>(); //! Under development
+builder.Services.AddScoped<NutritionPlanService>();
+builder.Services.AddScoped<CoachesServices>();
+builder.Services.AddScoped<BranchManagerServices>();
+builder.Services.AddScoped<PerformWorkoutService>();
 builder.Services.AddScoped<AnnouncementsServices>();
-// builder.Services.AddScoped<SalaryServices>();
-// builder.Services.AddScoped<PenaltyServices>();
-// builder.Services.AddScoped<BonusServices>();
-// builder.Services.AddScoped<MeetingsServices>();
-// builder.Services.AddScoped<ProgressServices>();
-// builder.Services.AddScoped<Owner>();
-// builder.Services.AddScoped<TalentPoolServices>();
-// builder.Services.AddScoped<ReportsServices>();
-// builder.Services.AddScoped<EventService>();
-// builder.Services.AddScoped<HolidayService>();
-// builder.Services.AddScoped<CalendarServices>();
-// builder.Services.AddScoped<RecommendationServices>();
-// builder.Services.AddScoped<StatisticsServices>();
-// builder.Services.AddScoped<InterviewService>();
-// builder.Services.AddScoped<SignUpCheckerServices>();
+builder.Services.AddScoped<SalaryServices>();
+builder.Services.AddScoped<PenaltyServices>();
+builder.Services.AddScoped<BonusServices>();
+builder.Services.AddScoped<MeetingService>();
+builder.Services.AddScoped<ProgressServices>();
+builder.Services.AddScoped<OwnerService>();
+builder.Services.AddScoped<TalentPoolService>();
+builder.Services.AddScoped<ReportsServices>();
+builder.Services.AddScoped<EventService>();
+builder.Services.AddScoped<HolidayService>();
+builder.Services.AddScoped<CalendarServices>();
+builder.Services.AddScoped<RecommendationServices>();
+builder.Services.AddScoped<StatisticsServices>();
+builder.Services.AddScoped<InterviewService>();
+builder.Services.AddScoped<SignUpCheckerServices>();
+builder.Services.AddScoped<InterestServices>();
+builder.Services.AddScoped<SessionService>();
 
 // Add SignalR for real-time communications
 builder.Services.AddSignalR();

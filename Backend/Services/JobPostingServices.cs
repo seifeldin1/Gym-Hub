@@ -1,142 +1,88 @@
-using Backend.Database;
-using Backend.Models;
-using BCrypt.Net;
-using Newtonsoft.Json;
-using MySql.Data.MySqlClient;
+using Backend.Context;
+using Backend.DbModels;    // EF entity for JobPost
+using Backend.Models;      // Presentation model if necessary
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Backend.Services
 {
-    public class JobPosting
+    public class JobPostingService
     {
-        private readonly GymDatabase database;
+        private readonly AppDbContext _context;
 
-        public JobPosting(GymDatabase gymDatabase)
+        public JobPostingService(AppDbContext context)
         {
-            this.database = gymDatabase;
-        }
-        public (bool success, string message) DeleteJobPost(int id)
-        {
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                string query = "DELETE FROM Job_Posting  WHERE  Post_ID = @Id;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "JobPost Deleted successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to Delete JobPost");
-                    }
-                }
-
-            }
-        }
-    public (bool success, string message) UpdateJobPost(JobPost entry)
-        {
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                string query = "UPDATE Job_Posting  SET Branch_Posted_ID=@Branch_Posted_ID,Description=@Description,Title=@Title,Date_Posted=@Date_Posted,Skills_Required=@Skills_Required,Experience_Years_Required=@Experience_Years_Required,Deadline=@Deadline,Location=@Location WHERE Post_ID=@Post_ID;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Branch_Posted_ID",entry.Branch_Posted_ID);
-                    command.Parameters.AddWithValue("@Description",entry.Description);
-                    command.Parameters.AddWithValue("@Title",entry.Title );
-                    command.Parameters.AddWithValue("@Date_Posted",entry.Date_Posted);
-                    command.Parameters.AddWithValue("@Skills_Required",entry.Skills_Required);
-                    command.Parameters.AddWithValue("@Experience_Years_Required",entry.Experience_Years_Required );
-                    command.Parameters.AddWithValue("@Deadline",entry.Deadline);
-                    command.Parameters.AddWithValue("@Location",entry.Location);
-                    command.Parameters.AddWithValue("@Post_ID",entry.Post_ID);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "JobPost Updated successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to Update JobPost");
-                    }
-                }
-            }
-
+            _context = context;
         }
 
-        public (bool success, string message) AddJobPost(JobPost entry)
+        // Deletes a job posting.
+        public async Task<(bool success, string message)> DeleteJobPostAsync(int id)
         {
-            using (var connection = database.ConnectToDatabase())
+            var jobPost = await _context.posts.FindAsync(id);
+            if (jobPost == null)
+                return (false, "JobPost not found");
+
+            _context.posts.Remove(jobPost);
+            try
             {
-                connection.Open();
-                string query = "INSERT INTO Job_Posting (Branch_Posted_ID,Description,Title,Date_Posted,Skills_Required,Experience_Years_Required,Deadline,Location) VALUES (@Branch_Posted_ID,@Description,@Title,@Date_Posted,@Skills_Required,@Experience_Years_Required,@Deadline,@Location);";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Branch_Posted_ID", entry.Branch_Posted_ID);
-                    command.Parameters.AddWithValue("@Description", entry.Description);
-                    command.Parameters.AddWithValue("@Title", entry.Title);
-                    command.Parameters.AddWithValue("@@Date_Posted", entry.Date_Posted);
-                    command.Parameters.AddWithValue("@Skills_Required", entry.Skills_Required);
-                    command.Parameters.AddWithValue("@Experience_Years_Required", entry.Experience_Years_Required);
-                    command.Parameters.AddWithValue("@Deadline", entry.Deadline);
-                    command.Parameters.AddWithValue("@Location", entry.Location);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "JobPost added successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to add JopPost");
-                    }
-                }
+                await _context.SaveChangesAsync();
+                return (true, "JobPost deleted successfully");
             }
-
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
         }
-        public List<JobPost> GetJobPosts()
+
+        // Updates a job posting.
+        public async Task<(bool success, string message)> UpdateJobPostAsync(JobPost entry)
         {
-            var jobPostsList = new List<JobPost>();
-            using (var connection = database.ConnectToDatabase())
+            var jobPost = await _context.posts.FindAsync(entry.Post_ID);
+            if (jobPost == null)
+                return (false, "JobPost not found");
+
+            // Update the fields
+            jobPost.BranchPostedID = entry.Branch_Posted_ID;
+            jobPost.Description = entry.Description;
+            jobPost.Title = entry.Title;
+            jobPost.DatePosted = entry.Date_Posted;
+            jobPost.SkillsRequired = entry.Skills_Required;
+            jobPost.ExperienceYearsRequired = entry.Experience_Years_Required??2;
+            jobPost.Deadline = entry.Deadline;
+            jobPost.Location = entry.Location;
+
+            try
             {
-                connection.Open();
-                string query = "SELECT * FROM Job_Posting;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        //The while loop iterates through each row of the query result.
-                        //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
-                        while (reader.Read())
-                        {
-                            jobPostsList.Add(new JobPost
-                            {
-
-                                Post_ID = reader.GetInt32("Post_ID"),
-                                Branch_Posted_ID = reader.GetInt32("Branch_Posted_ID"),
-                                Description = reader.GetString("Description"),
-                                Title = reader.GetString("Title"),
-                                Date_Posted = reader.GetDateTime("Date_Posted"),
-                                Skills_Required = reader.GetString("Skills_Required"),
-                                Experience_Years_Required = reader.GetInt32("Experience_Years_Required"),
-                                Deadline = reader.GetDateTime("Deadline"),
-                                Location = reader.GetString("Location"),
-                            });
-                        }
-
-
-                        return jobPostsList;
-                    }
-                }
+                await _context.SaveChangesAsync();
+                return (true, "JobPost updated successfully");
             }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
+        }
+
+        // Adds a new job posting.
+        public async Task<(bool success, string message)> AddJobPostAsync(Post entry)
+        {
+            await _context.posts.AddAsync(entry);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "JobPost added successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
+        }
+
+        // Retrieves all job postings.
+        public async Task<List<Post>> GetJobPostsAsync()
+        {
+            return await _context.posts.ToListAsync();
         }
     }
 }

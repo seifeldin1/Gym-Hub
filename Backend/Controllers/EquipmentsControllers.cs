@@ -3,6 +3,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -10,17 +11,17 @@ namespace Backend.Controllers
     [Route("api/Equipments")]
     public class EquipmentsController : ControllerBase
     {
-        private readonly Equipments equipmentsService;
-        public EquipmentsController(Equipments equipmentsService)
+        private readonly EquipmentService equipmentsService;
+        public EquipmentsController(EquipmentService equipmentsService)
         {
             this.equipmentsService = equipmentsService;
         }
         [HttpPost]
-        [Authorize(Roles = "BranchManager, Owner")]
-        public IActionResult AddEquipment([FromBody] EquipmentsModel entry)
+        //[Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> AddEquipment([FromBody] EquipmentsModel entry)
         {
             // Call the service method to add the workout
-            var result = equipmentsService.AddEquipments(entry);
+            var result = await equipmentsService.AddEquipmentAsync(entry);
             if (result.success)
             {
                 return Ok(new
@@ -42,23 +43,23 @@ namespace Backend.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "Owner , BranchManager , Coach ")]
-        public IActionResult GetEquipments()
+        //[Authorize(Roles = "Owner , BranchManager , Coach ")]
+        public async Task<IActionResult> GetEquipments()
         {
-            var equipmentList = equipmentsService.GetEquipments();
+            var equipmentList = await equipmentsService.GetEquipmentsAsync();
             return Ok(equipmentList);
         }
 
        [HttpDelete]
-       [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult DeleteEquipment([FromBody] GetByIDModel entry)
+       //[Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> DeleteEquipment([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Equipment ID provided." });
             }
 
-            var result = equipmentsService.DeleteEquipment(entry.id);
+            var result = await equipmentsService.DeleteEquipmentAsync(entry.id);
             // Return success response after deletion
             if (result.success)
             {
@@ -78,11 +79,11 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult UpdateEquipment([FromBody] EquipmentsModel entry)
+        //[Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> UpdateEquipment([FromBody] EquipmentsModel entry)
         {
             // Call the service to update the Branch
-            var result = equipmentsService.UpdateEquipment(entry);
+            var result = await equipmentsService.UpdateEquipmentAsync(entry);
             // Return success response after update
             if (result.success)
             {
@@ -100,12 +101,12 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-        [HttpPut("AssignEquipmentToBranch")]
-        [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult AssignEquipmentToBranch([FromBody] AssigningModel entry)
+        [HttpPut("Assign-Equipment")]
+        //[Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> AssignEquipmentToBranch([FromBody] AssigningModel entry)
         {
             // Call the service to Assign client To coach
-            var result = equipmentsService.AssignEquipmentToBranch(entry.Equipment_ID,entry.Branch_ID);            // Return success response after update
+            var result = await equipmentsService.AssignEquipmentToBranchAsync(entry.Equipment_ID,entry.Branch_ID);            // Return success response after update
             if (result.success)
             {
                 return Ok(new

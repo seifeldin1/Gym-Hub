@@ -16,7 +16,7 @@ namespace Backend.Controllers
             this.ann_Service = ann_Service;
         }
 
-        [HttpPost("add")]
+        [HttpPost]
         //[Authorize(Roles = "BranchManager,Coach")]
         public async Task<IActionResult> AddAnnouncement([FromBody] AnnouncementsModel entry)
         {

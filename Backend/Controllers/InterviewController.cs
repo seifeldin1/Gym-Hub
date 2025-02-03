@@ -3,6 +3,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Backend.Attributes;
+using System.Threading.Tasks;
 namespace Backend.Controllers
 {
     [ApiController]
@@ -16,12 +17,12 @@ namespace Backend.Controllers
             this.InterviewService = InterviewService;
         }
 
-        [HttpPost("add")]
-        [Authorize(Roles = "BranchManager")]
-        public IActionResult AddInterviewTime([FromBody] InterviewTimeModel entry)
+        [HttpPost]
+        //[Authorize(Roles = "BranchManager")]
+        public async Task<IActionResult> AddInterviewTime([FromBody] InterviewTimeModel entry)
         {
             // Call the service method to add the workout
-            var result = InterviewService.AddInterviewTime(entry.managerID,entry.interviewDate);
+            var result =await InterviewService.AddInterviewTimeAsync(entry.managerID,entry.interviewDate);
             if (result.success)
             {
                 return Ok(new
@@ -43,16 +44,16 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAvailableInterviews()
+        public async Task<IActionResult> GetAvailableInterviews()
         {
-            var interviewtList = InterviewService.GetAvailableInterviews();
+            var interviewtList = await InterviewService.GetAvailableInterviewsAsync();
             return Ok(interviewtList);
         }
         [HttpPut]
-        public IActionResult SelectInterview([FromBody] GetByIDModel entry)
+        public async Task<IActionResult> SelectInterview([FromBody] GetByIDModel entry)
         {
             // Call the service to update the Branch
-            var result = InterviewService.SelectInterview(entry.id);
+            var result = await InterviewService.SelectInterviewAsync(entry.id);
             // Return success response after update
             if (result.success)
             {

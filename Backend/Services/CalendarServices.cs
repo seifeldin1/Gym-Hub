@@ -1,144 +1,90 @@
+using Backend.Context;
+using Backend.DbModels;
 using Backend.Models;
-using Backend.Database;
-using MySql.Data.MySqlClient;
-namespace Backend.Services{
-    public class CalendarServices{
-        private readonly GymDatabase database;
-        public CalendarServices(GymDatabase gymDatabase)
+using Microsoft.EntityFrameworkCore;
+
+namespace Backend.Services
+{
+    public class CalendarServices
+    {
+        private readonly AppDbContext _context;
+
+        public CalendarServices(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
 
-        public List<CalendarEvent> GetCalendarEventsBetween(DateTime startDate , DateTime endDate){
-            var calendar = new List<CalendarEvent>();
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string eventQuery = @"SELECT Event_ID AS Id, Title, Start_Date AS StartDate, End_Date AS EndDate,
-                 'Event' AS Type FROM Events WHERE Start_Date BETWEEN @startDate AND @endDate";
-                using(var command = new MySqlCommand(eventQuery , connection)){
-                    command.Parameters.AddWithValue("@startDate" , startDate);
-                    command.Parameters.AddWithValue("@endDate" , endDate);
-                    using(var reader = command.ExecuteReader()){
-                        while(reader.Read()){
-                            calendar.Add(new CalendarEvent{
-                                Id = reader.GetInt32("Id"),
-                                Title = reader.GetString("Title"),
-                                StartDate = reader.GetDateTime("StartDate"),
-                                EndDate = reader.GetDateTime("EndDate"),
-                                Type = reader.GetString("Type")
-                            });
-                        }
-                    }
-                }
-
-                string holidayQuery = @"SELECT Holiday_ID AS Id, Title, Start_Date AS StartDate, End_Date AS EndDate,
-                                    'Holiday' AS Type FROM Holiday WHERE Start_Date BETWEEN @startDate AND @endDate";
-                using(var command = new MySqlCommand(holidayQuery , connection)){
-                    command.Parameters.AddWithValue("@startDate" , startDate);
-                    command.Parameters.AddWithValue("@endDate" , endDate);
-                    using(var reader = command.ExecuteReader()){
-                        while(reader.Read()){
-                            calendar.Add(new CalendarEvent{
-                                Id = reader.GetInt32("Id"),
-                                Title = reader.GetString("Title"),
-                                StartDate = reader.GetDateTime("StartDate"),
-                                EndDate = reader.GetDateTime("EndDate"),
-                                Type = reader.GetString("Type")
-                            });
-                        }
-                    }
-                }
-
-                //Time is stored at meetings table as datetime so i just want to get all meetings in that period
-                string meetingQuery = @"SELECT Meeting_ID AS Id, Title, Time AS StartDate, Time AS EndDate,
-                                     'Meeting' AS Type FROM Meetings WHERE Time BETWEEN @startDate AND @endDate";
-                using(var command = new MySqlCommand(meetingQuery , connection)){
-                    command.Parameters.AddWithValue("@startDate" , startDate);
-                    command.Parameters.AddWithValue("@endDate" , endDate);
-                    using(var reader = command.ExecuteReader()){
-                        while(reader.Read()){
-                            calendar.Add(new CalendarEvent{
-                                Id = reader.GetInt32("Id"),
-                                Title = reader.GetString("Title"),
-                                StartDate = reader.GetDateTime("StartDate"),
-                                EndDate = reader.GetDateTime("EndDate"),
-                                Type = reader.GetString("Type")
-                            });
-                        }
-                    }
-                }
-            }
-            return calendar;
-        }
-
-        public List<CalendarEvent> GetAllCalendarEvents()
+        public async Task<List<CalendarEvent>> GetCalendarEventsBetweenAsync(DateTime startDate, DateTime endDate)
         {
-            var calendar = new List<CalendarEvent>();
-
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-
-                string eventQuery = @"SELECT Event_ID AS Id, Title, Start_Date AS StartDate, End_Date AS EndDate, 'Event' AS Type FROM Events";
-                using (var command = new MySqlCommand(eventQuery, connection))
+            var events = _context.Event
+                .Where(e => e.StartDate >= startDate && e.StartDate <= endDate)
+                .Select(e => new CalendarEvent
                 {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            calendar.Add(new CalendarEvent
-                            {
-                                Id = reader.GetInt32("Id"),
-                                Title = reader.GetString("Title"),
-                                StartDate = reader.GetDateTime("StartDate"),
-                                EndDate = reader.GetDateTime("EndDate"),
-                                Type = reader.GetString("Type")
-                            });
-                        }
-                    }
-                }
+                    Id = e.EventID,
+                    Title = e.Title,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate,
+                    Type = "Event"
+                }).ToList();
 
-                string holidayQuery = @"SELECT Holiday_ID AS Id, Title, Start_Date AS StartDate, End_Date AS EndDate, 'Holiday' AS Type FROM Holiday";
-                using (var command = new MySqlCommand(holidayQuery, connection))
+            var holidays = _context.Holiday
+                .Where(h => h.StartDate >= startDate && h.StartDate <= endDate)
+                .Select(h => new CalendarEvent
                 {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            calendar.Add(new CalendarEvent
-                            {
-                                Id = reader.GetInt32("Id"),
-                                Title = reader.GetString("Title"),
-                                StartDate = reader.GetDateTime("StartDate"),
-                                EndDate = reader.GetDateTime("EndDate"),
-                                Type = reader.GetString("Type")
-                            });
-                        }
-                    }
-                }
+                    Id = h.HolidayID,
+                    Title = h.Title,
+                    StartDate = h.StartDate,
+                    EndDate = h.EndDate,
+                    Type = "Holiday"
+                }).ToList();
 
-                string meetingQuery = @"SELECT Meeting_ID AS Id, Title, Time AS StartDate, Time AS EndDate, 'Meeting' AS Type FROM Meetings";
-                using (var command = new MySqlCommand(meetingQuery, connection))
+            var meetings = _context.Meeting
+                .Where(m => m.Time >= startDate && m.Time <= endDate)
+                .Select(m => new CalendarEvent
                 {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            calendar.Add(new CalendarEvent
-                            {
-                                Id = reader.GetInt32("Id"),
-                                Title = reader.GetString("Title"),
-                                StartDate = reader.GetDateTime("StartDate"),
-                                EndDate = reader.GetDateTime("EndDate"),
-                                Type = reader.GetString("Type")
-                            });
-                        }
-                    }
-                }
-            }
+                    Id = m.MeetingID,
+                    Title = m.Title,
+                    StartDate = m.Time,
+                    EndDate = m.Time, // Meetings have the same Start and End Time
+                    Type = "Meeting"
+                }).ToList();
 
-            return calendar;
+            return events.Concat(holidays).Concat(meetings).ToList();
         }
 
+        public async Task<List<CalendarEvent>> GetAllCalendarEventsAsync()
+        {
+            var events = _context.Event
+                .Select(e => new CalendarEvent
+                {
+                    Id = e.EventID,
+                    Title = e.Title,
+                    StartDate = e.StartDate,
+                    EndDate = e.EndDate,
+                    Type = "Event"
+                }).ToList();
+
+            var holidays = _context.Holiday
+                .Select(h => new CalendarEvent
+                {
+                    Id = h.HolidayID,
+                    Title = h.Title,
+                    StartDate = h.StartDate,
+                    EndDate = h.EndDate,
+                    Type = "Holiday"
+                }).ToList();
+
+            var meetings = _context.Meeting
+                .Select(m => new CalendarEvent
+                {
+                    Id = m.MeetingID,
+                    Title = m.Title,
+                    StartDate = m.Time,
+                    EndDate = m.Time,
+                    Type = "Meeting"
+                }).ToList();
+
+            return events.Concat(holidays).Concat(meetings).ToList();
+        }
     }
 }

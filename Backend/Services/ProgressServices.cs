@@ -1,59 +1,56 @@
-using System.Net.Mail;
-using Backend.Database;
-using Backend.Models;
-using MySql.Data.MySqlClient;
+using Backend.Context;
+using Backend.DbModels; // EF entities
+using Backend.Models;   // Your presentation models (e.g., ProgressModel)
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Backend.Services{
-    public class ProgressServices{
-        private readonly GymDatabase database;
-        public ProgressServices(GymDatabase gymDatabase)
+namespace Backend.Services
+{
+    public class ProgressServices
+    {
+        private readonly AppDbContext _context;
+        public ProgressServices(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
 
-        public (bool success , string message) AddProgress(ProgressModel entry){
-            using (var connection = database.ConnectToDatabase()){
-                connection.Open();
+        public async Task<(bool success, string message)> AddProgressAsync(ProgressModel entry)
+        {
+            var progress = new Progress
+            {
+                ClientID = entry.Client_ID,
+                WeightKg = entry.Weight_kg
+                // DateInserted can be auto-set by the database or your entity configuration
+            };
 
-                string query = "INSERT INTO Progress (Client_ID, Weight_kg)VALUES (@Client_ID, @Weight_kg);";
-
-                using (var command = new MySqlCommand(query, connection)){
-                    command.Parameters.AddWithValue("@Client_ID", entry.Client_ID);
-                    command.Parameters.AddWithValue("@Weight_kg", entry.Weight_kg);
-
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                        return (true, "Progress added successfully");
-                    else
-                        return (false, "Failed to add progress");
-                }
+            await _context.Progress.AddAsync(progress);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Progress added successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to add progress: {ex.Message}");
             }
         }
 
-        public List<ProgressModel> GetProgressByClientId(int clientId){
-            var progressList = new List<ProgressModel>();
+        public async Task<List<ProgressModel>> GetProgressByClientIdAsync(int clientId)
+        {
+            var progresses = await _context.Progress
+                .Where(p => p.ClientID == clientId)
+                .OrderByDescending(p => p.DateInserted)
+                .ToListAsync();
 
-            using (var connection = database.ConnectToDatabase()){
-                connection.Open();
-
-                string query = "SELECT Client_ID,Weight_kg,DateInserted FROM Progress WHERE Client_ID = @Client_ID ORDER BY DateInserted ASC;";
-
-                using (var command = new MySqlCommand(query, connection)){
-                    command.Parameters.AddWithValue("@Client_ID", clientId);
-
-                    using (var reader = command.ExecuteReader()){
-                        while (reader.Read()){
-                            progressList.Add(new ProgressModel{
-                                Client_ID=reader.GetInt32("Client_ID"),
-                                Weight_kg = reader.GetDouble("Weight_kg"),
-                                DateInserted = reader.GetDateTime("DateInserted")
-                            });
-                        }
-                    }
-                }
-            }
-
-            return progressList;
-        } 
+            var progressModels = progresses.Select(p => new ProgressModel
+            {
+                Client_ID = p.ClientID,
+                Weight_kg = p.WeightKg,
+                DateInserted = p.DateInserted
+            }).ToList();
+            return progressModels;
+        }
     }
 }

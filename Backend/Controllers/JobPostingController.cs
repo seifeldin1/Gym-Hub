@@ -3,6 +3,8 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
+using Backend.DbModels;
 
 namespace Backend.Controllers
 {
@@ -10,19 +12,19 @@ namespace Backend.Controllers
     [Route("api/JobPost")]
     public class JobPostingController : ControllerBase
     {
-        private readonly JobPosting jobpostService;
+        private readonly JobPostingService jobpostService;
 
-        public JobPostingController(JobPosting jobpostService)
+        public JobPostingController(JobPostingService jobpostService)
         {
             this.jobpostService = jobpostService;
         }
 
         [HttpPost]
-        [Authorize(Roles = "BranchManager, Owner")]
-        public IActionResult AddJobPost([FromBody] JobPost entry)
+        //[Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> AddJobPost([FromBody] Post entry)
         {
             // Call the service method to add the Branch
-            var result = jobpostService.AddJobPost(entry);
+            var result =await jobpostService.AddJobPostAsync(entry);
             if (result.success)
             {
                 return Ok(new
@@ -42,21 +44,21 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetJobPosts()
+        public async Task<IActionResult> GetJobPosts()
         {
-            var jobpostList = jobpostService.GetJobPosts();
+            var jobpostList =await jobpostService.GetJobPostsAsync();
             return Ok(jobpostList);
         }
 
         [HttpDelete]
         [Authorize(Roles = "BranchManage, Owner")]
-        public IActionResult DeleteJobPost([FromBody] GetByIDModel entry)
+        public async Task<IActionResult> DeleteJobPost([FromBody] GetByIDModel entry)
         {
              if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Job Post ID provided." });
             }
-            var result = jobpostService.DeleteJobPost(entry.id);
+            var result =await jobpostService.DeleteJobPostAsync(entry.id);
             // Return success response after deletion
             if (result.success)
             {
@@ -76,11 +78,11 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "BranchManager, Owner")]
-        public IActionResult UpdateJopPost([FromBody] JobPost entry)
+        //[Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> UpdateJopPost([FromBody] JobPost entry)
         {
             // Call the service to update the JobPost
-            var result = jobpostService.UpdateJobPost(entry);
+            var result =await jobpostService.UpdateJobPostAsync(entry);
             // Return success response after update
             if (result.success)
             {

@@ -3,6 +3,8 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Backend.Attributes;
+using System.Threading.Tasks;
+using Backend.DbModels;
 namespace Backend.Controllers
 {
     [ApiController]
@@ -16,12 +18,12 @@ namespace Backend.Controllers
             this.ReportsServices = ReportsServices;
         }
 
-        [HttpPost("GenerateClientReport")]
+        [HttpPost("Client-Report")]
         [Authorize(Roles = "Coach")]
-        public IActionResult GenerateClientReport([FromBody] ClientReport entry)
+        public async Task<IActionResult> GenerateClientReport([FromBody] ClientReport entry)
         {
             // Call the service method to add the workout
-            var result = ReportsServices.GenerateClientReport(entry.report, entry.clientID, entry.coachId);
+            var result =await ReportsServices.GenerateClientReportAsync(entry.report, entry.clientID, entry.coachId);
             if (result.success)
             {
                 return Ok(new
@@ -37,12 +39,12 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpPost("GenerateBranchManagerReport")]
-        [Authorize(Roles = "BranchManager")]
-        public IActionResult GenerateBranchManagerReport([FromBody] ManagerialReportModel entry)
+        [HttpPost("Coach-Report")]
+        //[Authorize(Roles = "BranchManager")]
+        public async Task<IActionResult> GenerateBranchManagerReport([FromBody] ManagerialReportModel entry)
         {
             // Call the service method to add the workout
-            var result = ReportsServices.GenerateBranchManagerReport(entry);
+            var result =await ReportsServices.GenerateBranchManagerReportAsync(entry);
             if (result.success)
             {
                 return Ok(new
@@ -59,26 +61,28 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-        [HttpGet("GetClientReports")]
-        [Authorize(Roles = "Client , Coach, Owner")]
-        public IActionResult GetClientReports([FromBody] GetByIDModel entry)
+
+        [HttpGet("Client-Report")]
+        //[Authorize(Roles = "Client , Coach, Owner")]
+        public async Task<IActionResult> GetClientReports([FromBody] GetByIDModel entry)
         {
-            var report = ReportsServices.GetClientReports(entry.id);
-            return Ok(report);
-        }
-            [HttpGet("GetAllBranchManagerReports")]
-        [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult GetAllBranchManagerReports()
-        {
-            var report =ReportsServices.GetAllBranchManagerReports();
+            var report =await ReportsServices.GetClientReportsAsync(entry.id);
             return Ok(report);
         }
 
-        [HttpGet("GetBranchManagerReports")]
-        [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult GetBranchManagerReports([FromBody] GetByIDModel entry)
+        [HttpGet("Coach-Reports")]
+        //[Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> GetAllBranchManagerReports()
         {
-            var report = ReportsServices.GetBranchManagerReports(entry.id);
+            var report =await ReportsServices.GetAllBranchManagerReportsAsync();
+            return Ok(report);
+        }
+
+        [HttpGet("Coach-Report")]
+        //[Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> GetBranchManagerReports([FromBody] GetByIDModel entry)
+        {
+            var report =await ReportsServices.GetBranchManagerReportsAsync(entry.id);
             return Ok(report);
         }
 
@@ -86,7 +90,7 @@ namespace Backend.Controllers
     }
     public class ClientReport
     {
-        public Report report { get; set; }
+        public ClientProgress report { get; set; }
         public int clientID { get; set; }
         public int coachId { get; set; }
     }

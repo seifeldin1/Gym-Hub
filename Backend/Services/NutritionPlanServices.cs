@@ -1,137 +1,111 @@
-using Backend.Database;
-using Backend.Models;
-using BCrypt.Net;
-using Newtonsoft.Json;
-using MySql.Data.MySqlClient;
+using Backend.Context;
+using Backend.DbModels;   // EF entity classes (e.g. NutritionPlan)
+using Backend.Models;     // Presentation models (e.g. NutritionPlanModel)
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Backend.Services
 {
-    public class NutritionPlan
+    public class NutritionPlanService
     {
-        private readonly GymDatabase database;
+        private readonly AppDbContext _context;
 
-        public NutritionPlan(GymDatabase gymDatabase)
+        public NutritionPlanService(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
-        public (bool success, string message) AddNutritionPlan(NutritionPlanModel entry)
+
+        // Adds a new nutrition plan.
+        public async Task<(bool success, string message)> AddNutritionPlanAsync(NutritionPlanModel entry)
         {
-            using (var connection = database.ConnectToDatabase())
+            var nutritionPlan = new Nutrition
             {
-                connection.Open();
-                string query = "INSERT INTO Nutrition(Goal,Protein_grams,Carbohydrates_grams,Fat_grams,Calories,Name,Description) VALUES (@Goal,@Protein_grams,@Carbohydrates_grams,@Fat_grams,@Calories,@Name,@Description);";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Goal", entry.Goal);
-                    command.Parameters.AddWithValue("@Protein_grams", entry.Protein_grams);
-                    command.Parameters.AddWithValue("@Carbohydrates_grams", entry.Carbohydrates_grams);
-                    command.Parameters.AddWithValue("@Fat_grams", entry.Fat_grams);
-                    command.Parameters.AddWithValue("@Calories", entry.Calories);
-                    command.Parameters.AddWithValue("@Name", entry.Name);
-                    command.Parameters.AddWithValue("@Description", entry.Description);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
+                Goal = entry.Goal,
+                ProteinGrams = entry.Protein_grams,
+                CarbohydratesGrams = entry.Carbohydrates_grams,
+                FatGrams = entry.Fat_grams,
+                Calories = entry.Calories,
+                Name = entry.Name,
+                Description = entry.Description
+            };
 
-                        return (true, "NutritionPlan added successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to add NutritionPlan");
-                    }
-                }
+            await _context.Nutrition.AddAsync(nutritionPlan);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "NutritionPlan added successfully");
             }
-
-        }
-        public (bool success, string message) DeleteNutritionPlan(int id)
-        {
-            using (var connection = database.ConnectToDatabase())
+            catch (Exception ex)
             {
-                connection.Open();
-                string query = "DELETE FROM Nutrition WHERE Nutrition_ID=@Id;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "Nutrition Deleted successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to Delete Nutrition");
-                    }
-                }
-
+                return (false, $"Failed to add NutritionPlan: {ex.Message}");
             }
         }
-        public (bool success, string message) UpdateNutritionPlan(NutritionPlanModel entry)
+
+        // Deletes a nutrition plan.
+        public async Task<(bool success, string message)> DeleteNutritionPlanAsync(int id)
         {
-            using (var connection = database.ConnectToDatabase())
+            var nutritionPlan = await _context.Nutrition.FindAsync(id);
+            if (nutritionPlan == null)
+                return (false, "NutritionPlan not found");
+
+            _context.Nutrition.Remove(nutritionPlan);
+            try
             {
-                connection.Open();
-                string query = "UPDATE Nutrition SET Goal=@Goal,Protein_grams=@Protein_grams,Carbohydrates_grams=@Carbohydrates_grams,Fat_grams=@Fat_grams,Calories=@Calories,Name=@Name,Description=@Description WHERE Nutrition_ID=@Nutrition_ID;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Goal",entry.Goal);
-                    command.Parameters.AddWithValue("@Protein_grams",entry.Protein_grams);
-                    command.Parameters.AddWithValue("@Carbohydrates_grams",entry.Carbohydrates_grams);
-                    command.Parameters.AddWithValue("@Fat_grams",entry.Fat_grams);
-                    command.Parameters.AddWithValue("@Calories",entry.Calories);
-                    command.Parameters.AddWithValue("@Name",entry.Name);
-                    command.Parameters.AddWithValue("@Description",entry.Description);
-                    command.Parameters.AddWithValue("@Nutrition_ID",entry.Nutrition_ID);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "Nutrition Updated successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to Update Nutrition");
-                    }
-                }
+                await _context.SaveChangesAsync();
+                return (true, "NutritionPlan deleted successfully");
             }
-
+            catch (Exception ex)
+            {
+                return (false, $"Failed to delete NutritionPlan: {ex.Message}");
+            }
         }
-        public List<NutritionPlanModel> GetNutritionPlans()
+
+        // Updates an existing nutrition plan.
+        public async Task<(bool success, string message)> UpdateNutritionPlanAsync(NutritionPlanModel entry)
         {
-            var nutritionplanList = new List<NutritionPlanModel>();
-            using (var connection = database.ConnectToDatabase())
+            var nutritionPlan = await _context.Nutrition.FindAsync(entry.Nutrition_ID);
+            if (nutritionPlan == null)
+                return (false, "NutritionPlan not found");
+
+            // Update fields
+            nutritionPlan.Goal = entry.Goal;
+            nutritionPlan.ProteinGrams = entry.Protein_grams;
+            nutritionPlan.CarbohydratesGrams = entry.Carbohydrates_grams;
+            nutritionPlan.FatGrams = entry.Fat_grams;
+            nutritionPlan.Calories = entry.Calories;
+            nutritionPlan.Name = entry.Name;
+            nutritionPlan.Description = entry.Description;
+
+            try
             {
-                connection.Open();
-                string query = "SELECT * FROM Nutrition;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        //The while loop iterates through each row of the query result.
-                        //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
-                        while (reader.Read())
-                        {
-                            nutritionplanList.Add(new NutritionPlanModel
-                            {
-                                Nutrition_ID = reader.GetInt32("Nutrition_ID"),
-                                Goal = reader.GetString("Goal"),
-                                Protein_grams = reader.GetInt32("Protein_grams"),
-                                Carbohydrates_grams = reader.GetInt32("Carbohydrates_grams"),
-                                Fat_grams = reader.GetInt32("Fat_grams"),
-                                Calories = reader.GetInt32("Calories"),
-                                Name = reader.GetString("Name"),
-                                Description = reader.GetString("Description"),
-                            });
-                        }
-
-
-                        return nutritionplanList;
-                    }
-                }
+                await _context.SaveChangesAsync();
+                return (true, "NutritionPlan updated successfully");
             }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to update NutritionPlan: {ex.Message}");
+            }
+        }
+
+        // Retrieves all nutrition plans.
+        public async Task<List<NutritionPlanModel>> GetNutritionPlansAsync()
+        {
+            var nutritionPlans = await _context.Nutrition.ToListAsync();
+            var models = nutritionPlans.Select(np => new NutritionPlanModel
+            {
+                Nutrition_ID = np.NutritionID,
+                Goal = np.Goal,
+                Protein_grams = np.ProteinGrams,
+                Carbohydrates_grams = np.CarbohydratesGrams,
+                Fat_grams = np.FatGrams,
+                Calories = np.Calories,
+                Name = np.Name,
+                Description = np.Description
+            }).ToList();
+            return models;
         }
     }
 }

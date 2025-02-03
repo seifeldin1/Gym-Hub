@@ -2,125 +2,89 @@ using Backend.Database;
 using Backend.Models;
 using BCrypt.Net;
 using Newtonsoft.Json;
-using MySql.Data.MySqlClient;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Microsoft.IdentityModel;
 using System.Security.Claims;
-
+using Backend.Context;
+using System.Linq;
 
 namespace Backend.Services
 {
     public class CredentialServices
     {
-        private readonly GymDatabase database;
+        private readonly AppDbContext _context;
 
-        public CredentialServices(GymDatabase gymDatabase)
+        public CredentialServices(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
 
-        private string GenerateJwtToken(string username , string role){
-            var key = Encoding.UTF8.GetBytes("9c1b3f43-df57-4a9a-88d3-b6e9e58c6f2e"); //Convert the secret key into a byte array for cryptographic signing.
-            var Claims = new[]
+        private string GenerateJwtToken(string username, string role)
+        {
+            var key = Encoding.UTF8.GetBytes("9c1b3f43-df57-4a9a-88d3-b6e9e58c6f2e");
+            var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username), // Subject claim (username)
-                new Claim("role", role), // Custom claim for the user's role
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Unique identifier for the token to prevent reuse
+                new Claim(JwtRegisteredClaimNames.Sub, username),
+                new Claim("role", role),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            //Token descriptor to specify the token's properties
-            var tokenDescriptor = new SecurityTokenDescriptor{
-                Subject = new ClaimsIdentity(Claims), //assign claims to token 
-                Expires = DateTime.UtcNow.AddHours(24), //expires in 24 hours 
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(24),
                 SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key), // Use the secret key for logging in
-                     SecurityAlgorithms.HmacSha256Signature // Use HMAC-SHA256 for logging in (algorithm)
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature
                 )
             };
-            
-            var tokenHandler = new JwtSecurityTokenHandler(); //token handler that will generate the token 
-            var token = tokenHandler.CreateToken(tokenDescriptor); //token creation 
-            return tokenHandler.WriteToken(token); //convert token to string and return it 
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
 
-       
-
-        public (bool success, string message, int id,  string token, string userType) Login(Credentials entry)
+        public async Task<(bool success, string message, int id, string token, string userType)> Login(Credentials entry)
         {
-            using (var connection = database.ConnectToDatabase())
+            var user = _context.Users
+                .Where(u => u.Username == entry.Username)
+                .Select(u => new { u.UserID, u.PasswordHashed, u.Type })
+                .FirstOrDefault();
+
+            if (user == null)
             {
-                connection.Open();
+                return (false, "Username does not exist", -1, null, null);
+            }
 
-                string query = "SELECT User_ID , Username , PasswordHashed , Type FROM User WHERE Username = @username;";
-                using (var command = new MySqlCommand(query, connection))
+            // If user is a client, check if their account is activated
+            if (user.Type == "Client")
+            {
+                var client = _context.Clients
+                    .Where(c => c.ClientID == user.UserID)
+                    .Select(c => c.AccountActivated)
+                    .FirstOrDefault();
+
+                if (client == null)
                 {
-                    command.Parameters.AddWithValue("@username", entry.Username);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.Read()) // If username found in database
-                        {
-                            string hashedPassword = reader["PasswordHashed"].ToString();
-                            string roleType = reader["Type"].ToString();
-                            int id = (int)reader["User_ID"];
-                            if(roleType =="Client"){
-                                reader.Close(); 
-                                query = "SELECT AccountActivated from Client where Client_ID = @id";
-                                using (var command2 = new MySqlCommand(query, connection)){
-                                    command2.Parameters.AddWithValue("@id", id);
-                                    using (var reader2 = command2.ExecuteReader()){
-                                        if(reader2.Read()){
-                                            if(Convert.ToInt32(reader2["AccountActivated"]) == 1){
-                                                if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
-                                                {
-
-                                                    string token = GenerateJwtToken(entry.Username, roleType);
-                                                    // Password is correct
-                                                    return(true , "Login Successful" , id ,  token , roleType);
-                                                }
-                                                else
-                                                {
-                                                    // Password is incorrect
-                                                    return (false, "Invalid password", id,  null, null);
-                                                }
-                                            }else{
-                                                return (false, "Account not activated", id ,  null, null);
-                                            }
-                                        }
-                                        else{
-                                            return (false, "Client not found",id ,  null, null);
-                                        }
-                                    }
-                                    
-                                }
-
-                            }else{
-                                if (BCrypt.Net.BCrypt.Verify(entry.Password, hashedPassword))
-                                {
-
-                                    string token = GenerateJwtToken(entry.Username, roleType);
-                                    // Password is correct
-                                    return(true , "Login Successful" ,id ,  token , roleType);
-                                }
-                                else
-                                {
-                                    // Password is incorrect
-                                    return (false, "Invalid password",id ,  null, null);
-                                }
-                            }
-                            
-
-                            
-                        }
-                        else
-                        {
-                            // Username not found
-                            return (false, "Username does not exist", -1, null, null);
-                        }
-                    }
+                    return (false, "Client not found", user.UserID, null, null);
                 }
+
+                if (client == false)
+                {
+                    return (false, "Account not activated", user.UserID, null, null);
+                }
+            }
+
+            // Verify password
+            if (BCrypt.Net.BCrypt.Verify(entry.Password, user.PasswordHashed))
+            {
+                string token = GenerateJwtToken(entry.Username, user.Type);
+                return (true, "Login Successful", user.UserID, token, user.Type);
+            }
+            else
+            {
+                return (false, "Invalid password", user.UserID, null, null);
             }
         }
     }

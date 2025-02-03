@@ -1,53 +1,52 @@
-using Backend.Models;
-using Backend.Database;
-using MySql.Data.MySqlClient;
-namespace Backend.Services{
-    public class SalaryServices{
-        private readonly GymDatabase database;
-        public SalaryServices(GymDatabase database){
-            this.database = database;
-        }
+using Backend.Context;
+using Backend.DbModels;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
-        public (bool sucess, string message) updateCoachSalary(int salary, int id)
+namespace Backend.Services
+{
+    public class SalaryServices
+    {
+        private readonly AppDbContext _context;
+        public SalaryServices(AppDbContext context)
         {
-            using (var connection = database.ConnectToDatabase())
+            _context = context;
+        }
+
+        public async Task<(bool success, string message)> UpdateCoachSalaryAsync(int salary, int id)
+        {
+            var coach = await _context.Coaches.FindAsync(id);
+            if (coach == null)
+                return (false, "Coach not found");
+
+            coach.Salary = salary;
+            try
             {
-                connection.Open();
-                string query = "UPDATE Coach SET Salary = @Salary WHERE Coach_ID = @CoachID";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Salary", salary);
-                    command.Parameters.AddWithValue("@CoachID", id);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "Salary Udated successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to Update Salary");
-                    }
-                }
+                await _context.SaveChangesAsync();
+                return (true, "Salary updated successfully");
             }
-        }
-    
-
-        public (bool sucess , string message) updateBranchManagerSalary(int salary , int id){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = "UPDATE Coach SET Salary = @Salary WHERE Coach_ID = @CoachID";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@Salary" , salary);
-                    command.Parameters.AddWithValue("@CoachID" , id);
-                    command.ExecuteNonQuery();
-                }
-                return(true , "salary for branch manager updated successfully");
+            catch (System.Exception ex)
+            {
+                return (false, $"Failed to update salary: {ex.Message}");
             }
         }
 
-        //view salary => when he opens the coach/branch manager account , he will see all details including salary
+        public async Task<(bool success, string message)> UpdateBranchManagerSalaryAsync(int salary, int id)
+        {
+            var manager = await _context.Branch_Managers.FindAsync(id);
+            if (manager == null)
+                return (false, "Branch Manager not found");
 
+            manager.Salary = salary;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Salary for branch manager updated successfully");
+            }
+            catch (System.Exception ex)
+            {
+                return (false, $"Failed to update salary: {ex.Message}");
+            }
+        }
     }
 }

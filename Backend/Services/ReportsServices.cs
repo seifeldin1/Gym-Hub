@@ -1,187 +1,143 @@
-using Backend.Database;
-using Backend.Models;
-using MySql.Data.MySqlClient;
+using Backend.Context;
+using Backend.DbModels;      // EF entities (e.g., ClientProgress, Report, BranchManager, User)
+using Backend.Models;        // Your presentation models (e.g., Report, ManagerialReportModel)
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Backend.Services
 {
     public class ReportsServices
     {
-        private readonly GymDatabase database;
-        public ReportsServices(GymDatabase database)
+        private readonly AppDbContext _context;
+        public ReportsServices(AppDbContext context)
         {
-            this.database = database;
+            _context = context;
         }
 
-        public (bool success, string message) GenerateClientReport(Report report, int clientID, int coachId)
+        /// <summary>
+        /// Generates a client report by inserting a new ClientProgress record.
+        /// </summary>
+        public async Task<(bool success, string message)> GenerateClientReportAsync(ClientProgress report, int clientID, int coachId)
         {
-            using (var connection = database.ConnectToDatabase())
+            var clientProgress = new ClientProgress
             {
-                connection.Open();
-                var query = @"INSERT INTO ClientProgress (Client_ID, Coach_ID, ProgressSummary, GoalsAchieved, ChallengesFaced, NextSteps) 
-                            VALUES (@ClientID, @CoachID, @ProgressSummary, @GoalsAchieved, @ChallengesFaced, @NextSteps)";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@ClientID", clientID);
-                    command.Parameters.AddWithValue("@CoachID", coachId);
-                    command.Parameters.AddWithValue("@ProgressSummary", report.ProgressSummary);
-                    command.Parameters.AddWithValue("@GoalsAchieved", report.GoalsAchieved);
-                    command.Parameters.AddWithValue("@ChallengesFaced", report.ChallengesFaced);
-                    command.Parameters.AddWithValue("@NextSteps", report.NextSteps);
-                    command.ExecuteNonQuery();
-                }
-                return (true, "report generated successfully");
+                ClientID = clientID,
+                CoachID = coachId,
+                ProgressSummary = report.ProgressSummary,
+                GoalsAchieved = report.GoalsAchieved,
+                ChallengesFaced = report.ChallengesFaced,
+                NextSteps = report.NextSteps,
+                // Optionally, set ReportDate here if not handled automatically.
+                ReportDate = DateTime.UtcNow
+            };
+
+            await _context.ClientProgress.AddAsync(clientProgress);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Report generated successfully");
             }
-        }
-        public List<Report> GetClientReports(int clientID)
-        {
-            var reports = new List<Report>();
-            using (var connection = database.ConnectToDatabase())
+            catch (Exception ex)
             {
-                connection.Open();
-
-                var query = @"SELECT ReportDate, ProgressSummary, GoalsAchieved, ChallengesFaced, NextSteps
-                            FROM ClientProgress WHERE Client_ID = @clientID ORDER BY ReportDate DESC"; // Order by latest report first
-
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@clientID", clientID);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var report = new Report
-                            {
-                                ReportDate = reader.GetDateTime("ReportDate"),
-                                ProgressSummary = reader.GetString("ProgressSummary"),
-                                GoalsAchieved = reader.GetString("GoalsAchieved"),
-                                ChallengesFaced = reader.GetString("ChallengesFaced"),
-                                NextSteps = reader.GetString("NextSteps")
-                            };
-                            reports.Add(report);
-                        }
-                    }
-
-                    return reports;
-
-                }
+                return (false, $"Error: {ex.Message}");
             }
         }
 
-        public (bool success, string message) GenerateBranchManagerReport(ManagerialReportModel report)
+        /// <summary>
+        /// Retrieves client reports by client ID.
+        /// </summary>
+        public async Task<List<ClientProgress>> GetClientReportsAsync(int clientID)
         {
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                var query = @"
-                    INSERT INTO Reports 
-                        (Manager_Reported_ID, Title, Generated_Date, Type, Status, Content) 
-                    VALUES 
-                        (@ManagerReportedID, @Title, @GeneratedDate, @Type, @Status, @Content)";
-                using (var command = new MySqlCommand(query, connection))
+            var reports = await _context.ClientProgress
+                .Where(cp => cp.ClientID == clientID)
+                .OrderByDescending(cp => cp.ReportDate)
+                .Select(cp => new ClientProgress
                 {
-                    command.Parameters.AddWithValue("@ManagerReportedID", report.ManagerReportedID);
-                    command.Parameters.AddWithValue("@Title", report.Title);
-                    command.Parameters.AddWithValue("@GeneratedDate", report.GeneratedDate);
-                    command.Parameters.AddWithValue("@Type", report.Type);
-                    command.Parameters.AddWithValue("@Status", report.Status);
-                    command.Parameters.AddWithValue("@Content", report.Content);
-
-                    command.ExecuteNonQuery();
-                }
-                return (true, "Branch manager report generated successfully.");
-            }
-        }
-
-        public List<ManagerialReportModel> GetBranchManagerReports(int managerReportedID)
-        {
-            var reports = new List<ManagerialReportModel>();
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                string query = @"
-                    SELECT Report_ID, Title, Generated_Date, Type, Status, Content 
-                    FROM Reports 
-                    WHERE Manager_Reported_ID = @ManagerReportedID 
-                    ORDER BY Generated_Date DESC";
-
-                string ManagerNameQuery = @"SELECT CONCAT(First_Name ,' ', Last_Name ) AS FullName From User WHERE User_ID = @managerID";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@ManagerReportedID", managerReportedID);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var report = new ManagerialReportModel
-                            {
-                                ReportID = reader.GetInt32("Report_ID"),
-                                Title = reader.GetString("Title"),
-                                GeneratedDate = reader.GetDateTime("Generated_Date"),
-                                Type = reader.GetString("Type"),
-                                Status = reader.GetString("Status"),
-                                Content = reader.GetString("Content")
-                            };
-                            reports.Add(report);
-                        }
-                    }
-                    return reports;
-                }
-            }
-        }
-
-        public List<ManagerialReportModel> GetAllBranchManagerReports()
-        {
-            var reports = new List<ManagerialReportModel>();
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                var query = @"
-        SELECT 
-            r.Report_ID, 
-            r.Manager_Reported_ID, 
-            CONCAT(u.First_Name, ' ', u.Last_Name) AS ManagerName, 
-            r.Title, 
-            r.Generated_Date, 
-            r.Type, 
-            r.Status, 
-            r.Content 
-        FROM 
-            Reports r
-        LEFT JOIN 
-            Branch_Manager bm ON r.Manager_Reported_ID = bm.Branch_Manager_ID
-        LEFT JOIN 
-            User u ON bm.Branch_Manager_Id = u.User_Id
-        ORDER BY 
-            r.Generated_Date DESC";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            var report = new ManagerialReportModel
-                            {
-                                ReportID = reader.GetInt32("Report_ID"),
-                                ManagerReportedID = reader.IsDBNull(reader.GetOrdinal("Manager_Reported_ID")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("Manager_Reported_ID")),
-                                ManagerName = reader.IsDBNull(reader.GetOrdinal("ManagerName")) ? null : reader.GetString("ManagerName"),
-                                Title = reader.GetString("Title"),
-                                GeneratedDate = reader.GetDateTime("Generated_Date"),
-                                Type = reader.GetString("Type"),
-                                Status = reader.GetString("Status"),
-                                Content = reader.GetString("Content")
-                            };
-                            reports.Add(report);
-                        }
-                    }
-                }
-            }
+                    ReportDate = cp.ReportDate,
+                    ProgressSummary = cp.ProgressSummary,
+                    GoalsAchieved = cp.GoalsAchieved,
+                    ChallengesFaced = cp.ChallengesFaced,
+                    NextSteps = cp.NextSteps
+                })
+                .ToListAsync();
             return reports;
         }
 
+        /// <summary>
+        /// Generates a branch manager report by inserting a new Report record.
+        /// </summary>
+        public async Task<(bool success, string message)> GenerateBranchManagerReportAsync(ManagerialReportModel report)
+        {
+            var rep = new DbModels.Report
+            {
+                ManagerReportedID = report.ManagerReportedID,
+                Title = report.Title,
+                GeneratedDate = report.GeneratedDate,
+                Type = report.Type,
+                Status = report.Status,
+                Content = report.Content
+            };
 
+            await _context.Report.AddAsync(rep);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Branch manager report generated successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
+        }
 
+        /// <summary>
+        /// Retrieves branch manager reports for a specific manager.
+        /// </summary>
+        public async Task<List<ManagerialReportModel>> GetBranchManagerReportsAsync(int managerReportedID)
+        {
+            var reports = await _context.Report
+                .Where(r => r.ManagerReportedID == managerReportedID)
+                .OrderByDescending(r => r.GeneratedDate)
+                .Select(r => new ManagerialReportModel
+                {
+                    ReportID = r.ReportID,
+                    Title = r.Title,
+                    GeneratedDate = r.GeneratedDate,
+                    Type = r.Type,
+                    Status = r.Status,
+                    Content = r.Content
+                })
+                .ToListAsync();
+            return reports;
+        }
 
-
+        /// <summary>
+        /// Retrieves all branch manager reports.
+        /// </summary>
+        public async Task<List<ManagerialReportModel>> GetAllBranchManagerReportsAsync()
+        {
+            var reports = await _context.Report
+                .OrderByDescending(r => r.GeneratedDate)
+                .Select(r => new ManagerialReportModel
+                {
+                    ReportID = r.ReportID,
+                    ManagerReportedID = r.ManagerReportedID,
+                    // Assuming that Report entity has a navigation property named BranchManager
+                    // and that BranchManager has a navigation property User with FirstName and LastName.
+                    ManagerName = r.Branch_Manager != null 
+                        ? r.Branch_Manager.User.First_Name + " " + r.Branch_Manager.User.Last_Name 
+                        : null,
+                    Title = r.Title,
+                    GeneratedDate = r.GeneratedDate,
+                    Type = r.Type,
+                    Status = r.Status,
+                    Content = r.Content
+                })
+                .ToListAsync();
+            return reports;
+        }
     }
 }

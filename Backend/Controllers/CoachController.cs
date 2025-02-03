@@ -3,6 +3,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -17,11 +18,11 @@ namespace Backend.Controllers
             this.coachservice = coachservice;
         }
 
-        [HttpPost("add")]
-        [Authorize(Roles = "BranchManager, Owner")]
-        public IActionResult AddCoach([FromBody] CoachModel entry)
+        [HttpPost]
+        //[Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> AddCoach([FromBody] CoachModel entry)
         {
-            var result = coachservice.AddCoach(entry);
+            var result = await coachservice.AddCoachAsync(entry);
             if (result.success)
             {
                 return Ok(new
@@ -41,22 +42,22 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Coach , BranchManager , Owner")]
-        public IActionResult GetCoaches()
+        //[Authorize(Roles = "Coach , BranchManager , Owner")]
+        public async Task<IActionResult> GetCoaches()
         {
-            var coachList = coachservice.GetCoach();
+            var coachList = await coachservice.GetCoachAsync();
             return Ok(coachList);
         }
 
         [HttpDelete]
-        [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult DeleteCoach([FromBody] GetByIDModel entry)
+        //[Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> DeleteCoach([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Coach ID provided." });
             }
-            var result = coachservice.DeleteCoach(entry.id);
+            var result = await coachservice.DeleteCoachAsync(entry.id);
             // Return success response after deletion
             if (result.success)
             {
@@ -75,20 +76,20 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpGet("Solo")]
-        [Authorize(Roles = "Coach , BranchManager")]
-        public IActionResult GetCoachById([FromBody] GetByIDModel model)
+        [HttpGet("Coach")]
+        //[Authorize(Roles = "Coach , BranchManager")]
+        public async Task<IActionResult> GetCoachById([FromBody] GetByIDModel model)
         {
-            var coach = coachservice.GetCoachById(model.id);
+            var coach = await coachservice.GetCoachByIdAsync(model.id);
             return Ok(coach);
         }
 
-        [HttpPut("UpdateCoach")]
-        [Authorize(Roles = "Coach, Owner")]
-        public IActionResult UpdateCoachData([FromBody] CoachUpdaterModel entry)
+        [HttpPut]
+        //[Authorize(Roles = "Coach, Owner")]
+        public async Task<IActionResult> UpdateCoachData([FromBody] CoachUpdaterModel entry)
         {
             // Call the service to update the Branch
-            var result = coachservice.UpdateCoach(entry);
+            var result = await coachservice.UpdateCoachAsync(entry);
             // Return success response after update
             if (result.success)
             {
@@ -108,9 +109,9 @@ namespace Backend.Controllers
         }
 
 
-        [HttpPut("MoveCoach")]
-        [Authorize(Roles = "Owner , BranchManager")]
-        public IActionResult MoveCoach([FromBody] MovingModel entry)
+        [HttpPut("Move-Coach")]
+        //[Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> MoveCoach([FromBody] MovingModel entry)
         {
             if (entry.coachid <= 0)
             {
@@ -120,7 +121,7 @@ namespace Backend.Controllers
             {
                 return BadRequest(new { message = "Invalid Branch ID provided." });
             }
-            var result = coachservice.MoveCoach(entry.wfb, entry.coachid);         // Return success response after update
+            var result = await coachservice.MoveCoachAsync(entry.wfb, entry.coachid);         // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -138,15 +139,15 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpPut("UpdateCoachStatus")]
-        [Authorize(Roles = "Coach, Owner")]
-        public IActionResult UpdateStatus([FromBody] updatingStatus entry)
+        [HttpPut("Coach-Status")]
+        //[Authorize(Roles = "Coach, Owner")]
+        public async Task<IActionResult> UpdateStatus([FromBody] updatingStatus entry)
         {
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Coach ID provided." });
             }
-            var result = coachservice.UpdateCoachStatus(entry.id, entry.Status);         // Return success response after update
+            var result = await coachservice.UpdateCoachStatusAsync(entry.id, entry.Status);         // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -164,15 +165,15 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpPut("UpdateCoachContract")]
-        [Authorize(Roles = "BranchManager, Owner")]
-        public IActionResult UpdateCoachContract([FromBody] updatingContract entry)
+        [HttpPut("Coach-Contract")]
+        //[Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> UpdateCoachContract([FromBody] updatingContract entry)
         {
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Coach ID provided." });
             }
-            var result = coachservice.UpdateCoachContract(entry.id, entry.Contract);         // Return success response after update
+            var result = await coachservice.UpdateCoachContractAsync(entry.id, entry.Contract);         // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -190,11 +191,11 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpGet("ViewMyClients")]
-        [Authorize(Roles = "Coach, Owner")]
-        public IActionResult ViewMyClients([FromBody] ClientRequestModel request)
+        [HttpGet("View-Clients")]
+        //[Authorize(Roles = "Coach, Owner")]
+        public async Task<IActionResult> ViewMyClients([FromBody] ClientRequestModel request)
         {
-            var clientList = coachservice.ViewMyClients(request.Id);
+            var clientList = await coachservice.ViewMyClientsAsync(request.Id);
             if (clientList == null || clientList.Count == 0)
             {
                 return NotFound(new { success = false, message = "No clients found for the specified coach." });

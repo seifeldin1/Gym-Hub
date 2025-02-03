@@ -3,6 +3,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -10,19 +11,19 @@ namespace Backend.Controllers
     [Route("api/NutritionPlan")]
     public class NutritionPlanController : ControllerBase
     {
-        private readonly NutritionPlan NutritionPlanService;
+        private readonly NutritionPlanService NutritionPlanService;
 
-        public NutritionPlanController(NutritionPlan NutritionPlanService)
+        public NutritionPlanController(NutritionPlanService NutritionPlanService)
         {
             this.NutritionPlanService = NutritionPlanService;
         }
 
-        [HttpPost("add")]
-        [Authorize(Roles = "Coach, Owner")]
-        public IActionResult AddNutritionPlan([FromBody] NutritionPlanModel entry)
+        [HttpPost]
+        //[Authorize(Roles = "Coach, Owner")]
+        public async Task<IActionResult> AddNutritionPlan([FromBody] NutritionPlanModel entry)
         {
             // Call the service method to add the NutritionPlan
-            var result = NutritionPlanService.AddNutritionPlan(entry);
+            var result =await NutritionPlanService.AddNutritionPlanAsync(entry);
             if (result.success)
             {
                 return Ok(new
@@ -39,22 +40,24 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+
         [HttpGet]
-        [Authorize(Roles = "Coach,Client, Owner")]
-        public IActionResult GetNutritionPlans()
+        //[Authorize(Roles = "Coach,Client, Owner")]
+        public async Task<IActionResult> GetNutritionPlans()
         {
-            var nutritionplanList = NutritionPlanService.GetNutritionPlans();
+            var nutritionplanList =await NutritionPlanService.GetNutritionPlansAsync();
             return Ok(nutritionplanList);
         }
+
         [HttpDelete]
-        [Authorize(Roles = "Coach, Owner")]
-        public IActionResult DeleteNutritionPlan([FromBody] GetByIDModel entry)
+        //[Authorize(Roles = "Coach, Owner")]
+        public async Task<IActionResult> DeleteNutritionPlan([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Nutrition Plan ID provided." });
             }
-            var result = NutritionPlanService.DeleteNutritionPlan(entry.id);
+            var result =await NutritionPlanService.DeleteNutritionPlanAsync(entry.id);
             // Return success response after deletion
             if (result.success)
             {
@@ -70,12 +73,13 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
+
         [HttpPut]
         [Authorize(Roles = "Coach, Owner")]
-        public IActionResult UpdateNutrition([FromBody] NutritionPlanModel entry)
+        public async Task<IActionResult> UpdateNutrition([FromBody] NutritionPlanModel entry)
         {
             // Call the service to update the Branch
-            var result = NutritionPlanService.UpdateNutritionPlan(entry);
+            var result =await NutritionPlanService.UpdateNutritionPlanAsync(entry);
             // Return success response after update
             if (result.success)
             {

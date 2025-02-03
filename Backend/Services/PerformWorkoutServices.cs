@@ -1,76 +1,61 @@
-using Backend.Database;
+using Backend.Context;
+using Backend.DbModels;
 using Backend.Models;
-using BCrypt.Net;
-using Newtonsoft.Json;
-using MySql.Data.MySqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Backend.Services
 {
-    public class PerformWorkout
+    public class PerformWorkoutService
     {
-        private readonly GymDatabase database;
+        private readonly AppDbContext _context;
 
-        public PerformWorkout(GymDatabase gymDatabase)
+        public PerformWorkoutService(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
-        public List<PerformWorkoutModel> GetPerformWorkoutsByClientId(int id)
+
+        // Retrieves performed workouts by client ID.
+        public async Task<List<PerformWorkoutModel>> GetPerformWorkoutsByClientIdAsync(int clientId)
         {
-            var performWorkoutList = new List<PerformWorkoutModel>();
-            using (var connection = database.ConnectToDatabase())
+            var workouts = await _context.performWorkouts
+                .Where(pw => pw.ClientID == clientId)
+                .ToListAsync();
+
+            var models = workouts.Select(pw => new PerformWorkoutModel
             {
-                connection.Open();
-                string query = "SELECT * FROM Perform_Workout WHERE Client_ID = @Client_ID;";
-                using (var command = new MySqlCommand(query, connection))
-                {
+                Workout_ID = pw.WorkoutID,
+                Client_ID = pw.ClientID,
+                Order_Of_Workout = pw.OrderOfWorkout,
+                Type = pw.Type,
+                Day_Number = pw.DayNumber,
+                Performed = pw.Performed
+            }).ToList();
 
-                    command.Parameters.AddWithValue("@Client_ID", id);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-
-                        while (reader.Read())
-                        {
-                            performWorkoutList.Add(new PerformWorkoutModel
-                            {
-                                Workout_ID = reader.GetInt32("Workout_ID"),
-                                Client_ID = reader.GetInt32("Client_ID"),
-                                Order_Of_Workout = reader.GetInt32("Order_Of_Workout"),
-                                Type = reader.GetString("Type"),
-                                Day_Number = reader.GetInt32("Day_Number"),
-                                Performed = reader.GetBoolean("Performed"),
-                            });
-                        }
-
-                        return performWorkoutList;
-                    }
-                }
-            }
+            return models;
         }
-        public (bool success, string message) SetPerformed(int clientid,int workoutid)
+
+        // Marks a workout as performed.
+        public async Task<(bool success, string message)> SetPerformedAsync(int clientId, int workoutId)
         {
-            using (var connection = database.ConnectToDatabase())
+            var record = await _context.performWorkouts
+                .FirstOrDefaultAsync(pw => pw.ClientID == clientId && pw.WorkoutID == workoutId);
+            if (record == null)
+                return (false, "Workout record not found for the given client.");
+
+            record.Performed = true;
+            try
             {
-                connection.Open();
-                string query = "UPDATE Perform_Workout SET Performed = TRUE WHERE Client_ID=@Client_ID AND Workout_ID=@Workout_ID;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Client_ID",clientid);
-                    command.Parameters.AddWithValue("@Workout_ID",workoutid );
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, $"Client With ID:{clientid} perform Workout With ID:{workoutid}");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to add Performed workout ");
-                    }
-                }
+                await _context.SaveChangesAsync();
+                return (true, $"Client with ID: {clientId} performed workout with ID: {workoutId}");
             }
-
+            catch (Exception ex)
+            {
+                return (false, $"Failed to update performed status: {ex.Message}");
+            }
         }
     }
 }

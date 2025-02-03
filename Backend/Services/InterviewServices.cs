@@ -1,58 +1,76 @@
-//Interview_Times
-using Backend.Models;
-using Backend.Database;
-using MySql.Data.MySqlClient;
-namespace Backend.Services{
-    public class InterviewService{
-        private readonly GymDatabase database;
-        public InterviewService(GymDatabase database){
-            this.database = database;
+using Backend.Context;
+using Backend.DbModels;    // EF entity for InterviewTime
+using Backend.Models;      // EF mapping to Interview if needed
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Backend.Services
+{
+    public class InterviewService
+    {
+        private readonly AppDbContext _context;
+
+        public InterviewService(AppDbContext context)
+        {
+            _context = context;
         }
 
-        public (bool success , string message) AddInterviewTime(int managerID , DateTime interviewDate){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = @"INSERT INTO Interview_Times(Manager_ID , Free_Interview_Date) 
-                                    VALUES(@ID , @DATE)";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@ID" , managerID);
-                    command.Parameters.AddWithValue("@DATE" , interviewDate);
-                    command.ExecuteNonQuery();
-                }
-                return (true , "Interview Time Added");
+        // Adds a new interview time.
+        public async Task<(bool success, string message)> AddInterviewTimeAsync(int managerID, DateTime interviewDate)
+        {
+            var interviewTime = new InterviewTime
+            {
+                ManagerID = managerID,
+                FreeInterviewDate = interviewDate,
+                Status = "Available" // default value
+            };
+
+            await _context.interviewTimes.AddAsync(interviewTime);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Interview Time Added");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
             }
         }
 
-        public List<Interview> GetAvailableInterviews(){
-            List<Interview> interviews = new List<Interview>();
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = @"SELECT * FROM Interview_Times WHERE Taken = false";
-                using(var command = new MySqlCommand(query , connection)){
-                    using(var reader = command.ExecuteReader()){
-                        while(reader.Read()){
-                            interviews.Add(new Interview{
-                            Interview_ID = reader.GetInt32("Interview_ID"),
-                            Free_Interview_Date = reader.GetDateTime("Free_Interview_Date")
-                            });
-                        }
-                    }
-                }
-                return interviews;
-            }
+        // Retrieves available (not taken) interview times.
+        public async Task<List<Interview>> GetAvailableInterviewsAsync()
+        {
+            // Map the InterviewTime EF entity to your Interview model if needed.
+            var interviews = await _context.interviewTimes
+                .Where(it => it.Status == "Available")
+                .Select(it => new Interview
+                {
+                    Interview_ID = it.InterviewID,
+                    Free_Interview_Date = it.FreeInterviewDate
+                }).ToListAsync();
+            return interviews;
         }
 
-        public (bool success , string message) SelectInterview(int interviewID){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = @"UPDATE Interview_Times SET Taken = true WHERE Interview_ID = @ID";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@ID" , interviewID);
-                    command.ExecuteNonQuery();
-                }
-                return(true , "interview selected successfully");
+        // Marks an interview as taken.
+        public async Task<(bool success, string message)> SelectInterviewAsync(int interviewID)
+        {
+            var interview = await _context.interviewTimes.FindAsync(interviewID);
+            if (interview == null)
+                return (false, "Interview not found");
+
+            interview.Status = "Taken";
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Interview selected successfully");
             }
-            
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
         }
     }
 }

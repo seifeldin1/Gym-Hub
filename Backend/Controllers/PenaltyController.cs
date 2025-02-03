@@ -3,6 +3,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Backend.Attributes;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers{
     [ApiController]
@@ -14,17 +15,17 @@ namespace Backend.Controllers{
         }
 
         [HttpPut("Coach")]
-        [Authorize(Roles = "BranchManager, Owner")]
-        public IActionResult AddPenaltyToCoach([FromBody] PenaltyModel penalty){
-            var result = PenaltyServices.AddPenaltyToCoach(penalty.Penalties,penalty.Id);
+        //[Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> AddPenaltyToCoach([FromBody] PenaltyModel penalty){
+            var result =await PenaltyServices.AddPenaltyToCoachAsync(penalty.Penalties,penalty.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});
             return BadRequest(new{success = result.success , message = result.message });
         }
 
         [HttpPut("Branch-Manager")]
         [Authorize(Roles = "Owner")]
-        public IActionResult AddPenaltyToBranchManager([FromBody] PenaltyModel penalty){
-            var result = PenaltyServices.AddPenaltyToBranchManager(penalty.Penalties,penalty.Id);
+        public async Task<IActionResult> AddPenaltyToBranchManager([FromBody] PenaltyModel penalty){
+            var result =await PenaltyServices.AddPenaltyToBranchManagerAsync(penalty.Penalties,penalty.Id);
             if(result.success) return Ok(new{ success = result.success , message = result.message});
             return Unauthorized(new{success = result.success , message = result.message });
         }

@@ -1,8 +1,10 @@
 using Backend.Models;
+using Backend.DbModels;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -15,36 +17,36 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Coach , BranchManager, Owner")]
-        public IActionResult CreateEvent([FromBody] Events events){
-            var result = eventService.AddEvent(events);
+        //[Authorize(Roles = "Coach , BranchManager, Owner")]
+        public async Task<IActionResult> CreateEvent([FromBody] Event events){
+            var result = await eventService.AddEventAsync(events);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
 
 
         [HttpPut]
-        [Authorize(Roles = "Coach , BranchManager, Owner")]
-        public IActionResult UpdateEvent([FromBody] Events events){
-            var result = eventService.UpdateEvent(events);
+        //[Authorize(Roles = "Coach , BranchManager, Owner")]
+        public async Task<IActionResult> UpdateEvent([FromBody] Events events){
+            var result = await eventService.UpdateEventAsync(events);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
 
 
         [HttpDelete]
-        [Authorize(Roles = "Coach , BranchManager, Owner")]
-        public IActionResult DeleteEvent(GetByIDModel getByIDModel)
+        //[Authorize(Roles = "Coach , BranchManager, Owner")]
+        public async Task<IActionResult> DeleteEvent(GetByIDModel getByIDModel)
         {
-            var result = eventService.DeleteEvent(getByIDModel.id);
+            var result = await eventService.DeleteEventAsync(getByIDModel.id);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
 
         [HttpGet]
-        [Authorize(Roles = "Coach , BranchManager ,Client , Owner")]
-        public IActionResult GetEvents(){
-            var result = eventService.GetEvents();
+        //[Authorize(Roles = "Coach , BranchManager ,Client , Owner")]
+        public async Task<IActionResult> GetEvents(){
+            var result = await eventService.GetEventsAsync();
             return Ok(result);
         }
 

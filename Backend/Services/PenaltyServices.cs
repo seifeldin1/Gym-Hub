@@ -1,87 +1,58 @@
-using Backend.Models;
-using Backend.Database;
-using MySql.Data.MySqlClient;
-namespace Backend.Services{
-    public class PenaltyServices{
-        private readonly GymDatabase database;
-        public PenaltyServices(GymDatabase database){
-            this.database = database;
+using Backend.Context;
+using Backend.DbModels;   // EF entities for Coach and Branch_Manager
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
+
+namespace Backend.Services
+{
+    public class PenaltyServices
+    {
+        private readonly AppDbContext _context;
+
+        public PenaltyServices(AppDbContext context)
+        {
+            _context = context;
         }
 
-        //add + update penalty
-        //view bonus is automatically done when his profile is viewed 
-        public (bool success , string message) AddPenaltyToCoach(int penalty , int id){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = "UPDATE Coach SET Penalties = @Penalty Where Coach_ID = @ID";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@Penalty" , penalty);
-                    command.Parameters.AddWithValue("@ID" , id);
-                    command.ExecuteNonQuery();
-                }
-                int salary;
-                query = "SELECT Salary From Coach where Coach_ID = @ID";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@ID" , id);
-                    salary = (int)command.ExecuteScalar();
-                }
-                if(salary>penalty){
-                    query = "UPDATE Coach SET Salary = (@salary-@Penalty) Where Coach_ID = @ID";
-                    using(var command = new MySqlCommand(query , connection)){
-                        command.Parameters.AddWithValue("@salary" , salary);
-                        command.Parameters.AddWithValue("@Penalty" , penalty);
-                        command.Parameters.AddWithValue("@ID" , id);
-                        command.ExecuteNonQuery();
-                    }
-                }
-                else{
-                    query = "UPDATE Coach SET Salary = 0 Where Coach_ID = @ID";
-                    using(var command = new MySqlCommand(query , connection)){
-                        command.Parameters.AddWithValue("@ID" , id);
-                        command.ExecuteNonQuery();
-                    }
-                }
-                
-                return(true , "penalty added sucessfully");
+        // Adds a penalty to a coach and updates salary accordingly.
+        public async Task<(bool success, string message)> AddPenaltyToCoachAsync(int penalty, int id)
+        {
+            var coach = await _context.Coaches.FindAsync(id);
+            if (coach == null)
+                return (false, "Coach not found");
+
+            // Set penalty value (depending on your business logic, you might add to an existing value)
+            coach.Penalties = penalty;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Penalty added successfully to coach");
             }
-            
-        }
-        public (bool success , string message) AddPenaltyToBranchManager(int penalty , int id){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = "UPDATE Branch_Manager SET Penalties = @Penalty Where Branch_Manager_ID = @ID";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@Penalty" , penalty);
-                    command.Parameters.AddWithValue("@ID" , id);
-                    command.ExecuteNonQuery();
-                }
-                int salary;
-                query = "SELECT Salary From Branch_Manager where Branch_Manager_ID = @ID";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@ID" , id);
-                    salary = (int)command.ExecuteScalar();
-                }
-                if(salary>penalty){
-                    query = "UPDATE Branch_Manager SET Salary = (@salary-@Penalty) Where Branch_Manager_ID = @ID";
-                    using(var command = new MySqlCommand(query , connection)){
-                        command.Parameters.AddWithValue("@salary" , salary);
-                        command.Parameters.AddWithValue("@Penalty" , penalty);
-                        command.Parameters.AddWithValue("@ID" , id);
-                        command.ExecuteNonQuery();
-                    }
-                }
-                else{
-                    query = "UPDATE Branch_Manager SET Salary = 0 Where Branch_Manager_ID = @ID";
-                    using(var command = new MySqlCommand(query , connection)){
-                        command.Parameters.AddWithValue("@ID" , id);
-                        command.ExecuteNonQuery();
-                    }
-                }
-                
-                return(true , "penalty added sucessfully");
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
             }
-            
         }
 
+        // Adds a penalty to a branch manager and updates salary accordingly.
+        public async Task<(bool success, string message)> AddPenaltyToBranchManagerAsync(int penalty, int id)
+        {
+            var manager = await _context.Branch_Managers.FindAsync(id);
+            if (manager == null)
+                return (false, "Branch Manager not found");
+
+            manager.Penalties = penalty;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Penalty added successfully to branch manager");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
+            }
+        }
     }
 }

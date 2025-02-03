@@ -40,6 +40,7 @@ namespace Backend.Controllers
             });
             // Return the JSON result
         }
+
         [HttpGet]
         //[Authorize(Roles = "Owner")]
         public async Task<IActionResult> GetBranches()
@@ -99,7 +100,7 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpPut("woking-hours")]
+        [HttpPut("Woking-Hours")]
         //[Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> SetWorkingHours([FromBody] TimeModel time)
         {

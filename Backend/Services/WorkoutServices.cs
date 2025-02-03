@@ -1,138 +1,119 @@
-using Backend.Database;
-using Backend.Models;
-using BCrypt.Net;
-using Newtonsoft.Json;
-using MySql.Data.MySqlClient;
+using Backend.Context;
+using Backend.DbModels;   // Your EF entities (e.g. Workout)
+using Backend.Models;     // Your presentation model (e.g. WorkoutModel)
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Backend.Services
 {
-    public class Workout
+    public class WorkoutService
     {
-        private readonly GymDatabase database;
-
-        public Workout(GymDatabase gymDatabase)
+        private readonly AppDbContext _context;
+        public WorkoutService(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
-        public (bool success, string message) AddWorkout(WorkoutModel entry)
+
+        /// <summary>
+        /// Adds a new workout record.
+        /// </summary>
+        public async Task<(bool success, string message)> AddWorkoutAsync(WorkoutModel entry)
         {
-            using (var connection = database.ConnectToDatabase())
+            // Map the presentation model to your EF entity.
+            var workout = new Workout
             {
-                connection.Open();
-                string query = "INSERT INTO Workout(Muscle_Targeted,Goal ,Created_By_Coach_ID,Calories_Burnt,Reps_Per_Set,Sets,Duration_min) VALUES (@Muscle_Targeted,@Goal,@Created_By_Coach_ID,@Calories_Burnt,@Reps_Per_Set,@Sets,@Duration_min);";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Muscle_Targeted", entry.Muscle_Targeted);
-                    command.Parameters.AddWithValue("@Goal", entry.Goal);
-                    command.Parameters.AddWithValue("@Created_By_Coach_ID", entry.Created_By_Coach_ID);
-                    command.Parameters.AddWithValue("@Calories_Burnt", entry.Calories_Burnt);
-                    command.Parameters.AddWithValue("@Reps_Per_Set", entry.Reps_Per_Set);
-                    command.Parameters.AddWithValue("@Sets", entry.Sets);
-                    command.Parameters.AddWithValue("@Duration_min", entry.Duration_min);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
+                MuscleTargeted = entry.Muscle_Targeted,
+                Goal = entry.Goal,
+                CreatedByCoachID = entry.Created_By_Coach_ID,
+                CaloriesBurnt = entry.Calories_Burnt,
+                RepsPerSet = entry.Reps_Per_Set,
+                Sets = entry.Sets,
+                DurationMin = entry.Duration_min
+            };
 
-                        return (true, "Workout added successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to add Workout");
-                    }
-                }
+            await _context.workouts.AddAsync(workout);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Workout added successfully");
             }
-
-        }
-        public (bool success, string message) DeleteWorkout(int id)
-        {
-            using (var connection = database.ConnectToDatabase())
+            catch (Exception ex)
             {
-                connection.Open();
-                string query = "DELETE FROM Workout WHERE Workout_ID=@Id;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "Workout Deleted successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to Delete Workout");
-                    }
-                }
-
-            }
-        }
-        public List<WorkoutModel> GetWorkouts()
-        {
-            var workoutList = new List<WorkoutModel>();
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                string query = "SELECT * FROM Workout ;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        //The while loop iterates through each row of the query result.
-                        //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
-                        while (reader.Read())
-                        {
-                            workoutList.Add(new WorkoutModel
-                            {
-                                Workout_ID = reader.GetInt32("Workout_ID"),
-                                Muscle_Targeted = reader.GetString("Muscle_Targeted"),
-                                Goal = reader.GetString("Goal"),
-                                Created_By_Coach_ID = reader.GetInt32("Created_By_Coach_ID"),
-                                Calories_Burnt = reader.GetInt32("Calories_Burnt"),
-                                Reps_Per_Set=  reader.IsDBNull(reader.GetOrdinal("Reps_Per_Set")) ? null: reader.GetInt32("Reps_Per_Set"),
-                                Sets=  reader.IsDBNull(reader.GetOrdinal("Sets")) ? null: reader.GetInt32("Sets"),
-                                Duration_min=  reader.IsDBNull(reader.GetOrdinal("Duration_min")) ? null: reader.GetInt32("Duration_min"),
-                            });
-                        }
-
-
-                        return workoutList;
-                    }
-                }
+                return (false, $"Failed to add workout: {ex.Message}");
             }
         }
 
-        public (bool success, string message) UpdateWorkout(WorkoutModel entry)
+        /// <summary>
+        /// Deletes a workout record by its ID.
+        /// </summary>
+        public async Task<(bool success, string message)> DeleteWorkoutAsync(int id)
         {
-            using (var connection = database.ConnectToDatabase())
+            var workout = await _context.workouts.FindAsync(id);
+            if (workout == null)
+                return (false, "Workout not found");
+
+            _context.workouts.Remove(workout);
+            try
             {
-                connection.Open();
-                string query = "UPDATE Workout SET Muscle_Targeted=@Muscle_Targeted,Goal=@Goal,Created_By_Coach_ID=@Created_By_Coach_ID,Calories_Burnt=@Calories_Burnt,Reps_Per_Set=@Reps_Per_Set,Sets=@Sets,Duration_min=@Duration_min WHERE Workout_ID=@Workout_ID;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Muscle_Targeted",entry.Muscle_Targeted);
-                    command.Parameters.AddWithValue("@Goal",entry.Goal );
-                    command.Parameters.AddWithValue("@Created_By_Coach_ID",entry.Created_By_Coach_ID );
-                    command.Parameters.AddWithValue("@Calories_Burnt",entry.Calories_Burnt );
-                    command.Parameters.AddWithValue("@Reps_Per_Set",entry.Reps_Per_Set );
-                    command.Parameters.AddWithValue("@Sets",entry.Sets );
-                    command.Parameters.AddWithValue("@Duration_min",entry.Duration_min );
-                    command.Parameters.AddWithValue("@Workout_ID",entry.Workout_ID );
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "Workout Updated successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to Update Workout");
-                    }
-                }
+                await _context.SaveChangesAsync();
+                return (true, "Workout deleted successfully");
             }
+            catch (System.Exception ex)
+            {
+                return (false, $"Failed to delete workout: {ex.Message}");
+            }
+        }
 
+        /// <summary>
+        /// Retrieves all workout records.
+        /// </summary>
+        public async Task<List<WorkoutModel>> GetWorkoutsAsync()
+        {
+            var workouts = await _context.workouts.ToListAsync();
+            // Map EF entities to your presentation model.
+            var workoutModels = workouts.Select(w => new WorkoutModel
+            {
+                Workout_ID = w.WorkoutID,
+                Muscle_Targeted = w.MuscleTargeted,
+                Goal = w.Goal,
+                Created_By_Coach_ID = w.CreatedByCoachID??0,
+                Calories_Burnt = w.CaloriesBurnt,
+                Reps_Per_Set = w.RepsPerSet,
+                Sets = w.Sets,
+                Duration_min = w.DurationMin
+            }).ToList();
+            return workoutModels;
+        }
+
+        /// <summary>
+        /// Updates an existing workout record.
+        /// </summary>
+        public async Task<(bool success, string message)> UpdateWorkoutAsync(WorkoutModel entry)
+        {
+            var workout = await _context.workouts.FindAsync(entry.Workout_ID);
+            if (workout == null)
+                return (false, "Workout not found");
+
+            // Update the properties.
+            workout.MuscleTargeted = entry.Muscle_Targeted;
+            workout.Goal = entry.Goal;
+            workout.CreatedByCoachID = entry.Created_By_Coach_ID;
+            workout.CaloriesBurnt = entry.Calories_Burnt;
+            workout.RepsPerSet = entry.Reps_Per_Set;
+            workout.Sets = entry.Sets;
+            workout.DurationMin = entry.Duration_min;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Workout updated successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to update workout: {ex.Message}");
+            }
         }
     }
 }

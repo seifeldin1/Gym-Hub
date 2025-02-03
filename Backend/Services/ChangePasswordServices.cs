@@ -1,25 +1,33 @@
+using System;
+using System.Threading.Tasks;
 using Backend.Database;
 using BCrypt.Net;
-using MySql.Data.MySqlClient;
+using Microsoft.EntityFrameworkCore;
+using Backend.Context;
 
-namespace Backend.Services{
-    public class PasswordServices{
-        public GymDatabase gymDatabase;
-        public PasswordServices(GymDatabase gymDatabase){
-            this.gymDatabase = gymDatabase;
+namespace Backend.Services
+{
+    public class PasswordServices
+    {
+        private readonly AppDbContext _context;
+
+        public PasswordServices(AppDbContext context)
+        {
+            _context = context;
         }
 
-        public (bool success , string message) ChangePassword(string newPassword  , int id){
-            using(var connection = gymDatabase.ConnectToDatabase()){
-                connection.Open();
-                string query = "UPDATE User SET PasswordHashed = @Password Where User_ID = @id";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@Password" , BCrypt.Net.BCrypt.HashPassword(newPassword));
-                    command.Parameters.AddWithValue("@id" , id);
-                    command.ExecuteNonQuery();
-                }
-                return (true , "Password changed");
+        public async Task<(bool success, string message)> ChangePasswordAsync(string newPassword, int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return (false, "User not found");
             }
+
+            user.PasswordHashed = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _context.SaveChangesAsync();
+
+            return (true, "Password changed");
         }
     }
 }

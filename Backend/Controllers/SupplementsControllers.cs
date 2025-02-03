@@ -4,29 +4,30 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Utils;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/Supplements")]
     public class SupplementsController : ControllerBase
     {
-        private readonly Supplements supplementsService;
+        private readonly SupplementsServices supplementsService;
 
-        public SupplementsController(Supplements supplementsService)
+        public SupplementsController(SupplementsServices supplementsService)
         {
             this.supplementsService = supplementsService;
         }
 
         [HttpPost]
-        [Authorize(Roles = "Coach , BranchManager")]
-        public IActionResult AddSupplement([FromBody] SupplementsModel entry)
+        //[Authorize(Roles = "Coach , BranchManager")]
+        public async Task<IActionResult> AddSupplement([FromBody] SupplementsModel entry)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState); // Returns detailed validation errors
             }
             // Call the service method to add the workout
-            var result = supplementsService.AddSupplements(entry);
+            var result =await supplementsService.AddSupplementAsync(entry);
             if (result.success)
             {
                 return Ok(new
@@ -46,11 +47,11 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Coach , BranchManager")]
-        public IActionResult UpdateSupplement([FromBody] SupplementsModel entry)
+        //[Authorize(Roles = "Coach , BranchManager")]
+        public async Task<IActionResult> UpdateSupplement([FromBody] SupplementsModel entry)
         {
             // Call the service to update the Branch
-            var result = supplementsService.UpdateSupplement(entry);
+            var result =await supplementsService.UpdateSupplementAsync(entry);
             // Return success response after update
             if (result.success)
             {
@@ -70,22 +71,22 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Coach , BranchManager , Client")]
-        public IActionResult GetSupplements()
+        //[Authorize(Roles = "Coach , BranchManager , Client")]
+        public async Task<IActionResult> GetSupplements()
         {
-            var supplementList = supplementsService.GetSupplements();
+            var supplementList =await supplementsService.GetSupplementsAsync();
             return Ok(supplementList);
         }
 
         [HttpDelete]
         [Authorize(Roles = "Coach , BranchManager")]
-        public IActionResult DeleteSupplement([FromBody] GetByIDModel entry)
+        public async Task<IActionResult> DeleteSupplement([FromBody] GetByIDModel entry)
         {
              if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Supplement ID provided." });
             }
-            var result = supplementsService.DeleteSupplement(entry.id);
+            var result =await supplementsService.DeleteSupplementAsync(entry.id);
             // Return success response after deletion
             if (result.success)
             {

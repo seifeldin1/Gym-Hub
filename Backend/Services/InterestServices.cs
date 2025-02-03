@@ -1,71 +1,95 @@
-using Backend.Models;
-using Backend.Database;
-using MySql.Data.MySqlClient;
-namespace Backend.Services{
-    public class InterestServices{
-        private readonly GymDatabase database;
-        public InterestServices(GymDatabase gymDatabase)
+using Backend.Context;
+using Backend.DbModels;      // For the Interested entity
+using Backend.Models;        // For the presentation model 'Interests'
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Backend.Services
+{
+    public class InterestServices
+    {
+        private readonly AppDbContext _context;
+        public InterestServices(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
 
-        public (bool success  , string message) AddToInterests(int clientID , int interestID){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                // Check if the record already exists
-                string checkQuery = "SELECT COUNT(*) FROM Interested WHERE Client_ID = @clientID AND Session_ID = @sessionID";
-                using (var checkCommand = new MySqlCommand(checkQuery, connection)){
-                    checkCommand.Parameters.AddWithValue("@clientID", clientID);
-                    checkCommand.Parameters.AddWithValue("@sessionID", interestID);
-                    int count = Convert.ToInt32(checkCommand.ExecuteScalar());
+        /// <summary>
+        /// Adds an interest for the specified client and session if it does not already exist.
+        /// </summary>
+        public async Task<(bool success, string message)> AddToInterestsAsync(int clientID, int interestID)
+        {
+            // Check if the record already exists
+            bool exists = await _context.Interested
+                .AnyAsync(i => i.Client_ID == clientID && i.Session_ID == interestID);
+            if (exists)
+            {
+                return (false, "Already exists in Interested table");
+            }
 
-                    if (count > 0)
-                        return (false, "Already exists in Interested table");
-                }
-                string query = "INSERT INTO Interested (Client_ID,Session_ID) VALUES (@clientID , @sessionID)";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@clientID" , clientID);
-                    command.Parameters.AddWithValue("@sessionID" , interestID);
-                    command.ExecuteNonQuery();
-                }
-                return(true , "added to interested successfully");
+            var interested = new Interested
+            {
+                Client_ID = clientID,
+                Session_ID = interestID
+            };
+
+            await _context.Interested.AddAsync(interested);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Added to interested successfully");
+            }
+            catch (System.Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
             }
         }
 
-        public (bool success  , string message) RemoveFromInterests(int clientID , int interestID){
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = "DELETE FROM Interested WHERE Client_ID= @clientID AND Session_ID = @sessionID";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@clientID" , clientID);
-                    command.Parameters.AddWithValue("@sessionID" , interestID);
-                    command.ExecuteNonQuery();
-                }
-                return(true , "deleted from interested successfully");
+        /// <summary>
+        /// Removes an interest record for the specified client and session.
+        /// </summary>
+        public async Task<(bool success, string message)> RemoveFromInterestsAsync(int clientID, int interestID)
+        {
+            var interested = await _context.Interested
+                .FirstOrDefaultAsync(i => i.Client_ID == clientID && i.Session_ID == interestID);
+            if (interested == null)
+            {
+                return (false, "Record not found in Interested table");
+            }
+
+            _context.Interested.Remove(interested);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Deleted from interested successfully");
+            }
+            catch (System.Exception ex)
+            {
+                return (false, $"Error: {ex.Message}");
             }
         }
 
-        public List<Interests> ViewMyInterests(int clientID){
-            var interests = new List<Interests>();
-            using(var connection = database.ConnectToDatabase()){
-                connection.Open();
-                string query = @"SELECT s.Title , s.Category , s.Location , s.Date_Time FROM Interested i 
-                LEFT JOIN Session s ON i.Session_ID = s.Session_ID WHERE Client_ID = @clientID";
-                using(var command = new MySqlCommand(query , connection)){
-                    command.Parameters.AddWithValue("@clientID" , clientID);
-                    using(var reader = command.ExecuteReader()){
-                        while(reader.Read()){
-                            interests.Add(new Interests(){
-                                Name = reader.GetString(reader.GetOrdinal("Title")),
-                                Category = reader.GetString(reader.GetOrdinal("Category")),
-                                Location = reader.GetString(reader.GetOrdinal("Location")),
-                                Time = reader.GetDateTime(reader.GetOrdinal("Date_Time")),
-                            });
-                        }
-                    }
-                }
-            }
-            return interests;               
+        /// <summary>
+        /// Retrieves the interests (session details) for the specified client.
+        /// </summary>
+        public async Task<List<Interests>> ViewMyInterestsAsync(int clientID)
+        {
+            // Assuming that your Session EF entity has properties: Title, Category, Location, Date_Time,
+            // and that your 'Interests' model is defined in Backend.Models.
+            var interests = await _context.Interested
+                .Where(i => i.Client_ID == clientID)
+                .Include(i => i.Session)
+                .Select(i => new Interests
+                {
+                    Name = i.Session.Title,
+                    Category = i.Session.Category,
+                    Location = i.Session.Location,
+                    Time = i.Session.Date_Time
+                })
+                .ToListAsync();
+            return interests;
         }
     }
 }

@@ -1,60 +1,36 @@
-using Backend.Database;
-using MySql.Data.MySqlClient;
+using Backend.Context;
+using Backend.DbModels;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
-namespace Backend.Services {
-    public class SignUpCheckerServices {
-        private readonly GymDatabase database;
-
-        public SignUpCheckerServices(GymDatabase database) {
-            this.database = database;
+namespace Backend.Services
+{
+    public class SignUpCheckerServices
+    {
+        private readonly AppDbContext _context;
+        public SignUpCheckerServices(AppDbContext context)
+        {
+            _context = context;
         }
 
-        public bool IsEmailUsed(string email) {
-            using (var connection = database.ConnectToDatabase()) {
-                connection.Open();
-                string query = "SELECT COUNT(*) FROM User WHERE Email = @Email";
-                using (var command = new MySqlCommand(query, connection)) {
-                    command.Parameters.AddWithValue("@Email", email);
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count > 0;
-                }
-            }
+        public async Task<bool> IsEmailUsedAsync(string email)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email);
         }
 
-        public bool IsUsernameUsed(string username) {
-            using (var connection = database.ConnectToDatabase()) {
-                connection.Open();
-                string query = "SELECT COUNT(*) FROM User WHERE Username = @Username";
-                using (var command = new MySqlCommand(query, connection)) {
-                    command.Parameters.AddWithValue("@Username", username);
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count > 0;
-                }
-            }
+        public async Task<bool> IsUsernameUsedAsync(string username)
+        {
+            return await _context.Users.AnyAsync(u => u.Username == username);
         }
 
-        public bool IsPhoneNumberUsed(string phoneNumber) {
-            using (var connection = database.ConnectToDatabase()) {
-                connection.Open();
-                string query = "SELECT COUNT(*) FROM User WHERE Phone_Number = @PhoneNumber";
-                using (var command = new MySqlCommand(query, connection)) {
-                    command.Parameters.AddWithValue("@PhoneNumber", phoneNumber);
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count > 0;
-                }
-            }
+        public async Task<bool> IsPhoneNumberUsedAsync(string phoneNumber)
+        {
+            return await _context.Users.AnyAsync(u => u.Phone_Number == phoneNumber);
         }
 
-        public bool IsNationalNumberUsed(long nationalNumber) {
-            using (var connection = database.ConnectToDatabase()) {
-                connection.Open();
-                string query = "SELECT COUNT(*) FROM User WHERE National_Number = @NationalNumber";
-                using (var command = new MySqlCommand(query, connection)) {
-                    command.Parameters.AddWithValue("@NationalNumber", nationalNumber);
-                    int count = Convert.ToInt32(command.ExecuteScalar());
-                    return count > 0;
-                }
-            }
+        public async Task<bool> IsNationalNumberUsedAsync(long nationalNumber)
+        {
+            return await _context.Users.AnyAsync(u => u.National_Number == nationalNumber);
         }
     }
 }

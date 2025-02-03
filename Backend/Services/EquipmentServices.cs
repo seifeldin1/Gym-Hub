@@ -1,158 +1,136 @@
-using Backend.Database;
+using Backend.Context;
+using Backend.DbModels;
 using Backend.Models;
-using BCrypt.Net;
-using Newtonsoft.Json;
-using MySql.Data.MySqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Backend.Services
 {
-    public class Equipments
+    public class EquipmentService
     {
-        private readonly GymDatabase database;
-        public Equipments(GymDatabase gymDatabase)
+        private readonly AppDbContext _context;
+
+        public EquipmentService(AppDbContext context)
         {
-            this.database = gymDatabase;
+            _context = context;
         }
-        public (bool success, string message) AddEquipments(EquipmentsModel entry)
+
+        // Adds a new equipment record to the database.
+        public async Task<(bool success, string message)> AddEquipmentAsync(EquipmentsModel entry)
         {
-            using (var connection = database.ConnectToDatabase())
+            var equipment = new Equipment
             {
-                connection.Open();
+                // Map properties from your model to your DbModel
+                Status = entry.Status,
+                PurchasePrice = entry.Purchase_Price,
+                Category = entry.Category,
+                PurchaseDate = entry.Purchase_Date,
+                Name = entry.Name,
+                SerialNumber = entry.Serial_Number,
+                BelongToBranchID = entry.Belong_To_Branch_ID
+            };
 
-                string query = "INSERT INTO Equipments (Status,Purchase_Price ,Category,Purchase_Date, Name,Serial_Number,Belong_To_Branch_ID) VALUES (@Status, @Purchase_Price, @Category,@Purchase_Date,@name,@Serial_Number,@Belong_To_Branch_ID);";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Status", entry.Status);
-                    command.Parameters.AddWithValue("@Purchase_Price", entry.Purchase_Price);
-                    command.Parameters.AddWithValue("@Category", entry.Category);
-                    command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date);
-                    command.Parameters.AddWithValue("@Name", entry.Name);
-                    command.Parameters.AddWithValue("@Serial_Number", entry.Serial_Number);
-                    command.Parameters.AddWithValue("@Belong_To_Branch_ID", entry.Belong_To_Branch_ID);
-
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "Equipment added successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to add equipment");
-                    }
-                }
+            await _context.equipments.AddAsync(equipment);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Equipment added successfully");
             }
-
-        }
-        public List<EquipmentsModel> GetEquipments()
-        {
-            var equipmentsList = new List<EquipmentsModel>();
-            using (var connection = database.ConnectToDatabase())
+            catch (Exception ex)
             {
-                connection.Open();
-                string query = "SELECT * FROM Equipments ;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        //The while loop iterates through each row of the query result.
-                        //For each row, the reader.Read() method reads the current row and moves the cursor to the next row.   
-                        while (reader.Read())
-                        {
-                            equipmentsList.Add(new EquipmentsModel
-                            {
-                                Equipment_ID=  reader.GetInt32("Equipment_ID"),
-                                Status = reader.GetString("Status"),
-                                Purchase_Price = reader.GetInt32("Purchase_Price"),
-                                Category = reader.GetString("Category"),
-                                Purchase_Date =reader.IsDBNull(reader.GetOrdinal("Purchase_Date")) ? (DateTime?)null : reader.GetDateTime("Purchase_Date"),
-                                Name = reader.GetString("Name"),
-                                Serial_Number = reader.GetString("Serial_Number"),
-                                Belong_To_Branch_ID=  reader.IsDBNull(reader.GetOrdinal("Belong_To_Branch_ID")) ? null: reader.GetInt32("Belong_To_Branch_ID"),
-                            });
-                        }
-
-
-                        return equipmentsList;
-                    }
-                }
-            }
-        }
-        public (bool success, string message) UpdateEquipment(EquipmentsModel entry)
-        {
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                string query = "UPDATE Equipments SET Status=@Status,Purchase_Price=@Purchase_Price,Category=@Category,Purchase_Date=@Purchase_Date,Name=@Name,Serial_Number=@Serial_Number,Belong_To_Branch_ID=@Belong_To_Branch_ID WHERE Equipment_ID=@Equipment_ID;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Status", entry.Status);
-                    command.Parameters.AddWithValue("@Purchase_Price", entry.Purchase_Price);
-                    command.Parameters.AddWithValue("@Category", entry.Category);
-                    command.Parameters.AddWithValue("@Purchase_Date", entry.Purchase_Date);
-                    command.Parameters.AddWithValue("@Name", entry.Name);
-                    command.Parameters.AddWithValue("@Serial_Number", entry.Serial_Number);
-                    command.Parameters.AddWithValue("@Belong_To_Branch_ID", entry.Belong_To_Branch_ID);
-                    command.Parameters.AddWithValue("@Equipment_ID", entry.Equipment_ID);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "Equipment Updated successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to Update Equipment");
-                    }
-                }
-            }
-        }
-        public (bool success, string message) AssignEquipmentToBranch(int Equipment_ID, int Branch_ID)
-        {
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                string query = "UPDATE Equipments SET Belong_To_Branch_ID= @Belong_To_Branch_ID WHERE Equipment_ID=@Equipment_ID;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Belong_To_Branch_ID", Branch_ID);
-                    command.Parameters.AddWithValue("@Equipment_ID", Equipment_ID);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                        return (true, $"Assign Equipment:{Equipment_ID} To Branch:{Branch_ID} successfully");
-                    else
-                        return (false, "Failed to Assign Equipment To Branch");
-                }
-            }
-        }
-        public (bool success, string message) DeleteEquipment(int id)
-        {
-            using (var connection = database.ConnectToDatabase())
-            {
-                connection.Open();
-                string query = "DELETE FROM Equipments WHERE Equipment_ID=@Id;";
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", id);
-                    int rowsAffected = command.ExecuteNonQuery();
-                    if (rowsAffected > 0)
-                    {
-
-                        return (true, "Equipment Deleted successfully");
-                    }
-                    else
-                    {
-
-                        return (false, "Failed to Delete Equipment");
-                    }
-                }
-
+                return (false, $"Failed to add equipment: {ex.Message}");
             }
         }
 
+        // Retrieves all equipment records.
+        public async Task<List<EquipmentsModel>> GetEquipmentsAsync()
+        {
+            // Retrieve all equipment from the DbSet
+            var equipments = await _context.equipments.ToListAsync();
+            // Convert each DbModel to your presentation model if needed.
+            var equipmentModels = new List<EquipmentsModel>();
+            foreach (var eq in equipments)
+            {
+                equipmentModels.Add(new EquipmentsModel
+                {
+                    Equipment_ID = eq.EquipmentID, // Adjust property names accordingly
+                    Status = eq.Status,
+                    Purchase_Price = eq.PurchasePrice,
+                    Category = eq.Category,
+                    Purchase_Date = eq.PurchaseDate,
+                    Name = eq.Name,
+                    Serial_Number = eq.SerialNumber,
+                    Belong_To_Branch_ID = eq.BelongToBranchID
+                });
+            }
+            return equipmentModels;
+        }
+
+        // Updates an existing equipment record.
+        public async Task<(bool success, string message)> UpdateEquipmentAsync(EquipmentsModel entry)
+        {
+            var equipment = await _context.equipments.FindAsync(entry.Equipment_ID);
+            if (equipment == null)
+                return (false, "Equipment not found");
+
+            // Update properties
+            equipment.Status = entry.Status;
+            equipment.PurchasePrice = entry.Purchase_Price;
+            equipment.Category = entry.Category;
+            equipment.PurchaseDate = entry.Purchase_Date;
+            equipment.Name = entry.Name;
+            equipment.SerialNumber = entry.Serial_Number;
+            equipment.BelongToBranchID = entry.Belong_To_Branch_ID;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Equipment updated successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to update equipment: {ex.Message}");
+            }
+        }
+
+        // Assigns equipment to a branch.
+        public async Task<(bool success, string message)> AssignEquipmentToBranchAsync(int equipmentId, int branchId)
+        {
+            var equipment = await _context.equipments.FindAsync(equipmentId);
+            if (equipment == null)
+                return (false, "Equipment not found");
+
+            equipment.BelongToBranchID = branchId;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, $"Assigned Equipment: {equipmentId} to Branch: {branchId} successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to assign equipment to branch: {ex.Message}");
+            }
+        }
+
+        // Deletes an equipment record.
+        public async Task<(bool success, string message)> DeleteEquipmentAsync(int id)
+        {
+            var equipment = await _context.equipments.FindAsync(id);
+            if (equipment == null)
+                return (false, "Equipment not found");
+
+            _context.equipments.Remove(equipment);
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Equipment deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Failed to delete equipment: {ex.Message}");
+            }
+        }
     }
 }
-
-

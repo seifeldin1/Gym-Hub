@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Backend.Controllers
 {
     [ApiController]
-    [Route("api/BranchManager")]
+    [Route("api/Branch-Manager")]
     public class BranchManagerController : ControllerBase
     {
         private readonly BranchManagerServices branchmanagersService;
@@ -16,7 +16,7 @@ namespace Backend.Controllers
         {
             this.branchmanagersService = branchmanagersService;
         }
-        [HttpPost("add")]
+        [HttpPost]
         //[Authorize(Roles = "Owner")]
         public async Task<IActionResult> AddBranchManager([FromBody] BranchManagerModel entry)
         {
@@ -39,14 +39,14 @@ namespace Backend.Controllers
 
         }
 
-        [HttpGet("Solo")]
+        [HttpGet("Manager")]
         //[Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> GetBranchManagers([FromBody] GetByIDModel manager){
             var result = await branchmanagersService.GetBranchManagerByIdAsync(manager.id);
             return Ok(result);
         }
         
-        [HttpPut("UpdateBranchManager")]
+        [HttpPut]
         //[Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> UpdateBranchManager([FromBody] BranchManagerUpdaterModel entry)
         {
@@ -70,7 +70,7 @@ namespace Backend.Controllers
             });
         }
         [HttpDelete]
-        [Authorize(Roles = "Owner")]
+        //[Authorize(Roles = "Owner")]
         public async Task<IActionResult> DeleteBranchManager([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -103,7 +103,7 @@ namespace Backend.Controllers
             return Ok(branchmanagerList);
         }
 
-        [HttpPut("ChangeBranchManager")]
+        [HttpPut("Change-Manager")]
         //[Authorize(Roles = "Owner")]
         public async Task<IActionResult> ChangeBranchManager([FromBody] ChangingManagerModel entry)
         {
@@ -125,7 +125,7 @@ namespace Backend.Controllers
                 message = result.message
             });
         }
-        [HttpPut("UpdateBranchManagerContract")]
+        [HttpPut("Manager-Contract")]
         //[Authorize(Roles = "Owner")]
         public async Task<IActionResult> UpdateBranchManagerContract([FromBody] updatingContract entry)
         {

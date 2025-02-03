@@ -63,6 +63,8 @@ namespace Backend.Context
         public DbSet<Nutrition> Nutrition { get; set; }
         public DbSet<Diet> Diet { get; set; }
         public DbSet<Report> Report { get; set; }
+        public DbSet<Session> Sessions { get; set; }
+        public DbSet<Interested> Interested { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

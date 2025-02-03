@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Models;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -11,18 +12,18 @@ namespace Backend.Controllers
     public class MeetingsController : ControllerBase
     {
         private readonly NotificationServices notificationServices;
-        private readonly MeetingsServices meetingService;
+        private readonly MeetingService meetingService;
         private readonly CoachesServices coachesServices;
 
-        public MeetingsController(NotificationServices notification, MeetingsServices meetingService, CoachesServices coachesServices)
+        public MeetingsController(NotificationServices notification, MeetingService meetingService, CoachesServices coachesServices)
         {
             this.notificationServices = notification;
             this.meetingService = meetingService;
             this.coachesServices = coachesServices;
         }
 
-        [HttpPost("schedule")]
-        [Authorize(Roles = "Coach, Owner")]
+        [HttpPost]
+        //[Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> ScheduleMeeting([FromBody] MeetingDetails meeting)
         {
             try
@@ -34,7 +35,7 @@ namespace Backend.Controllers
                 }
 
                 // Add the new meeting in the service layer
-                var result = meetingService.AddMeeting(meeting);
+                var result =await meetingService.AddMeetingAsync(meeting);
 
                 // Check the result and return appropriate response
                 if (result.success)
@@ -54,8 +55,8 @@ namespace Backend.Controllers
         }
 
 
-        [HttpPut("update")]
-        [Authorize(Roles = "Coach, Owner")]
+        [HttpPut]
+        //[Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> UpdateMeeting([FromBody] MeetingDetails meeting)
         {
             try
@@ -67,7 +68,7 @@ namespace Backend.Controllers
                 }
 
                 // Update the meeting in the service layer
-                var result = meetingService.UpdateMeeting(meeting);
+                var result =await meetingService.UpdateMeetingAsync(meeting);
 
                 // Check the result and return appropriate response
                 if (result.success)
@@ -88,18 +89,18 @@ namespace Backend.Controllers
 
 
         [HttpDelete]
-        [Authorize(Roles = "Coach, Owner")]
+        //[Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> DeleteMeeting([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Meeting ID provided." });
             }
-            string title = meetingService.GetMeetingTitle(entry.id);
+            string title =await meetingService.GetMeetingTitleAsync(entry.id);
             var meetingDeleted = $"Meeting {title} has been deleted.";
             await notificationServices.NotifyAllUsersAsync(meetingDeleted);
 
-            var result = meetingService.DeleteMeeting(entry.id);
+            var result =await meetingService.DeleteMeetingAsync(entry.id);
             if (result.success)
             {
                 return Ok(new { message = "Meeting deleted and notification sent successfully" });
@@ -108,11 +109,11 @@ namespace Backend.Controllers
             return BadRequest(new { message = result.message });
         }
 
-        [HttpGet("all")]
-        [Authorize(Roles = "Coach , Client, Owner")]
-        public IActionResult GetMeetings()
+        [HttpGet]
+        //[Authorize(Roles = "Coach , Client, Owner")]
+        public async Task<IActionResult> GetMeetings()
         {
-            var meetingList = meetingService.GetMeetings();
+            var meetingList =await meetingService.GetMeetingsAsync();
             return Ok(meetingList);
         }
     }

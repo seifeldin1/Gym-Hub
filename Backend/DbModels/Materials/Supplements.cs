@@ -5,8 +5,8 @@ namespace Backend.DbModels
         public int SupplementID { get; set; }
         public string Name { get; set; }
         public string Brand { get; set; }
-        public decimal SellingPrice { get; set; }
-        public decimal PurchasedPrice { get; set; }
+        public float SellingPrice { get; set; }
+        public float PurchasedPrice { get; set; }
         public string Type { get; set; }
         public string Flavor { get; set; } 
         public DateOnly ManufacturedDate { get; set; }

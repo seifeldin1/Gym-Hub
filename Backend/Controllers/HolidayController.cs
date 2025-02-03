@@ -3,6 +3,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -15,36 +16,36 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Coach , BranchManager, Owner")]
-        public IActionResult AddHoliday([FromBody] Holiday holiday){
-            var result = HolidayService.AddHoliday(holiday);
+        //[Authorize(Roles = "Coach , BranchManager, Owner")]
+        public async Task<IActionResult> AddHoliday([FromBody] DbModels.Holiday holiday){
+            var result = await HolidayService.AddHolidayAsync(holiday);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
 
 
         [HttpPut]
-        [Authorize(Roles = "Coach , BranchManager, Owner")]
-        public IActionResult UpdateHoliday([FromBody] Holiday holiday){
-            var result = HolidayService.UpdateHoliday(holiday);
+        //[Authorize(Roles = "Coach , BranchManager, Owner")]
+        public async Task<IActionResult> UpdateHoliday([FromBody] DbModels.Holiday holiday){
+            var result = await HolidayService.UpdateHolidayAsync(holiday);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
 
 
         [HttpDelete]
-        [Authorize(Roles = "Coach , BranchManager, Owner")]
-        public IActionResult DeleteHoliday(GetByIDModel getByIDModel)
+        //[Authorize(Roles = "Coach , BranchManager, Owner")]
+        public async Task<IActionResult> DeleteHoliday(GetByIDModel getByIDModel)
         {
-            var result = HolidayService.DeleteHoliday(getByIDModel.id);
+            var result = await HolidayService.DeleteHolidayAsync(getByIDModel.id);
             if(result.success) return Ok(new {success = result.success , message = result.message});
             return BadRequest(new {success = result.success , message = result.message});
         }
 
         [HttpGet]
         [Authorize(Roles = "Coach , BranchManager , Client , Owner")]
-        public IActionResult GetHolidays(){
-            var result = HolidayService.GetHolidays();
+        public async Task<IActionResult> GetHolidays(){
+            var result = await HolidayService.GetHolidaysAsync();
             return Ok(result);
         }
 

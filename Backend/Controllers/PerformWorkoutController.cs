@@ -3,6 +3,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -10,33 +11,35 @@ namespace Backend.Controllers
     [Route("api/Perform-Workout")]
     public class PerformWorkoutController : ControllerBase
     {
-        private readonly PerformWorkout performWorkoutService;
+        private readonly PerformWorkoutService performWorkoutService;
 
-        public PerformWorkoutController(PerformWorkout performWorkoutService)
+        public PerformWorkoutController(PerformWorkoutService performWorkoutService)
         {
             this.performWorkoutService = performWorkoutService;
         }
+
         [HttpGet]
-        [Authorize(Roles = "Client , Coach")]
-        public IActionResult GetSessionsHistory([FromBody] Sessionshistory Sessionshistory)
+        //[Authorize(Roles = "Client , Coach")]
+        public async Task<IActionResult> GetSessionsHistory([FromBody] Sessionshistory Sessionshistory)
         {
             if (Sessionshistory.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Client ID provided." });
             }
 
-            var result = performWorkoutService.GetPerformWorkoutsByClientId(Sessionshistory.id);
+            var result =await performWorkoutService.GetPerformWorkoutsByClientIdAsync(Sessionshistory.id);
             if (result == null || result.Count == 0)
             {
                 return NotFound(new { message = "No sessions found for the given client ID." });
             }
             return Ok(result);
         }
-        [HttpPut("SetPerformed")]
+
+        [HttpPut("Set-Performed")]
         [Authorize(Roles = "Client , Coach")]
-        public IActionResult SetPerformed([FromBody] PerformedModel entry)
+        public async Task<IActionResult> SetPerformed([FromBody] PerformedModel entry)
         {
-            var result = performWorkoutService.SetPerformed(entry.Client_ID, entry.Workout_ID);
+            var result =await performWorkoutService.SetPerformedAsync(entry.Client_ID, entry.Workout_ID);
             // Return success response after update
             if (result.success)
             {
