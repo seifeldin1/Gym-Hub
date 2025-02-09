@@ -42,9 +42,9 @@ Gym-Hub is a comprehensive gym management system designed to streamline operatio
 
 ## **Technology Stack**  
 - **Frontend:** React.js, Next.js, Tailwind CSS, Material UI  
-- **Backend:** C#, .NET, Node.js, TypeScript  
-- **Database:** MySQL, Redis  
-- **Authentication:** JWT, OAuth  
+- **Backend:** C#, .NET , Entity Framework  
+- **Database:** MySQL  
+- **Authentication:** JWT  
 
 ## Installation
 1. Clone the repository:
