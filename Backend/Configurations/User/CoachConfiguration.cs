@@ -31,7 +31,8 @@ namespace Backend.Configurations
                         .HasColumnType("DATE");
 
                 builder.Property(c => c.Fire_Date)
-                        .HasColumnType("DATE");
+                        .HasColumnType("DATE")
+                        .IsRequired(false);;
 
                 builder.Property(c => c.Experience_Years)
                         .IsRequired()
@@ -57,7 +58,8 @@ namespace Backend.Configurations
                         .HasDefaultValue(5); 
                 
                 builder.Property(bm=>bm.Renewal_Date)
-                        .HasColumnType("DATE");
+                        .HasColumnType("DATE")
+                        .IsRequired(false);;
                 
                 builder.HasOne(u => u.User)
                         .WithOne()

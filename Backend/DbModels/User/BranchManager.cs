@@ -9,10 +9,8 @@ namespace Backend.DbModels{
         public int Employee_Under_Supervision {get; set;}
         public DateOnly? Fire_Date {get; set;}
         public DateOnly? Renewal_Date {get; set;}
-        public int? Manages_Branch_ID {get; set;}
         public int? Contract_Length {get; set;}
         public User User { get; set; } //Navigation property
-        public Branch Branch { get; set; } //Navigation property
 
         public ICollection<Report> Reports { get; set; }
         public ICollection<InterviewTime> Interview { get; set; }        

@@ -44,10 +44,7 @@ namespace Backend.Configurations{
                         .HasForeignKey<Branch_Manager>(bm =>bm.Branch_ManagerID)
                         .OnDelete(DeleteBehavior.Cascade);
                 
-                builder.HasOne(b => b.Branch)
-                        .WithOne()
-                        .HasForeignKey<Branch_Manager>(bm=>bm.Manages_Branch_ID)
-                        .OnDelete(DeleteBehavior.SetNull); 
+                 
                 
         }
     }

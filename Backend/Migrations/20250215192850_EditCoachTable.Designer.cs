@@ -4,6 +4,7 @@ using Backend.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250215192850_EditCoachTable")]
+    partial class EditCoachTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,6 +158,9 @@ namespace Backend.Migrations
                     b.Property<DateOnly>("Hire_Date")
                         .HasColumnType("DATE");
 
+                    b.Property<int?>("Manages_Branch_ID")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Penalties")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -171,6 +177,9 @@ namespace Backend.Migrations
                     b.HasKey("Branch_ManagerID");
 
                     b.HasIndex("BranchID");
+
+                    b.HasIndex("Manages_Branch_ID")
+                        .IsUnique();
 
                     b.ToTable("Branch_Manager", (string)null);
                 });
@@ -1297,6 +1306,13 @@ namespace Backend.Migrations
                         .HasForeignKey("Backend.DbModels.Branch_Manager", "Branch_ManagerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Backend.DbModels.Branch", "Branch")
+                        .WithOne()
+                        .HasForeignKey("Backend.DbModels.Branch_Manager", "Manages_Branch_ID")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Branch");
 
                     b.Navigation("User");
                 });

@@ -70,7 +70,6 @@ namespace Backend.Services
                     Hire_Date = bm.Hire_Date,
                     Employee_Under_Supervision = bm.Employee_Under_Supervision,
                     Fire_Date = bm.Fire_Date,
-                    Manages_Branch_ID = bm.Manages_Branch_ID,
                     Contract_Length = bm.Contract_Length ?? 0,
                     User_ID = bm.User.UserID,
                     Username = bm.User.Username,
@@ -107,7 +106,6 @@ namespace Backend.Services
                 Hire_Date = branchManager.Hire_Date,
                 Employee_Under_Supervision = branchManager.Employee_Under_Supervision,
                 Fire_Date = branchManager.Fire_Date,
-                Manages_Branch_ID = branchManager.Manages_Branch_ID,
                 Contract_Length = branchManager.Contract_Length??0,
                 User_ID = branchManager.User.UserID,
                 Username = branchManager.User.Username,
@@ -187,7 +185,6 @@ namespace Backend.Services
             }
 
             branch.Branch_Manager_ID = branchManagerId;
-            branchManager.Manages_Branch_ID = branchId;
 
             try
             {
@@ -234,7 +231,6 @@ namespace Backend.Services
                 if (entry.Fire_Date.HasValue) branchManager.Fire_Date = entry.Fire_Date.Value;
                 else branchManager.Fire_Date = null; // set to null if no date is provided
 
-                if (entry.Manages_Branch_ID.HasValue) branchManager.Manages_Branch_ID = entry.Manages_Branch_ID;
                 if (entry.Contract_Length.HasValue) branchManager.Contract_Length = entry.Contract_Length;
 
                 // Save changes to the database
