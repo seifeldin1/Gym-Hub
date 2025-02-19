@@ -15,7 +15,7 @@ namespace Backend.Controllers{
         }
         
         [HttpPost]
-        [Authorize(Roles = "Owner")]
+        //[Authorize(Roles = "Owner")]
         public async Task<IActionResult> AddOwner([FromBody] OwnerModel entry)
         {
             

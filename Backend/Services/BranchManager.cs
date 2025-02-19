@@ -20,7 +20,7 @@ namespace Backend.Services
             var user = new User
             {
                 Username = entry.Username,
-                PasswordHashed = entry.PasswordHashed,
+                PasswordHashed = BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed),
                 Type = entry.Type,
                 First_Name = entry.First_Name,
                 Last_Name = entry.Last_Name,
@@ -146,15 +146,20 @@ namespace Backend.Services
         // Delete Branch Manager
         public async Task<(bool success, string message)> DeleteBranchManagerAsync(int id)
         {
-            var branchManager = await _dbContext.Branch_Managers.FindAsync(id);
+            var branchManager = await _dbContext.Branch_Managers.Include(b => b.User)
+                                        .FirstOrDefaultAsync(b => b.Branch_ManagerID == id);
             if (branchManager == null)
             {
                 return (false, "Branch Manager not found.");
             }
 
-            // Delete the associated User as well
-            _dbContext.Users.Remove(branchManager.User);
+            if (branchManager.User != null)
+            {
+                _dbContext.Users.Remove(branchManager.User);
+            }
+
             _dbContext.Branch_Managers.Remove(branchManager);
+
 
             try
             {
