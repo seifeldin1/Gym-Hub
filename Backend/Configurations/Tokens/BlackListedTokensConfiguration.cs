@@ -12,8 +12,7 @@ namespace Backend.Configurations
                     .HasKey(bt => bt.Token);
 
             builder.Property(bt => bt.Token)
-                    .IsRequired()
-                    .HasMaxLength(200);
+                    .IsRequired();
         }
     }
 }

@@ -7,9 +7,9 @@ using Backend.Attributes;
 namespace Backend.Controllers{
     [ApiController]
     [Route("api/Bouns")]
-    public class BounsController : ControllerBase{
+    public class BonusController : ControllerBase{
         private readonly BonusServices BonusServices;
-        public BounsController(BonusServices BonusServices){
+        public BonusController(BonusServices BonusServices){
             this.BonusServices = BonusServices;
         }
         [HttpPut("Coach")]
