@@ -19,7 +19,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> AddCoach([FromBody] CoachModel entry)
         {
             var result = await coachservice.AddCoachAsync(entry);
@@ -42,7 +42,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Coach , BranchManager , Owner")]
+        [Authorize(Roles = "Coach , BranchManager , Owner")]
         public async Task<IActionResult> GetCoaches()
         {
             var coachList = await coachservice.GetCoachAsync();
@@ -50,7 +50,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "Owner , BranchManager")]
+        [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> DeleteCoach([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -77,7 +77,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("Coach")]
-        //[Authorize(Roles = "Coach , BranchManager")]
+        [Authorize(Roles = "Coach , BranchManager")]
         public async Task<IActionResult> GetCoachById([FromBody] GetByIDModel model)
         {
             var coach = await coachservice.GetCoachByIdAsync(model.id);
@@ -85,7 +85,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        //[Authorize(Roles = "Coach, Owner")]
+        [Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> UpdateCoachData([FromBody] CoachUpdaterModel entry)
         {
             // Call the service to update the Branch
@@ -110,7 +110,7 @@ namespace Backend.Controllers
 
 
         [HttpPut("Move-Coach")]
-        //[Authorize(Roles = "Owner , BranchManager")]
+        [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> MoveCoach([FromBody] MovingModel entry)
         {
             if (entry.coachid <= 0)
@@ -140,7 +140,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("Coach-Status")]
-        //[Authorize(Roles = "Coach, Owner")]
+        [Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> UpdateStatus([FromBody] updatingStatus entry)
         {
             if (entry.id <= 0)
@@ -166,7 +166,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("Coach-Contract")]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> UpdateCoachContract([FromBody] updatingContract entry)
         {
             if (entry.id <= 0)
@@ -192,7 +192,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("View-Clients")]
-        //[Authorize(Roles = "Coach, Owner")]
+        [Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> ViewMyClients([FromBody] ClientRequestModel request)
         {
             var clientList = await coachservice.ViewMyClientsAsync(request.Id);

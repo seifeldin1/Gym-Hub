@@ -35,7 +35,7 @@ namespace Backend.Services
             await _context.SaveChangesAsync();
 
             var coach = new Coach{
-                CoachID = entry.Coach_ID,
+                CoachID = user.UserID,
                 Salary = entry.Salary,
                 Penalties = entry.Penalties,
                 Bonuses = entry.Bonuses,
