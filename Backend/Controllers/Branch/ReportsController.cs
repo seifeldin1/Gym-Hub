@@ -40,7 +40,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("Coach-Report")]
-        //[Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager")]
         public async Task<IActionResult> GenerateBranchManagerReport([FromBody] ManagerialReportModel entry)
         {
             // Call the service method to add the workout
@@ -63,7 +63,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("Client-Report")]
-        //[Authorize(Roles = "Client , Coach, Owner")]
+        [Authorize(Roles = "Client , Coach, Owner")]
         public async Task<IActionResult> GetClientReports([FromBody] GetByIDModel entry)
         {
             var report =await ReportsServices.GetClientReportsAsync(entry.id);
@@ -71,7 +71,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("Coach-Reports")]
-        //[Authorize(Roles = "Owner , BranchManager")]
+        [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> GetAllBranchManagerReports()
         {
             var report =await ReportsServices.GetAllBranchManagerReportsAsync();
@@ -79,7 +79,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("Coach-Report")]
-        //[Authorize(Roles = "Owner , BranchManager")]
+        [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> GetBranchManagerReports([FromBody] GetByIDModel entry)
         {
             var report =await ReportsServices.GetBranchManagerReportsAsync(entry.id);

@@ -76,11 +76,15 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpGet("Coach")]
+        [HttpGet("single-coach")]
         [Authorize(Roles = "Coach , BranchManager")]
         public async Task<IActionResult> GetCoachById([FromBody] GetByIDModel model)
         {
             var coach = await coachservice.GetCoachByIdAsync(model.id);
+                if (coach == null)
+                {
+                    return NotFound(new { message = "Coach not found" });
+                }
             return Ok(coach);
         }
 

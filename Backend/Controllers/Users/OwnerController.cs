@@ -38,7 +38,7 @@ namespace Backend.Controllers{
             // Return the JSON result
         }
         [HttpDelete]
-        //[Authorize(Roles = "Owner")]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> DeleteOwner([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -64,7 +64,7 @@ namespace Backend.Controllers{
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Owner")]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> GetOwners()
         {
             var ownerlist=await ownerServices.GetOwnersAsync();
@@ -72,7 +72,7 @@ namespace Backend.Controllers{
         }
 
         [HttpPut]
-        //[Authorize(Roles = "Owner")]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> UpdateOwner([FromBody] OwnerUpdaterModel entry)
         {
             // Call the service to update the Branch

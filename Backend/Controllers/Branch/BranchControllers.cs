@@ -18,7 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Owner")]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> AddBranch([FromBody] BranchModel entry)
         {
             // Call the service method to add the Branch
@@ -42,7 +42,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Owner")]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> GetBranches()
         {
             var branchList = await branchService.GetBranchesAsync();
@@ -50,7 +50,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "Owner")]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> DeleteBranch([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -77,7 +77,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        //[Authorize(Roles = "Owner")]
+        [Authorize(Roles = "Owner")]
         public async Task<IActionResult> UpdateBranch([FromBody] BranchModel UpdatedBranch)
         {
             // Call the service to update the Branch
@@ -101,7 +101,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("Woking-Hours")]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> SetWorkingHours([FromBody] TimeModel time)
         {
             // Call the service to set new working Hours

@@ -13,7 +13,7 @@ namespace Backend.Models{
         public double? Height_cm { get; set; }
         public int? Belong_To_Coach_ID { get; set; }
         
-        public virtual CoachModel Coach_ID {get; set;}
+        //public virtual CoachModel Coach_ID {get; set;}
         public bool? AccountActivated{get; set;} = false;
      
         public DateOnly Start_Date_Membership { get; set; }
