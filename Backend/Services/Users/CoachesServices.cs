@@ -160,7 +160,7 @@ namespace Backend.Services
 
         }
 
-        public async Task<Coach> GetCoachByIdAsync(int id) // Get Coach Data by Coach ID
+        public async Task<Coach?> GetCoachByIdAsync(int id) // Get Coach Data by Coach ID
         {
             return await _context.Coaches.FindAsync(id);
         }

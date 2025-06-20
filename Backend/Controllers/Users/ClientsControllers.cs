@@ -40,7 +40,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("Rate")]
-        //[Authorize(Roles = "Client, Owner")]
+        [Authorize(Roles = "Client, Owner")]
         public async Task<IActionResult> AddRating([FromBody] RatingModel entry)
         {   
             var result = await ClientsService.AddRateCoachAsync(entry.Coach_ID , entry.Client_ID , entry.Rate);
@@ -62,7 +62,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet("Client")]
-        //[Authorize(Roles = "Coach , Client ,Owner")]
+        [Authorize(Roles = "Coach , Client ,Owner")]
         public async Task<IActionResult> GetClientById([FromBody] GetByIDModel c){
             var result = await ClientsService.GetClientByIdAsync(c.id);
             return Ok(result);
@@ -70,7 +70,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Owner,Coach,BranchManager,Client")]
+        [Authorize(Roles = "Owner,Coach,BranchManager,Client")]
         public async Task<IActionResult> GetClients()
         {
             var clientList = await ClientsService.GetAllClientsAsync();
@@ -80,7 +80,7 @@ namespace Backend.Controllers
         
 
         [HttpPut]
-        //[Authorize(Roles = "Client, Owner")]
+        [Authorize(Roles = "Client, Owner")]
         public async Task<IActionResult> UpdateClient([FromBody] ClientUpdaterModel entry)
         {
             // Call the service to Assign client To coach
@@ -104,7 +104,7 @@ namespace Backend.Controllers
 
 
         [HttpPut("Activate")]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> ActiveAccount([FromBody] activeModel activ)
         {
             var result = await ClientsService.ActivateAccountAsync(activ.Client_ID);            // Return success response after update
@@ -126,7 +126,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("Deactivate")]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> DeactiveAccount([FromBody] activeModel activ)
         {
             var result = await ClientsService.DeactivateAccountAsync(activ.Client_ID);            // Return success response after update
@@ -148,7 +148,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> DeleteClient([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -175,11 +175,11 @@ namespace Backend.Controllers
         }
 
         [HttpPut("Assign-Client")]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> AssignClientToCoach([FromBody] CTC ctc)
         {
             // Call the service to Assign client To coach
-            var result = await ClientsService.AssignClientToCoachAsync(ctc.coachID, ctc.clientID);            // Return success response after update
+            var result = await ClientsService.AssignClientToCoachAsync(ctc.clientID,ctc.coachID);            // Return success response after update
             if (result.success)
             {
                 return Ok(new

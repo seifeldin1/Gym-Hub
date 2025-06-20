@@ -202,9 +202,15 @@ namespace Backend.Services
         public async Task<(bool success, string message)> AssignClientToCoachAsync(int clientId, int coachId)
         {
             var client = await _dbContext.Clients.FindAsync(clientId);
+            var coach = await _dbContext.Coaches.FindAsync(coachId);
             if (client == null)
+            {
                 return (false, "Client not found");
-
+            }
+            if (coach == null) {
+                return (false, "coach not found");
+            }
+                
             client.BelongToCoachID = coachId;
 
             try
