@@ -1,4 +1,7 @@
-namespace Backend.DbModels{
+using System.Text.Json.Serialization;
+
+namespace Backend.DbModels
+{
     public class ClientProgress
     {
         public int ClientProgressID { get; set; }
@@ -10,7 +13,9 @@ namespace Backend.DbModels{
         public string ChallengesFaced { get; set; }
         public string NextSteps { get; set; }
 
+        [JsonIgnore]
         public Client Client { get; set; }
+        [JsonIgnore]
         public Coach Coach { get; set; }
     }
 

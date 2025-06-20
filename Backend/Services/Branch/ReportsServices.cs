@@ -1,4 +1,5 @@
 using Backend.Context;
+using Backend.Controllers;
 using Backend.DbModels;      // EF entities (e.g., ClientProgress, Report, BranchManager, User)
 using Backend.Models;        // Your presentation models (e.g., Report, ManagerialReportModel)
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +18,8 @@ namespace Backend.Services
             _context = context;
         }
 
-        /// <summary>
-        /// Generates a client report by inserting a new ClientProgress record.
-        /// </summary>
-        public async Task<(bool success, string message)> GenerateClientReportAsync(ClientProgress report, int clientID, int coachId)
+        
+        public async Task<(bool success, string message)> GenerateClientReportAsync(ClientProgressDto report, int clientID, int coachId)
         {
             var clientProgress = new ClientProgress
             {

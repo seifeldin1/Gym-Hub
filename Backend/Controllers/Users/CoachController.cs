@@ -89,7 +89,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = "Coach, Owner")]
+        [Authorize(Roles = "Coach, BranchManager, Owner")]
         public async Task<IActionResult> UpdateCoachData([FromBody] CoachUpdaterModel entry)
         {
             // Call the service to update the Branch

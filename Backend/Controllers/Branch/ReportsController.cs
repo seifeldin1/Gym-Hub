@@ -23,7 +23,7 @@ namespace Backend.Controllers
         public async Task<IActionResult> GenerateClientReport([FromBody] ClientReport entry)
         {
             // Call the service method to add the workout
-            var result =await ReportsServices.GenerateClientReportAsync(entry.report, entry.clientID, entry.coachId);
+            var result = await ReportsServices.GenerateClientReportAsync(entry.report, entry.clientID, entry.coachId);
             if (result.success)
             {
                 return Ok(new
@@ -44,7 +44,7 @@ namespace Backend.Controllers
         public async Task<IActionResult> GenerateBranchManagerReport([FromBody] ManagerialReportModel entry)
         {
             // Call the service method to add the workout
-            var result =await ReportsServices.GenerateBranchManagerReportAsync(entry);
+            var result = await ReportsServices.GenerateBranchManagerReportAsync(entry);
             if (result.success)
             {
                 return Ok(new
@@ -66,7 +66,7 @@ namespace Backend.Controllers
         [Authorize(Roles = "Client , Coach, Owner")]
         public async Task<IActionResult> GetClientReports([FromBody] GetByIDModel entry)
         {
-            var report =await ReportsServices.GetClientReportsAsync(entry.id);
+            var report = await ReportsServices.GetClientReportsAsync(entry.id);
             return Ok(report);
         }
 
@@ -74,7 +74,7 @@ namespace Backend.Controllers
         [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> GetAllBranchManagerReports()
         {
-            var report =await ReportsServices.GetAllBranchManagerReportsAsync();
+            var report = await ReportsServices.GetAllBranchManagerReportsAsync();
             return Ok(report);
         }
 
@@ -82,7 +82,7 @@ namespace Backend.Controllers
         [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> GetBranchManagerReports([FromBody] GetByIDModel entry)
         {
-            var report =await ReportsServices.GetBranchManagerReportsAsync(entry.id);
+            var report = await ReportsServices.GetBranchManagerReportsAsync(entry.id);
             return Ok(report);
         }
 
@@ -90,8 +90,16 @@ namespace Backend.Controllers
     }
     public class ClientReport
     {
-        public ClientProgress report { get; set; }
+        public ClientProgressDto report { get; set; }
         public int clientID { get; set; }
         public int coachId { get; set; }
     }
+    public class ClientProgressDto
+    {
+        public string ProgressSummary { get; set; }
+        public string GoalsAchieved { get; set; }
+        public string ChallengesFaced { get; set; }
+        public string NextSteps { get; set; }
+    }
+
 }
