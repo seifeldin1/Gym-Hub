@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\amr ashraf\\CCE\\Data Base\\gymhub\\Gym-Hub\\Backend\\Backend.csproj": {}
+    "E:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj": {}
   },
   "projects": {
-    "D:\\amr ashraf\\CCE\\Data Base\\gymhub\\Gym-Hub\\Backend\\Backend.csproj": {
+    "E:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\amr ashraf\\CCE\\Data Base\\gymhub\\Gym-Hub\\Backend\\Backend.csproj",
+        "projectUniqueName": "E:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj",
         "projectName": "Backend",
-        "projectPath": "D:\\amr ashraf\\CCE\\Data Base\\gymhub\\Gym-Hub\\Backend\\Backend.csproj",
-        "packagesPath": "C:\\Users\\amras\\.nuget\\packages\\",
-        "outputPath": "D:\\amr ashraf\\CCE\\Data Base\\gymhub\\Gym-Hub\\Backend\\obj\\",
+        "projectPath": "E:\\My_Database_Project\\Gym-Hub\\Backend\\Backend.csproj",
+        "packagesPath": "C:\\Users\\ben10\\.nuget\\packages\\",
+        "outputPath": "E:\\My_Database_Project\\Gym-Hub\\Backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\amras\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\ben10\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -121,7 +119,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.405/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
