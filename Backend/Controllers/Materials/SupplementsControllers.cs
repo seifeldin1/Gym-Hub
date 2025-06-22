@@ -19,7 +19,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "Coach , BranchManager")]
+        [Authorize(Roles = "Coach , BranchManager")]
         public async Task<IActionResult> AddSupplement([FromBody] SupplementsModel entry)
         {
             if (!ModelState.IsValid)
@@ -47,8 +47,8 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        //[Authorize(Roles = "Coach , BranchManager")]
-        public async Task<IActionResult> UpdateSupplement([FromBody] SupplementsModel entry)
+        [Authorize(Roles = "Coach , BranchManager")]
+        public async Task<IActionResult> UpdateSupplement([FromBody] SupplementsUpdaterModel entry)
         {
             // Call the service to update the Branch
             var result =await supplementsService.UpdateSupplementAsync(entry);
@@ -71,7 +71,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Coach , BranchManager , Client")]
+        [Authorize(Roles = "Coach , BranchManager , Client")]
         public async Task<IActionResult> GetSupplements()
         {
             var supplementList =await supplementsService.GetSupplementsAsync();

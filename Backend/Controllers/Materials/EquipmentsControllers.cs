@@ -17,7 +17,7 @@ namespace Backend.Controllers
             this.equipmentsService = equipmentsService;
         }
         [HttpPost]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> AddEquipment([FromBody] EquipmentsModel entry)
         {
             // Call the service method to add the workout
@@ -43,7 +43,7 @@ namespace Backend.Controllers
 
 
         [HttpGet]
-        //[Authorize(Roles = "Owner , BranchManager , Coach ")]
+        [Authorize(Roles = "Owner , BranchManager , Coach ")]
         public async Task<IActionResult> GetEquipments()
         {
             var equipmentList = await equipmentsService.GetEquipmentsAsync();
@@ -51,7 +51,7 @@ namespace Backend.Controllers
         }
 
        [HttpDelete]
-       //[Authorize(Roles = "Owner , BranchManager")]
+       [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> DeleteEquipment([FromBody] GetByIDModel entry)
         {
             if (entry.id <= 0)
@@ -79,8 +79,8 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        //[Authorize(Roles = "Owner , BranchManager")]
-        public async Task<IActionResult> UpdateEquipment([FromBody] EquipmentsModel entry)
+        [Authorize(Roles = "Owner , BranchManager")]
+        public async Task<IActionResult> UpdateEquipment([FromBody] EquipmentsUpdaterModel entry)
         {
             // Call the service to update the Branch
             var result = await equipmentsService.UpdateEquipmentAsync(entry);
@@ -102,7 +102,7 @@ namespace Backend.Controllers
             });
         }
         [HttpPut("Assign-Equipment")]
-        //[Authorize(Roles = "Owner , BranchManager")]
+        [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> AssignEquipmentToBranch([FromBody] AssigningModel entry)
         {
             // Call the service to Assign client To coach

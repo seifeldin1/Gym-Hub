@@ -69,31 +69,44 @@ namespace Backend.Services
         }
 
         // Updates an existing equipment record.
-        public async Task<(bool success, string message)> UpdateEquipmentAsync(EquipmentsModel entry)
-        {
-            var equipment = await _context.equipments.FindAsync(entry.Equipment_ID);
-            if (equipment == null)
-                return (false, "Equipment not found");
+       public async Task<(bool success, string message)> UpdateEquipmentAsync(EquipmentsUpdaterModel entry)
+{
+    var equipment = await _context.equipments.FindAsync(entry.Equipment_ID);
+    if (equipment == null)
+        return (false, "Equipment not found.");
 
-            // Update properties
-            equipment.Status = entry.Status;
-            equipment.PurchasePrice = entry.Purchase_Price;
-            equipment.Category = entry.Category;
-            equipment.PurchaseDate = entry.Purchase_Date;
-            equipment.Name = entry.Name;
-            equipment.SerialNumber = entry.Serial_Number;
-            equipment.BelongToBranchID = entry.Belong_To_Branch_ID;
+    // Update fields only if values are provided
+    if (!string.IsNullOrWhiteSpace(entry.Status))
+        equipment.Status = entry.Status;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-                return (true, "Equipment updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return (false, $"Failed to update equipment: {ex.Message}");
-            }
-        }
+    if (entry.Purchase_Price.HasValue && entry.Purchase_Price > 0)
+        equipment.PurchasePrice = entry.Purchase_Price.Value;
+
+    if (!string.IsNullOrWhiteSpace(entry.Category))
+        equipment.Category = entry.Category;
+
+    if (entry.Purchase_Date.HasValue)
+        equipment.PurchaseDate = entry.Purchase_Date.Value;
+
+    if (!string.IsNullOrWhiteSpace(entry.Name))
+        equipment.Name = entry.Name;
+
+    if (!string.IsNullOrWhiteSpace(entry.Serial_Number))
+        equipment.SerialNumber = entry.Serial_Number;
+
+    if (entry.Belong_To_Branch_ID.HasValue && entry.Belong_To_Branch_ID > 0)
+        equipment.BelongToBranchID = entry.Belong_To_Branch_ID.Value;
+
+    try
+    {
+        await _context.SaveChangesAsync();
+        return (true, "Equipment updated successfully.");
+    }
+    catch (Exception ex)
+    {
+        return (false, $"Failed to update equipment: {ex.Message}");
+    }
+}
 
         // Assigns equipment to a branch.
         public async Task<(bool success, string message)> AssignEquipmentToBranchAsync(int equipmentId, int branchId)

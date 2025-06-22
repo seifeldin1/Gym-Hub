@@ -74,36 +74,51 @@ namespace Backend.Services
         /// <summary>
         /// Updates an existing supplement record.
         /// </summary>
-        public async Task<(bool success, string message)> UpdateSupplementAsync(SupplementsModel entry)
-        {
-            var supplement = await _context.supplements.FindAsync(entry.Supplement_ID);
-            if (supplement == null)
-                return (false, "Supplement not found");
+   public async Task<(bool success, string message)> UpdateSupplementAsync(SupplementsUpdaterModel entry)
+{
+    var supplement = await _context.supplements.FindAsync(entry.Supplement_ID);
+    if (supplement == null)
+        return (false, "Supplement not found");
 
-            // Update fields
-            supplement.Name = entry.Name;
-            supplement.Brand = entry.Brand;
-            supplement.SellingPrice = entry.Selling_Price;
-            supplement.PurchasedPrice = entry.Purchased_Price;
-            supplement.Type = entry.Type;
-            supplement.Flavor = entry.Flavor;
-            supplement.ManufacturedDate = entry.Manufactured_Date;
-            supplement.ExpirationDate = entry.Expiration_Date;
-            supplement.PurchaseDate = entry.Purchase_Date;
-            supplement.ScoopSizeGrams = entry.Scoop_Size_grams;
-            supplement.ScoopNumberPackage = entry.Scoop_Number_package;
-            supplement.ScoopDetail = entry.Scoop_Detail;
+    // Conditional updates (preserve old values if new ones are null or invalid)
+    supplement.Name = entry.Name ?? supplement.Name;
+    supplement.Brand = entry.Brand ?? supplement.Brand;
+    supplement.Type = entry.Type ?? supplement.Type;
+    supplement.Flavor = entry.Flavor ?? supplement.Flavor;
+    supplement.ScoopDetail = entry.Scoop_Detail ?? supplement.ScoopDetail;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-                return (true, "Supplement updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return (false, $"Failed to update supplement: {ex.Message}");
-            }
-        }
+    if (entry.Selling_Price > 0)
+        supplement.SellingPrice = (float)entry.Selling_Price;
+
+    if (entry.Purchased_Price > 0)
+        supplement.PurchasedPrice = (float)entry.Purchased_Price;
+
+    if (entry.Scoop_Size_grams > 0)
+        supplement.ScoopSizeGrams = (int)entry.Scoop_Size_grams;
+
+    if (entry.Scoop_Number_package > 0)
+        supplement.ScoopNumberPackage = (int)entry.Scoop_Number_package;
+
+    if (entry.Manufactured_Date != default)
+        supplement.ManufacturedDate = entry.Manufactured_Date;
+
+    if (entry.Expiration_Date.HasValue)
+        supplement.ExpirationDate = entry.Expiration_Date.Value;
+
+    if (entry.Purchase_Date.HasValue)
+        supplement.PurchaseDate = entry.Purchase_Date.Value;
+
+    try
+    {
+        await _context.SaveChangesAsync();
+        return (true, "Supplement updated successfully.");
+    }
+    catch (Exception ex)
+    {
+        return (false, $"Failed to update supplement: {ex.InnerException?.Message ?? ex.Message}");
+    }
+}
+
 
         /// <summary>
         /// Retrieves all supplement records.
