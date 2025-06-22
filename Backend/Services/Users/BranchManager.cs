@@ -203,51 +203,53 @@ namespace Backend.Services
 
         }
         public async Task<(bool success, string message)> UpdateBranchManagerAsync(BranchManagerUpdaterModel entry)
-        {
-            try
-            {
-                // Find the BranchManager (inherited from User)
-                var branchManager = await  _dbContext.Branch_Managers.Include(bm => bm.User)
-                        .FirstOrDefaultAsync(bm => bm.User.UserID == entry.User_ID);
+{
+    // Step 1: Find the BranchManager
+    var branchManager = await _dbContext.Branch_Managers.FindAsync(entry.Branch_Manager_ID);
+    if (branchManager == null)
+        return (false, "Branch Manager not found.");
 
-                if (branchManager == null)
-                {
-                    return (false, "Branch Manager not found.");
-                }
+    // Step 2: Find the associated User
+    var user = await _dbContext.Users.FindAsync(branchManager.Branch_ManagerID);
+    if (user == null)
+        return (false, "Associated User not found.");
 
-                // Update User (common fields for User and BranchManager)
-                if (!string.IsNullOrEmpty(entry.Username)) branchManager.User.Username = entry.Username;
-                if (!string.IsNullOrEmpty(entry.PasswordHashed)) branchManager.User.PasswordHashed = BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed);
-                if (!string.IsNullOrEmpty(entry.Type)) branchManager.User.Type = entry.Type;
-                if (!string.IsNullOrEmpty(entry.First_Name)) branchManager.User.First_Name = entry.First_Name;
-                if (!string.IsNullOrEmpty(entry.Last_Name)) branchManager.User.Last_Name = entry.Last_Name;
-                if (!string.IsNullOrEmpty(entry.Email)) branchManager.User.Email = entry.Email;
-                if (!string.IsNullOrEmpty(entry.Phone_Number)) branchManager.User.Phone_Number = entry.Phone_Number;
-                if (!string.IsNullOrEmpty(entry.Gender)) branchManager.User.Gender = entry.Gender;
-                if (entry.Age > 0) branchManager.User.Age = entry.Age;
-                if (entry.National_Number> 0) branchManager.User.National_Number = entry.National_Number??0;
+    // Step 3: Update user fields
+    user.Username = entry.Username ?? user.Username;
+    user.First_Name = entry.First_Name ?? user.First_Name;
+    user.Last_Name = entry.Last_Name ?? user.Last_Name;
+    user.Type = entry.Type ?? user.Type;
+    user.Email = entry.Email ?? user.Email;
+    user.Phone_Number = entry.Phone_Number ?? user.Phone_Number;
+    user.Gender = entry.Gender ?? user.Gender;
+    user.Age = entry.Age > 0 ? entry.Age : user.Age;
+    user.National_Number = entry.National_Number ?? user.National_Number;
 
-                // Update BranchManager-specific fields
-                if (entry.Salary > 0) branchManager.Salary = entry.Salary??0;
-                if (entry.Penalties > 0) branchManager.Penalties = entry.Penalties;
-                if (entry.Bonuses > 0) branchManager.Bonuses = entry.Bonuses;
-                if (entry.Hire_Date.HasValue) branchManager.Hire_Date = entry.Hire_Date.Value;
-                if (entry.Employee_Under_Supervision.HasValue) branchManager.Employee_Under_Supervision = entry.Employee_Under_Supervision??0;
-                if (entry.Fire_Date.HasValue) branchManager.Fire_Date = entry.Fire_Date.Value;
-                else branchManager.Fire_Date = null; // set to null if no date is provided
+    if (!string.IsNullOrEmpty(entry.PasswordHashed))
+    {
+        user.PasswordHashed = BCrypt.Net.BCrypt.HashPassword(entry.PasswordHashed);
+    }
 
-                if (entry.Contract_Length.HasValue) branchManager.Contract_Length = entry.Contract_Length;
+    // Step 4: Update branch manager fields
+    branchManager.Salary = entry.Salary ?? branchManager.Salary;
+    branchManager.Penalties = entry.Penalties ?? branchManager.Penalties;
+    branchManager.Bonuses = entry.Bonuses ?? branchManager.Bonuses;
+    branchManager.Hire_Date = entry.Hire_Date ?? branchManager.Hire_Date;
+    branchManager.Fire_Date = entry.Fire_Date; // nullable directly assigned
+    branchManager.Employee_Under_Supervision = entry.Employee_Under_Supervision ?? branchManager.Employee_Under_Supervision;
+    branchManager.Contract_Length = entry.Contract_Length ?? branchManager.Contract_Length;
 
-                // Save changes to the database
-                _dbContext.SaveChanges();
-
-                return (true, "Branch Manager updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                return (false, $"Error updating Branch Manager: {ex.Message}");
-            }
-        }
+    // Step 5: Save changes
+    try
+    {
+        await _dbContext.SaveChangesAsync();
+        return (true, "Branch Manager updated successfully.");
+    }
+    catch (Exception ex)
+    {
+        return (false, $"Error updating Branch Manager: {ex.Message}");
+    }
+}
         
     }
 }

@@ -65,13 +65,36 @@ namespace Backend.Services
 
         //* DeleteCoach : Deletes a Coach from Coach Relation
         public async Task<(bool success, string message)> DeleteCoachAsync(int id)
-        {
-            var coach = await _context.Coaches.FindAsync(id);
-            if(coach ==null)
-                return(false , "No coach found");
-            _context.Coaches.Remove(coach);
-            return(true , "Coach deleted successfully");
-        }
+{
+    var coach = await _context.Coaches
+                    .Include(c => c.User)
+                    .FirstOrDefaultAsync(c => c.CoachID == id);
+
+    if (coach == null)
+    {
+        return (false, "Coach not found.");
+    }
+
+    // Delete the associated User if present
+    if (coach.User != null)
+    {
+        _context.Users.Remove(coach.User);
+    }
+
+    // Delete the Coach record
+    _context.Coaches.Remove(coach);
+
+    try
+    {
+        await _context.SaveChangesAsync();
+        return (true, "Coach deleted successfully.");
+    }
+    catch (Exception ex)
+    {
+        return (false, $"Error while deleting coach: {ex.Message}");
+    }
+}
+
 
         //* GetCoach : Gets Coach Data from Coach Relation
         public async Task<List<Coach>> GetCoachAsync() //Gets Coach Data from Coach Relation
@@ -112,6 +135,7 @@ namespace Backend.Services
             user.First_Name = entry.First_Name??user.First_Name;
             user.Last_Name = entry.Last_Name??user.Last_Name;
             user.Gender = entry.Gender ?? user.Gender;
+            user.Age = entry.Age ?? user.Age;
             user.National_Number = entry.National_Number ?? user.National_Number;
             if (!string.IsNullOrEmpty(entry.PasswordHashed))
             {

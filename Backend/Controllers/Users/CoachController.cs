@@ -199,7 +199,7 @@ namespace Backend.Controllers
         [Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> ViewMyClients([FromBody] ClientRequestModel request)
         {
-            var clientList = await coachservice.ViewMyClientsAsync(request.Id);
+            var clientList = await coachservice.ViewMyClientsAsync(request.id);
             if (clientList == null || clientList.Count == 0)
             {
                 return NotFound(new { success = false, message = "No clients found for the specified coach." });
@@ -228,7 +228,7 @@ namespace Backend.Controllers
 
     public class ClientRequestModel
     {
-        public int Id { get; set; }
+        public int id { get; set; }
     }
 
 

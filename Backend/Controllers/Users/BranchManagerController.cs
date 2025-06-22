@@ -47,7 +47,7 @@ namespace Backend.Controllers
         }
         
         [HttpPut]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> UpdateBranchManager([FromBody] BranchManagerUpdaterModel entry)
         {
             // Call the service to update the Branch
@@ -96,7 +96,7 @@ namespace Backend.Controllers
             });
         }
         [HttpGet]
-        //[Authorize(Roles = "Owner , BranchManager")]
+        [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> GetBranchManagers()
         {
             var branchmanagerList = await branchmanagersService.GetBranchManagersAsync();
