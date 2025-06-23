@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using Backend.DbModels;
 
 namespace Backend.Controllers
 {
@@ -42,7 +43,7 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Coach , BranchManager , Owner")]
+        [Authorize(Roles = "BranchManager , Owner")]
         public async Task<IActionResult> GetCoaches()
         {
             var coachList = await coachservice.GetCoachAsync();
@@ -77,24 +78,49 @@ namespace Backend.Controllers
         }
 
         [HttpGet("single-coach")]
-        [Authorize(Roles = "Coach , BranchManager")]
-        public async Task<IActionResult> GetCoachById([FromBody] GetByIDModel model)
+        [Authorize(Roles = "Coach, BranchManager")]
+        public async Task<IActionResult> GetCoachById([FromQuery] int? id)
         {
-            var coach = await coachservice.GetCoachByIdAsync(model.id);
-                if (coach == null)
-                {
-                    return NotFound(new { message = "Coach not found" });
-                }
+            Coach coach = null;
+
+            var role = User.FindFirst("role")?.Value;
+
+            if (role == "Coach")
+            {
+                if (!int.TryParse(User.FindFirst("UserID")?.Value, out int userId))
+                    return Unauthorized(new { message = "Invalid user token." });
+
+                coach = await coachservice.GetCoachByIdAsync(userId);
+            }
+            else if (role == "BranchManager")
+            {
+                if (id == null || id <= 0)
+                    return BadRequest(new { message = "You must provide a valid Coach ID as query parameter." });
+
+                coach = await coachservice.GetCoachByIdAsync(id.Value);
+            }
+
+            if (coach == null)
+                return NotFound(new { message = "Coach not found." });
+
             return Ok(coach);
         }
+
 
         [HttpPut]
         [Authorize(Roles = "Coach, BranchManager, Owner")]
         public async Task<IActionResult> UpdateCoachData([FromBody] CoachUpdaterModel entry)
         {
-            // Call the service to update the Branch
+            var role = User.FindFirst("role")?.Value;
+            if (role == "Coach")
+            {
+                int userId = int.Parse(User.FindFirst("UserID")?.Value);
+                if (entry.User_ID != userId)
+                {
+                    return Unauthorized(new { message = "You can only update your own data." });
+                }
+            }
             var result = await coachservice.UpdateCoachAsync(entry);
-            // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -125,7 +151,7 @@ namespace Backend.Controllers
             {
                 return BadRequest(new { message = "Invalid Branch ID provided." });
             }
-            var result = await coachservice.MoveCoachAsync(entry.wfb, entry.coachid);         // Return success response after update
+            var result = await coachservice.MoveCoachAsync(entry.wfb, entry.coachid);       
             if (result.success)
             {
                 return Ok(new
@@ -147,6 +173,16 @@ namespace Backend.Controllers
         [Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> UpdateStatus([FromBody] updatingStatus entry)
         {
+
+             var role = User.FindFirst("role")?.Value;
+            if (role == "Coach")
+            {
+                int userId = int.Parse(User.FindFirst("UserID")?.Value);
+                if (entry.id != userId)
+                {
+                    return Unauthorized(new { message = "You can only update your own data." });
+                }
+            }
             if (entry.id <= 0)
             {
                 return BadRequest(new { message = "Invalid Coach ID provided." });
@@ -199,6 +235,15 @@ namespace Backend.Controllers
         [Authorize(Roles = "Coach, Owner")]
         public async Task<IActionResult> ViewMyClients([FromBody] ClientRequestModel request)
         {
+             var role = User.FindFirst("role")?.Value;
+            if (role == "Coach")
+            {
+                int userId = int.Parse(User.FindFirst("UserID")?.Value);
+                if (request.id != userId)
+                {
+                    return Unauthorized(new { message = "You can only update your own clients." });
+                }
+            }
             var clientList = await coachservice.ViewMyClientsAsync(request.id);
             if (clientList == null || clientList.Count == 0)
             {

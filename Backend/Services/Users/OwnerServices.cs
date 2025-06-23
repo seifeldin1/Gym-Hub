@@ -1,6 +1,6 @@
 using Backend.Context;
-using Backend.DbModels;       // Your EF entity classes (e.g., User, Owner)
-using Backend.Models;         // Your presentation models (e.g., OwnerModel, OwnerUpdaterModel)
+using Backend.DbModels;       // EF entities 
+using Backend.Models;         //presentation models
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,9 +17,7 @@ namespace Backend.Services
             _context = context;
         }
 
-        /// <summary>
-        /// Adds a new owner. First, it creates a User record then uses the generated User ID for the Owner record.
-        /// </summary>
+
         public async Task<(bool success, string message)> AddOwnerAsync(OwnerModel entry)
         {
             // Create a new User entity
@@ -52,36 +50,58 @@ namespace Backend.Services
             {
                 OwnerID = user.UserID,  // assuming user.ID is generated upon saving
                 SharePercentage = entry.Share_Percentage,
-                Established_branches = entry.Established_branches
+                Established_branches = entry.Established_branches,
+                IsPrimaryOwner = entry.IsPrimaryOwner
             };
 
             await _context.Owners.AddAsync(owner);
             try
             {
                 await _context.SaveChangesAsync();
-                return (true, "Owner added successfully");
             }
             catch (Exception ex)
             {
                 return (false, $"Error adding owner: {ex.Message}");
             }
+
+            var totalShare = await _context.Owners.SumAsync(o => o.SharePercentage);
+            if (totalShare != 100)
+            {
+                _context.Users.Remove(user);
+                _context.Owners.Remove(owner);
+                await _context.SaveChangesAsync();
+
+                return (false, "Total share percentage of all owners must equal 100%");
+            }
+            return (true, "Owner added successfully");
         }
 
-        /// <summary>
-        /// Deletes an owner by deleting the associated User record. (Assumes cascading deletes are configured.) 
-        /// </summary>
-        public async Task<(bool success, string message)> DeleteOwnerAsync(int id)
-        {
-            // Find the user (and related owner) by id.
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-                return (false, "Owner not found");
 
-            _context.Users.Remove(user);
+        public async Task<(bool success, string message)> DeleteOwnerAsync(int ownerIdToDelete, int requestingUserId)
+        {
+            var requestingOwner = await _context.Owners.FindAsync(requestingUserId);
+            bool isPrimaryOwner = requestingOwner?.IsPrimaryOwner ?? false;
+            if (requestingOwner == null || !isPrimaryOwner)
+                return (false, "Only the primary owner can delete other owners.");
+
+            if (ownerIdToDelete == requestingUserId)
+                return (false, "Primary owner cannot delete themselves.");
+
+            var userToDelete = await _context.Users.FindAsync(ownerIdToDelete);
+            if (userToDelete == null)
+                return (false, "Owner not found.");
+
+            _context.Users.Remove(userToDelete);
+
             try
             {
                 await _context.SaveChangesAsync();
-                return (true, "Owner deleted successfully");
+
+                var totalShare = await _context.Owners.SumAsync(o => o.SharePercentage);
+                if (totalShare != 100)
+                    return (false, $"Warning: After deletion, total share percentage of all owners = {totalShare}%, not 100%.");
+
+                return (true, "Owner deleted successfully.");
             }
             catch (Exception ex)
             {
@@ -89,9 +109,8 @@ namespace Backend.Services
             }
         }
 
-        /// <summary>
-        /// Updates the owner. This method updates both the associated User and Owner records.
-        /// </summary>
+
+
         public async Task<(bool success, string message)> UpdateOwnerAsync(OwnerUpdaterModel entry)
         {
             // Find the User record by its ID.
@@ -119,15 +138,14 @@ namespace Backend.Services
             if (entry.Age > 0)
                 user.Age = entry.Age;
             if (entry.National_Number > 0)
-                user.National_Number = entry.National_Number??user.National_Number;
+                user.National_Number = entry.National_Number ?? user.National_Number;
 
             // Find the Owner record by the same ID.
             var owner = await _context.Owners.FindAsync(entry.User_ID);
             if (owner == null)
                 return (false, "Owner record not found");
 
-            if (entry.Share_Percentage > 0)
-                owner.SharePercentage = entry.Share_Percentage??30;
+
             if (entry.Established_branches > 0)
                 owner.Established_branches = entry.Established_branches;
 
@@ -142,37 +160,105 @@ namespace Backend.Services
             }
         }
 
-        /// <summary>
-        /// Retrieves a list of owners by joining the Owner and User records.
-        /// </summary>
-        public async Task<List<OwnerModel>> GetOwnersAsync()
+        public async Task<(bool success, string message)> UpdateAllOwnerSharesAsync(List<OwnerShareUpdateModel> updatedOwners)
         {
-            var owners = await _context.Owners
-                    .Include(o => o.User)
-                    .ToListAsync(); 
+            if (updatedOwners == null || updatedOwners.Count == 0)
+                return (false, "No owners provided for update.");
 
-            var ownerModels = new List<OwnerModel>();
-            foreach (var owner in owners)
+            var total = updatedOwners.Sum(o => o.SharePercentage);
+            if (total != 100)
+                return (false, $"Total share percentage must equal 100%. Currently: {total}%");
+
+            var ownerIds = updatedOwners.Select(o => o.OwnerId).ToList();
+            var existingOwners = await _context.Owners
+                .Where(o => ownerIds.Contains(o.OwnerID))
+                .ToListAsync();
+
+            if (existingOwners.Count != updatedOwners.Count)
             {
-                ownerModels.Add(new OwnerModel
-                {
-                    Owner_ID = owner.OwnerID,
-                    Share_Percentage = owner.SharePercentage,
-                    Established_branches = owner.Established_branches??0,
-                    User_ID = owner.User.UserID,
-                    Username = owner.User.Username,
-                    PasswordHashed = owner.User.PasswordHashed,
-                    Type = owner.User.Type,
-                    First_Name = owner.User.First_Name,
-                    Last_Name = owner.User.Last_Name,
-                    Email = owner.User.Email,
-                    Phone_Number = owner.User.Phone_Number,
-                    Gender = owner.User.Gender,
-                    Age = owner.User.Age??35,
-                    National_Number = owner.User.National_Number
-                });
+                var missingIds = ownerIds.Except(existingOwners.Select(e => e.OwnerID)).ToList();
+                return (false, $"Some owners were not found: {string.Join(", ", missingIds)}");
             }
-            return ownerModels;
+
+            foreach (var owner in existingOwners)
+            {
+                var updated = updatedOwners.First(o => o.OwnerId == owner.OwnerID);
+                owner.SharePercentage = updated.SharePercentage;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Owner shares updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error updating owner shares: {ex.Message}");
+            }
         }
+
+
+
+        public async Task<(bool success, List<OwnerModel> owners, string message)> GetOwnersAsync(int requestingUserId)
+        {
+            var requestingOwner = await _context.Owners.FindAsync(requestingUserId);
+            bool isPrimaryOwner = requestingOwner?.IsPrimaryOwner ?? false;
+            if (requestingOwner == null || !isPrimaryOwner)
+                return (false, null, "Only the primary owner can view all owners.");
+
+            var owners = await _context.Owners
+                .Include(o => o.User)
+                .ToListAsync();
+
+            var ownerModels = owners.Select(owner => new OwnerModel
+            {
+                Owner_ID = owner.OwnerID,
+                Share_Percentage = owner.SharePercentage,
+                Established_branches = owner.Established_branches ?? 0,
+                User_ID = owner.User.UserID,
+                Username = owner.User.Username,
+                PasswordHashed = owner.User.PasswordHashed,
+                Type = owner.User.Type,
+                First_Name = owner.User.First_Name,
+                Last_Name = owner.User.Last_Name,
+                Email = owner.User.Email,
+                Phone_Number = owner.User.Phone_Number,
+                Gender = owner.User.Gender,
+                Age = owner.User.Age ?? 35,
+                National_Number = owner.User.National_Number
+            }).ToList();
+
+            return (true, ownerModels, "Owners retrieved successfully.");
+        }
+        
+        public async Task<OwnerModel> GetMyOwnerDetailsAsync(int requestingUserId)
+        {
+            var owner = await _context.Owners
+                .Include(o => o.User)
+                .FirstOrDefaultAsync(o => o.OwnerID == requestingUserId);
+
+            if (owner == null)
+                return null;
+
+            return new OwnerModel
+            {
+                Owner_ID = owner.OwnerID,
+                Share_Percentage = owner.SharePercentage,
+                Established_branches = owner.Established_branches ?? 0,
+                User_ID = owner.User.UserID,
+                Username = owner.User.Username,
+                PasswordHashed = owner.User.PasswordHashed,
+                Type = owner.User.Type,
+                First_Name = owner.User.First_Name,
+                Last_Name = owner.User.Last_Name,
+                Email = owner.User.Email,
+                Phone_Number = owner.User.Phone_Number,
+                Gender = owner.User.Gender,
+                Age = owner.User.Age ?? 35,
+                National_Number = owner.User.National_Number
+            };
+        }
+
+
     }
 }

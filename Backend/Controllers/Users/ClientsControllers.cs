@@ -64,13 +64,22 @@ namespace Backend.Controllers
         [HttpGet("Client")]
         [Authorize(Roles = "Coach , Client ,Owner")]
         public async Task<IActionResult> GetClientById([FromBody] GetByIDModel c){
+             var role = User.FindFirst("role")?.Value;
+            if (role == "Client")
+            {
+                int userId = int.Parse(User.FindFirst("UserID")?.Value);
+                if (c.id != userId)
+                {
+                    return Unauthorized(new { message = "You can only view your own data." });
+                }
+            }
             var result = await ClientsService.GetClientByIdAsync(c.id);
             return Ok(result);
 
         }
 
         [HttpGet]
-        [Authorize(Roles = "Owner,Coach,BranchManager,Client")]
+        [Authorize(Roles = "Owner,Coach,BranchManager")]
         public async Task<IActionResult> GetClients()
         {
             var clientList = await ClientsService.GetAllClientsAsync();
@@ -83,8 +92,16 @@ namespace Backend.Controllers
         [Authorize(Roles = "Client, Owner")]
         public async Task<IActionResult> UpdateClient([FromBody] ClientUpdaterModel entry)
         {
-            // Call the service to Assign client To coach
-            var result = await ClientsService.UpdateClientAsync(entry);            // Return success response after update
+            var role = User.FindFirst("role")?.Value;
+            if (role == "Coach")
+            {
+                int userId = int.Parse(User.FindFirst("UserID")?.Value);
+                if (entry.User_ID != userId)
+                {
+                    return Unauthorized(new { message = "You can only update your own data." });
+                }
+            }
+            var result = await ClientsService.UpdateClientAsync(entry);            
             if (result.success)
             {
                 return Ok(new

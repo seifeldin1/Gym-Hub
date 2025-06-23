@@ -41,7 +41,16 @@ namespace Backend.Controllers
 
         [HttpGet("Manager")]
         [Authorize(Roles = "Owner , BranchManager")]
-        public async Task<IActionResult> GetBranchManagers([FromBody] GetByIDModel manager){
+        public async Task<IActionResult> GetBranchManager([FromBody] GetByIDModel manager){
+             var role = User.FindFirst("role")?.Value;
+            if (role == "BranchManager")
+            {
+                int userId = int.Parse(User.FindFirst("UserID")?.Value);
+                if (manager.id != userId)
+                {
+                    return Unauthorized(new { message = "You can only view your own data." });
+                }
+            }
             var result = await branchmanagersService.GetBranchManagerByIdAsync(manager.id);
             return Ok(result);
         }
@@ -50,9 +59,16 @@ namespace Backend.Controllers
         [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> UpdateBranchManager([FromBody] BranchManagerUpdaterModel entry)
         {
-            // Call the service to update the Branch
+             var role = User.FindFirst("role")?.Value;
+            if (role == "BranchManager")
+            {
+                int userId = int.Parse(User.FindFirst("UserID")?.Value);
+                if (entry.User_ID != userId)
+                {
+                    return Unauthorized(new { message = "You can only update your own data." });
+                }
+            }
             var result = await branchmanagersService.UpdateBranchManagerAsync(entry);
-            // Return success response after update
             if (result.success)
             {
                 return Ok(new
@@ -96,7 +112,7 @@ namespace Backend.Controllers
             });
         }
         [HttpGet]
-        [Authorize(Roles = "Owner , BranchManager")]
+        [Authorize(Roles = "Owner ")]
         public async Task<IActionResult> GetBranchManagers()
         {
             var branchmanagerList = await branchmanagersService.GetBranchManagersAsync();

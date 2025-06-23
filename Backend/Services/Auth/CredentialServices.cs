@@ -20,13 +20,14 @@ namespace Backend.Services
             _context = context;
         }
 
-        private string GenerateJwtToken(string username, string role)
+        private string GenerateJwtToken(string username, string role , int userId)
         {
             var key = Encoding.UTF8.GetBytes("9c1b3f43-df57-4a9a-88d3-b6e9e58c6f2e");
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim("role", role),
+                new Claim("UserID" , userId.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -79,7 +80,7 @@ namespace Backend.Services
             // Verify password
             if (BCrypt.Net.BCrypt.Verify(entry.Password, user.PasswordHashed))
             {
-                string token = GenerateJwtToken(entry.Username, user.Type);
+                string token = GenerateJwtToken(entry.Username, user.Type , user.UserID);
                 return (true, "Login Successful", user.UserID, token, user.Type);
             }
             else

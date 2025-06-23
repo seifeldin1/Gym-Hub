@@ -7,5 +7,6 @@ namespace Backend.Models
         public int? Owner_ID { get; set; }
         public int Share_Percentage { get; set; }
         public int Established_branches { get; set; }
+        public bool IsPrimaryOwner { get; set; }
     }
 }
