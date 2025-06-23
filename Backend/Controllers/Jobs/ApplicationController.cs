@@ -55,7 +55,7 @@ namespace Backend.Controllers
         /// <param name="post">The job post to retrieve applications for.</param>
         /// <returns>List of applications.</returns>
         [HttpGet]
-        //[Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager")]
         public async Task<IActionResult> GetAllApplications([FromBody] JobPost post)
         {
             if (post.Post_ID<= 0)
@@ -75,7 +75,7 @@ namespace Backend.Controllers
         /// <param name="candidateId">The ID of the candidate.</param>
         /// <returns>Candidate details.</returns>
         [HttpGet("Candidate")]
-        //[Authorize(Roles = "BranchManager")]
+        [Authorize(Roles = "BranchManager")]
         public async Task<IActionResult> GetApplicantByID([FromBody] GetByIDModel candidateId)
         {
             if (candidateId.id <= 0)

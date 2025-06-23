@@ -12,95 +12,110 @@ namespace Backend.Services{
             _dbContext = dbContext;
         }
 
-        public async Task<(bool success , string message)> ApplyForJobAsync(Models.Candidate candidate , JobPost job){
-            if (candidate == null || job == null)
-                return (false, "Invalid candidate or job post.");
-            if(DateTime.Now > job.Deadline)
-                return (false , "Application deadline has passed");
-            try{
+        public async Task<(bool success, string message)> ApplyForJobAsync(Models.Candidate candidate, JobPost job)
+{
+    if (candidate == null || job == null)
+        return (false, "Invalid candidate or job post.");
 
-                var existingCandidate = await _dbContext.candidates.FirstOrDefaultAsync(c=> c.NationalNumber == candidate.NationalNumber);
-                
-                
+    if (DateTime.Now > job.Deadline)
+        return (false, "Application deadline has passed.");
 
-                var post = new Post{
-                    PostID = job.Post_ID,
-                    BranchPostedID = job.Branch_Posted_ID,
-                    Description = job.Description, 
-                    Title = job.Title, 
-                    DatePosted = job.Date_Posted,
-                    SkillsRequired = job.Skills_Required,
-                    Deadline =job.Deadline ,
-                    Location =job.Location
-                };
+    try
+    {
+        // 1. Ensure the job post exists in DB
+        var existingPost = await _dbContext.posts
+            .FirstOrDefaultAsync(p => p.PostID == job.Post_ID);
 
-                if (existingCandidate == null){
-                    var newCandidate = new DbModels.Candidate{
-                        CandidateID = candidate.Id,
-                        FirstName = candidate.FirstName, 
-                        LastName = candidate.LastName,
-                        Email = candidate.Email,
-                        PhoneNumber = candidate.PhoneNumber,
-                        NationalNumber = candidate.NationalNumber,
-                        Age = candidate.Age, 
-                        ResumeLink = candidate.ResumeLink, 
-                        Status = candidate.Status, 
-                        ExperienceYears = candidate.ExperienceYears,
-                        LinkedinAccountLink = candidate.LinkedinAccountLink
-                    };
-
-                    await _dbContext.candidates.AddAsync(newCandidate);
-                }
-                else{
-                    if(!string.IsNullOrEmpty(candidate.FirstName))
-                        existingCandidate.FirstName = candidate.FirstName;
-                    if(!string.IsNullOrEmpty(candidate.LastName))
-                        existingCandidate.LastName = candidate.LastName;
-                    if(!string.IsNullOrEmpty(candidate.Email))
-                        existingCandidate.Email = candidate.Email;
-                    if(!string.IsNullOrEmpty(candidate.PhoneNumber))
-                        existingCandidate.PhoneNumber = candidate.PhoneNumber;
-                    if(candidate.NationalNumber>0)
-                        existingCandidate.NationalNumber = candidate.NationalNumber;
-                    if(candidate.Age>20)
-                        existingCandidate.Age = candidate.Age;
-                    if(!string.IsNullOrEmpty(candidate.ResumeLink))
-                        existingCandidate.ResumeLink = candidate.ResumeLink;
-                    if(candidate.ExperienceYears>0)
-                        existingCandidate.ExperienceYears = candidate.ExperienceYears;
-                    if(!string.IsNullOrEmpty(candidate.LinkedinAccountLink))
-                        existingCandidate.LinkedinAccountLink = candidate.LinkedinAccountLink;
-                    if(!string.IsNullOrEmpty(candidate.Status))
-                        existingCandidate.Status = candidate.Status;
-                    _dbContext.candidates.Update(existingCandidate);
-                        
-                }
-                var existingApplication = await _dbContext.applications
-                .FirstOrDefaultAsync(a => a.ApplicantID == existingCandidate.CandidateID && a.PostID == job.Post_ID);
-
-                if (existingApplication != null)
-                return (false, "The candidate has already applied for this job.");
-
-                var application = new DbModels.Application
-                {
-                    ApplicantID = existingCandidate.CandidateID,
-                    PostID = job.Post_ID,
-                    AppliedDate = DateTime.Now,
-                    YearsOfExperience = candidate.ExperienceYears ?? 0
-                };
-
-                await _dbContext.applications.AddAsync(application);
-                await _dbContext.SaveChangesAsync();
-
-                return (true, "Application is submitted successfully.");
-
-            }
-            catch (Exception ex)
-            {
-                return (false, $"An error occurred while submitting the application: {ex.Message}");
-            }
-
+        if (existingPost == null)
+        {
+            return (false, "The specified job post does not exist in the system.");
         }
+
+        // 2. Check if candidate exists by National Number
+        var existingCandidate = await _dbContext.candidates
+            .FirstOrDefaultAsync(c => c.NationalNumber == candidate.NationalNumber);
+
+        DbModels.Candidate dbCandidate;
+
+        if (existingCandidate == null)
+        {
+            var newCandidate = new DbModels.Candidate
+            {
+                FirstName = candidate.FirstName,
+                LastName = candidate.LastName,
+                Email = candidate.Email,
+                PhoneNumber = candidate.PhoneNumber,
+                NationalNumber = candidate.NationalNumber,
+                Age = candidate.Age,
+                ResumeLink = candidate.ResumeLink,
+                Status = candidate.Status,
+                ExperienceYears = candidate.ExperienceYears,
+                LinkedinAccountLink = candidate.LinkedinAccountLink
+            };
+
+            var result = await _dbContext.candidates.AddAsync(newCandidate);
+            await _dbContext.SaveChangesAsync();
+            dbCandidate = result.Entity;
+        }
+        else
+        {
+            // 3. Update existing candidate info if provided
+            if (!string.IsNullOrEmpty(candidate.FirstName))
+                existingCandidate.FirstName = candidate.FirstName;
+            if (!string.IsNullOrEmpty(candidate.LastName))
+                existingCandidate.LastName = candidate.LastName;
+            if (!string.IsNullOrEmpty(candidate.Email))
+                existingCandidate.Email = candidate.Email;
+            if (!string.IsNullOrEmpty(candidate.PhoneNumber))
+                existingCandidate.PhoneNumber = candidate.PhoneNumber;
+            if (candidate.NationalNumber > 0)
+                existingCandidate.NationalNumber = candidate.NationalNumber;
+            if (candidate.Age > 20)
+                existingCandidate.Age = candidate.Age;
+            if (!string.IsNullOrEmpty(candidate.ResumeLink))
+                existingCandidate.ResumeLink = candidate.ResumeLink;
+            if (candidate.ExperienceYears > 0)
+                existingCandidate.ExperienceYears = candidate.ExperienceYears;
+            if (!string.IsNullOrEmpty(candidate.LinkedinAccountLink))
+                existingCandidate.LinkedinAccountLink = candidate.LinkedinAccountLink;
+            if (!string.IsNullOrEmpty(candidate.Status))
+                existingCandidate.Status = candidate.Status;
+
+            _dbContext.candidates.Update(existingCandidate);
+            await _dbContext.SaveChangesAsync();
+            dbCandidate = existingCandidate;
+        }
+
+        // 4. Check if candidate already applied for the post
+        var existingApplication = await _dbContext.applications
+            .FirstOrDefaultAsync(a =>
+                a.ApplicantID == dbCandidate.CandidateID &&
+                a.PostID == existingPost.PostID);
+
+        if (existingApplication != null)
+            return (false, "The candidate has already applied for this job.");
+
+        // 5. Create new application
+        var application = new DbModels.Application
+        {
+            ApplicantID = dbCandidate.CandidateID,
+            PostID = existingPost.PostID,
+            AppliedDate = DateTime.Now,
+            YearsOfExperience = candidate.ExperienceYears ?? 0
+        };
+
+        await _dbContext.applications.AddAsync(application);
+        await _dbContext.SaveChangesAsync();
+
+        return (true, "Application submitted successfully.");
+    }
+    catch (Exception ex)
+    {
+        return (false, $"An error occurred while submitting the application: {ex.Message}");
+    }
+}
+
+
 
             
         public async Task<List<DbModels.Application>> GetAllApplicationsForPostAsync(JobPost job)

@@ -20,7 +20,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        //[Authorize(Roles = "BranchManager, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> AddJobPost([FromBody] Post entry)
         {
             // Call the service method to add the Branch
@@ -51,7 +51,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "BranchManage, Owner")]
+        [Authorize(Roles = "BranchManager, Owner")]
         public async Task<IActionResult> DeleteJobPost([FromBody] GetByIDModel entry)
         {
              if (entry.id <= 0)
@@ -78,8 +78,8 @@ namespace Backend.Controllers
         }
 
         [HttpPut]
-        //[Authorize(Roles = "BranchManager, Owner")]
-        public async Task<IActionResult> UpdateJopPost([FromBody] JobPost entry)
+        [Authorize(Roles = "BranchManager, Owner")]
+        public async Task<IActionResult> UpdateJopPost([FromBody] PostUpdater entry)
         {
             // Call the service to update the JobPost
             var result =await jobpostService.UpdateJobPostAsync(entry);
