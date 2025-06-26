@@ -1,8 +1,0 @@
-@layer NavbarItems {
-    .container {
-        @apply flex flex-col w-[80%] text-xs py-2 mx-auto h-screen justify-center;
-    }
-    .icon {
-        @apply flex text-[#DBFF55] px-2 py-2 rounded-full items-center justify-center w-fit mx-auto gap-2 hover:text-black hover:bg-[#DBFF55] duration-75 cursor-pointer text-left;
-    }
-}
