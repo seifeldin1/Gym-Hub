@@ -1,14 +1,44 @@
 .NavBarContainer {
-  @apply bg-[#ff4500] min-w-[75px] py-5  hidden;
-  @apply md:flex flex-col justify-between items-center;
+  width: 6%;
+  background-color: #1f2937;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 0;
+  align-items: center;
 }
 
-.iconsContainer {
-  @apply flex flex-col justify-between;
-  @apply min-h-[300px];
+.logo {
+  width: 100%;
+  height: auto;
+  max-width: 45px;
+}
+
+.mainIconsContainer {
+  display: flex;
+  height: 50%;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  align-items: center;
 }
 
 .iconStyle {
-  @apply text-[#ffe6d6] size-10 cursor-pointer rounded-md p-2 w-[90%] mx-auto;
-  @apply hover:bg-[#ffe6d6] hover:text-[#ff4500] duration-200;
+  width: fit-content;
+  cursor: pointer;
+  color: #F3F4F6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition:
+    transform 0.3s ease-in-out,
+    background-color 0.3s ease-in-out,
+    padding 0.3s ease-in-out;
+  border-radius: 8px;
+}
+
+.iconStyle:hover {
+  background-color: #EF4444;
+  padding: 0.4rem;
+  transform: scale(1.3); 
 }

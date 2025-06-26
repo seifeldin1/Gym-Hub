@@ -1,6 +1,4 @@
 import '../styles/globals.css';
-import { config } from '@fortawesome/fontawesome-svg-core';
-config.autoAddCss = false; // Disable automatic CSS injection
 
 export const metadata = {
   title: 'Pulse Fit',
@@ -15,7 +13,7 @@ export default function RootLayout({ children }) {
         <title>{metadata.title}</title>
         <meta name="description" content={metadata.description} />
       </head>
-      <body>
+      <body cz-shortcut-listen="true">
         <main>{children}</main>
       </body>
     </html>
