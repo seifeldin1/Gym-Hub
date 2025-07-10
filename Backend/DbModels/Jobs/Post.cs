@@ -12,7 +12,7 @@ namespace Backend.DbModels
         public DateTime Deadline { get; set; }
         public string Location { get; set; }
 
-        public Branch BranchPosted { get; set; }
-        public ICollection<Application> Application { get; set; }
+        public Branch? BranchPosted { get; set; }
+        public ICollection<Application>? Application { get; set; }
     }
 }
