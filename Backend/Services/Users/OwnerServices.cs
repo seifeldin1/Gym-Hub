@@ -67,11 +67,7 @@ namespace Backend.Services
             var totalShare = await _context.Owners.SumAsync(o => o.SharePercentage);
             if (totalShare != 100)
             {
-                _context.Users.Remove(user);
-                _context.Owners.Remove(owner);
-                await _context.SaveChangesAsync();
-
-                return (false, "Total share percentage of all owners must equal 100%");
+                return (true, "Warning: Total share percentage of all owners must equal 100%. Please adjust it");
             }
             return (true, "Owner added successfully");
         }
@@ -99,7 +95,7 @@ namespace Backend.Services
 
                 var totalShare = await _context.Owners.SumAsync(o => o.SharePercentage);
                 if (totalShare != 100)
-                    return (false, $"Warning: After deletion, total share percentage of all owners = {totalShare}%, not 100%.");
+                    return (true, $"Warning: After deletion, total share percentage of all owners = {totalShare}%, not 100%. Please adjust it.");
 
                 return (true, "Owner deleted successfully.");
             }
@@ -217,7 +213,6 @@ namespace Backend.Services
                 Established_branches = owner.Established_branches ?? 0,
                 User_ID = owner.User.UserID,
                 Username = owner.User.Username,
-                PasswordHashed = owner.User.PasswordHashed,
                 Type = owner.User.Type,
                 First_Name = owner.User.First_Name,
                 Last_Name = owner.User.Last_Name,
@@ -247,7 +242,6 @@ namespace Backend.Services
                 Established_branches = owner.Established_branches ?? 0,
                 User_ID = owner.User.UserID,
                 Username = owner.User.Username,
-                PasswordHashed = owner.User.PasswordHashed,
                 Type = owner.User.Type,
                 First_Name = owner.User.First_Name,
                 Last_Name = owner.User.Last_Name,

@@ -42,7 +42,7 @@ namespace Backend.Controllers
         [HttpGet("Manager")]
         [Authorize(Roles = "Owner , BranchManager")]
         public async Task<IActionResult> GetBranchManager([FromBody] GetByIDModel manager){
-             var role = User.FindFirst("role")?.Value;
+            var role = User.FindFirst("role")?.Value;
             if (role == "BranchManager")
             {
                 int userId = int.Parse(User.FindFirst("UserID")?.Value);

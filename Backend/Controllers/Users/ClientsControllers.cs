@@ -64,7 +64,7 @@ namespace Backend.Controllers
         [HttpGet("Client")]
         [Authorize(Roles = "Coach , Client ,Owner")]
         public async Task<IActionResult> GetClientById([FromBody] GetByIDModel c){
-             var role = User.FindFirst("role")?.Value;
+            var role = User.FindFirst("role")?.Value;
             if (role == "Client")
             {
                 int userId = int.Parse(User.FindFirst("UserID")?.Value);

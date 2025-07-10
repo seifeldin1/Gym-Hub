@@ -100,11 +100,44 @@ namespace Backend.Services
         }
 
 
-        //* GetCoach : Gets Coach Data from Coach Relation
-        public async Task<List<Coach>> GetCoachAsync()
+        public async Task<List<CoachModel>> GetCoachAsync()
         {
-            return await _context.Coaches.ToListAsync();
+            var coaches = await _context.Coaches
+                .Include(c => c.User)
+                .ToListAsync();
 
+            return coaches.Select(coach => new CoachModel
+            {
+                // Coach-specific fields
+                Coach_ID = coach.CoachID,
+                Salary = (int)coach.Salary,
+                Penalties = (int)coach.Penalties,
+                Bonuses = (int)coach.Bonuses,
+                Hire_Date = coach.Hire_Date,
+                Fire_Date = coach.Fire_Date,
+                Experience_Years = coach.Experience_Years,
+                Works_For_Branch = coach.Works_For_Branch,
+                Daily_Hours_Worked = coach.Daily_Hours_Worked,
+                Shift_Start = coach.Shift_Start,
+                Shift_Ends = coach.Shift_Ends,
+                Speciality = coach.Speciality,
+                Status = coach.Status,
+                Contract_Length = coach.Contract_Length,
+                Renewal_Date = coach.Renewal_Date,
+
+                // User (inherited) fields
+                User_ID = coach.User.UserID,
+                Username = coach.User.Username,
+                PasswordHashed = null, // or remove if you're omitting it
+                Type = coach.User.Type,
+                First_Name = coach.User.First_Name,
+                Last_Name = coach.User.Last_Name,
+                Email = coach.User.Email,
+                Phone_Number = coach.User.Phone_Number,
+                Gender = coach.User.Gender,
+                Age = coach.User.Age ?? 35,
+                National_Number = coach.User.National_Number
+            }).ToList();
         }
 
         //* MoveCoach : Branch Manager can move coach to another branch
@@ -195,10 +228,55 @@ namespace Backend.Services
 
         }
 
-        public async Task<Coach?> GetCoachByIdAsync(int id) // Get Coach Data by Coach ID
+       public async Task<CoachModel?> GetCoachByIdAsync(int id)
         {
-            return await _context.Coaches.FindAsync(id);
-        }
+            var coach = await _context.Coaches
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.CoachID == id);
+
+            if (coach == null)
+                throw new Exception($"❌ Coach not found in database for ID {id}");
+
+            if (coach.User == null)
+                throw new Exception($"⚠️ Coach found but related User is null for CoachID {id}");
+
+            var user = coach.User;
+
+            return new CoachModel
+            {
+                // Coach-specific fields
+                Coach_ID = coach.CoachID,
+                Salary = (int) coach.Salary,
+                Penalties = coach.Penalties ?? 0,
+                Bonuses = coach.Bonuses ?? 0,
+                Hire_Date = coach.Hire_Date,
+                Fire_Date = coach.Fire_Date,
+                Experience_Years = coach.Experience_Years,
+                Works_For_Branch = coach.Works_For_Branch,
+                Daily_Hours_Worked = coach.Daily_Hours_Worked,
+                Shift_Start = coach.Shift_Start,
+                Shift_Ends = coach.Shift_Ends,
+                Speciality = coach.Speciality,
+                Status = coach.Status,
+                Contract_Length = coach.Contract_Length,
+                Renewal_Date = coach.Renewal_Date,
+
+                // Inherited user fields
+                User_ID = user.UserID,
+                Username = user.Username,
+                Type = user.Type,
+                First_Name = user.First_Name,
+                Last_Name = user.Last_Name,
+                Email = user.Email,
+                Phone_Number = user.Phone_Number,
+                Gender = user.Gender,
+                Age = user.Age ?? 35,
+                National_Number = user.National_Number
+            };
+}
+
+
+
 
 
 
@@ -289,7 +367,6 @@ namespace Backend.Services
                 Renewal_Date = coach.Renewal_Date,
 
                 Username = coach.User.Username,
-                PasswordHashed = coach.User.PasswordHashed,
                 Type = coach.User.Type,
                 Email = coach.User.Email,
                 First_Name = coach.User.First_Name,

@@ -5,6 +5,7 @@ using Backend.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Backend.DbModels;
+using System.Security.Claims;
 
 namespace Backend.Controllers
 {
@@ -77,27 +78,37 @@ namespace Backend.Controllers
             });
         }
 
-        [HttpGet("single-coach")]
+        [HttpGet("single")]
         [Authorize(Roles = "Coach, BranchManager")]
         public async Task<IActionResult> GetCoachById([FromQuery] int? id)
         {
-            Coach coach = null;
+            CoachModel coach = null;
+            // var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
+            // return Ok(claims);
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
-            var role = User.FindFirst("role")?.Value;
+            if (string.IsNullOrEmpty(role))
+                return Unauthorized(new { message = "User role not found in token." });
 
             if (role == "Coach")
             {
-                if (!int.TryParse(User.FindFirst("UserID")?.Value, out int userId))
+                var userIdClaim = User.FindFirst("UserID")?.Value;
+
+                if (!int.TryParse(userIdClaim, out var userId))
                     return Unauthorized(new { message = "Invalid user token." });
 
                 coach = await coachservice.GetCoachByIdAsync(userId);
             }
             else if (role == "BranchManager")
             {
-                if (id == null || id <= 0)
-                    return BadRequest(new { message = "You must provide a valid Coach ID as query parameter." });
+                if (id is null or <= 0)
+                    return BadRequest(new { message = "You must provide a valid Coach ID as a query parameter." });
 
                 coach = await coachservice.GetCoachByIdAsync(id.Value);
+            }
+            else
+            {
+                return Forbid(); // Handles unexpected roles gracefully
             }
 
             if (coach == null)
@@ -105,6 +116,8 @@ namespace Backend.Controllers
 
             return Ok(coach);
         }
+
+
 
 
         [HttpPut]

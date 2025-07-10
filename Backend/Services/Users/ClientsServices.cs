@@ -65,14 +65,77 @@ namespace Backend.Services
             }
         }
 
-        public async Task<List<Client>> GetAllClientsAsync()
+        public async Task<List<ClientsModel>> GetAllClientsAsync()
         {
-            return await _dbContext.Clients.ToListAsync();
+            var clients = await _dbContext.Clients
+                .Include(c => c.User)
+                .ToListAsync();
+
+            return clients.Select(client => new ClientsModel
+            {
+                Client_ID = client.ClientID,
+                Join_Date = client.JoinDate,
+                BMR = client.BMR,
+                Weight_kg = client.WeightKg,
+                Height_cm = client.HeightCm,
+                Belong_To_Coach_ID = client.BelongToCoachID,
+                AccountActivated = client.AccountActivated,
+                Start_Date_Membership = client.StartDateMembership,
+                End_Date_Membership = client.EndDateMembership,
+                Membership_Type = client.MembershipType,
+                Fees_Of_Membership = client.FeesOfMembership,
+                Membership_Period_Months = client.MembershipPeriodMonths,
+
+                User_ID = client.User.UserID,
+                Username = client.User.Username,
+                Type = client.User.Type,
+                First_Name = client.User.First_Name,
+                Last_Name = client.User.Last_Name,
+                Email = client.User.Email,
+                Phone_Number = client.User.Phone_Number,
+                Gender = client.User.Gender,
+                Age = client.User.Age ?? 35,
+                National_Number = client.User.National_Number
+            }).ToList();
         }
 
-        public async Task<Client?> GetClientByIdAsync(int id)
+        public async Task<ClientsModel?> GetClientByIdAsync(int id)
         {
-            return await _dbContext.Clients.FindAsync(id);
+            var client = await _dbContext.Clients
+                .Include(c => c.User)
+                .FirstOrDefaultAsync(c => c.ClientID == id);
+
+            if (client == null || client.User == null)
+                return null;
+
+            return new ClientsModel
+            {
+                // Client-specific fields
+                Client_ID = client.ClientID,
+                Join_Date = client.JoinDate,
+                BMR = client.BMR,
+                Weight_kg = client.WeightKg,
+                Height_cm = client.HeightCm,
+                Belong_To_Coach_ID = client.BelongToCoachID,
+                AccountActivated = client.AccountActivated,
+                Start_Date_Membership = client.StartDateMembership,
+                End_Date_Membership = client.EndDateMembership,
+                Membership_Type = client.MembershipType,
+                Fees_Of_Membership = client.FeesOfMembership,
+                Membership_Period_Months = client.MembershipPeriodMonths,
+
+                // Inherited user fields
+                User_ID = client.User.UserID,
+                Username = client.User.Username,
+                Type = client.User.Type,
+                First_Name = client.User.First_Name,
+                Last_Name = client.User.Last_Name,
+                Email = client.User.Email,
+                Phone_Number = client.User.Phone_Number,
+                Gender = client.User.Gender,
+                Age = client.User.Age ?? 35,
+                National_Number = client.User.National_Number
+            };
         }
 
         public async Task<(bool success, string message)> UpdateClientAsync(ClientUpdaterModel entry)
