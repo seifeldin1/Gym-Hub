@@ -17,7 +17,6 @@ namespace Backend.Services
             _context = context;
         }
 
-        // Deletes a job posting.
         public async Task<(bool success, string message)> DeleteJobPostAsync(int id)
         {
             var jobPost = await _context.posts.FindAsync(id);
@@ -36,45 +35,38 @@ namespace Backend.Services
             }
         }
 
-        // Updates a job posting.   
             public async Task<(bool success, string message)> UpdateJobPostAsync(PostUpdater entry)
-{
-    // Step 1: Check if PostID is provided
-    if (entry.PostID == null)
-        return (false, "Post ID is required.");
+        {
+            if (entry.PostID == null)
+                return (false, "Post ID is required.");
 
-    // Step 2: Find the job post by ID
-    var jobPost = await _context.posts.FindAsync(entry.PostID);
-    if (jobPost == null)
-        return (false, "Job post not found.");
+            var jobPost = await _context.posts.FindAsync(entry.PostID);
+            if (jobPost == null)
+                return (false, "Job post not found.");
 
-    // Step 3: Conditionally update fields if new values are provided
-    jobPost.BranchPostedID = entry.BranchPostedID ?? jobPost.BranchPostedID;
-    jobPost.Description = entry.Description ?? jobPost.Description;
-    jobPost.Title = entry.Title ?? jobPost.Title;
-    jobPost.DatePosted = entry.DatePosted ?? jobPost.DatePosted;
-    jobPost.SkillsRequired = entry.SkillsRequired ?? jobPost.SkillsRequired;
-    jobPost.ExperienceYearsRequired = entry.ExperienceYearsRequired ?? jobPost.ExperienceYearsRequired;
-    jobPost.Deadline = entry.Deadline ?? jobPost.Deadline;
-    jobPost.Location = entry.Location ?? jobPost.Location;
+            jobPost.BranchPostedID = entry.BranchPostedID ?? jobPost.BranchPostedID;
+            jobPost.Description = entry.Description ?? jobPost.Description;
+            jobPost.Title = entry.Title ?? jobPost.Title;
+            jobPost.DatePosted = entry.DatePosted ?? jobPost.DatePosted;
+            jobPost.SkillsRequired = entry.SkillsRequired ?? jobPost.SkillsRequired;
+            jobPost.ExperienceYearsRequired = entry.ExperienceYearsRequired ?? jobPost.ExperienceYearsRequired;
+            jobPost.Deadline = entry.Deadline ?? jobPost.Deadline;
+            jobPost.Location = entry.Location ?? jobPost.Location;
 
-    // Navigation properties (BranchPosted, Application) are ignored here
 
-    // Step 4: Save changes
-    try
-    {
-        await _context.SaveChangesAsync();
-        return (true, "Job post updated successfully.");
-    }
-    catch (Exception ex)
-    {
-        return (false, $"Error updating job post: {ex.Message}");
-    }
-}
+            try
+            {
+                await _context.SaveChangesAsync();
+                return (true, "Job post updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Error updating job post: {ex.Message}");
+            }
+        }
 
 
 
-        // Adds a new job posting.
         public async Task<(bool success, string message)> AddJobPostAsync(Post entry)
         {
             await _context.posts.AddAsync(entry);
@@ -89,7 +81,6 @@ namespace Backend.Services
             }
         }
 
-        // Retrieves all job postings.
         public async Task<List<Post>> GetJobPostsAsync()
         {
             return await _context.posts.ToListAsync();
